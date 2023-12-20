@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using domain;
-using service.contract.DTOs;
+using service.contract.DTOs.Account;
 
 namespace service
 {

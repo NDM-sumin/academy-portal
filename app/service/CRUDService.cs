@@ -5,10 +5,12 @@ using service.contract;
 
 namespace service
 {
-    public class CRUDService<TEntityDto, TDbContext, TEntity> : ICRUDService<TEntityDto, TDbContext, TEntity>
+    public class CRUDService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TDbContext, TEntity> : ICRUDService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TDbContext, TEntity>
         where TDbContext : DbContext
         where TEntityDto : class
         where TEntity : class
+        where TCreateEntityDto : class
+        where TUpdateEntityDto : class
     {
         public readonly IGenericRepository<TDbContext, TEntity> Repository;
         public readonly IMapper Mapper;
@@ -18,7 +20,7 @@ namespace service
             this.Mapper = mapper;
         }
 
-        public async Task<TEntityDto> Create(TEntityDto entityDto)
+        public async Task<TEntityDto> Create(TCreateEntityDto entityDto)
         {
 
             var entity = Mapper.Map<TEntity>(entityDto);
@@ -33,7 +35,7 @@ namespace service
             return await Repository.GetAll();
         }
 
-        public async Task<TEntityDto> Update(TEntityDto entityDto)
+        public async Task<TEntityDto> Update(TUpdateEntityDto entityDto)
         {
 
             var entity = Mapper.Map<TEntity>(entityDto);

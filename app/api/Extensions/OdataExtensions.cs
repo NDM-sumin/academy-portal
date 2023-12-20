@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.OData;
+﻿using domain;
+using Microsoft.AspNetCore.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 
@@ -18,6 +19,7 @@ namespace api.Extensions
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
 
+            builder.EntitySet<Account>(nameof(Account));
             builder.EnableLowerCamelCase();
             return builder.GetEdmModel();
         }

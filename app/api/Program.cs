@@ -18,17 +18,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<MailConfiguration>(builder.Configuration.GetSection("Mail"));
-builder.Services.AddCors(options =>
+/*builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsConstants.PolicyName,
         build => build
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials().SetIsOriginAllowed(hostName => true).Build());
-});
+});*/
+builder.Services.AddAppDefaultDbContext(builder.Configuration);
 builder.Services.RegisterAppServices();
 builder.Services.AddJwtAuthentication();
-builder.Services.AddAppDefaultDbContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
@@ -43,7 +43,7 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler("/error");
 app.UseAuthorization();
 app.UseStaticFiles();
-app.MapControllers();
-app.UseCors(CorsConstants.PolicyName);
+app.MapControllers();/*
+app.UseCors(CorsConstants.PolicyName);*/
 
 app.Run();

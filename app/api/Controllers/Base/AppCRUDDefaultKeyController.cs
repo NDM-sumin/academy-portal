@@ -2,11 +2,13 @@
 
 namespace api.Controllers.Base
 {
-    public class AppCRUDDefaultKeyController<TEntityDto, TEntity> : AppCRUDAbstractKeyController<TEntityDto, TEntity, Guid>
+    public class AppCRUDDefaultKeyController<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TEntity> : AppCRUDSingleKeyController<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TEntity, Guid>
         where TEntity : class
         where TEntityDto : class
+        where TCreateEntityDto : class
+        where TUpdateEntityDto : class
     {
-        public AppCRUDDefaultKeyController(IAppCRUDDefaultKeyService<TEntityDto, TEntity> appCRUDService) : base(appCRUDService)
+        public AppCRUDDefaultKeyController(IAppCRUDDefaultKeyService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TEntity> appCRUDService) : base(appCRUDService)
         {
         }
     }
