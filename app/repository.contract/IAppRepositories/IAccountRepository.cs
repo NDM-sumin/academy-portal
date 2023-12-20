@@ -5,5 +5,6 @@ namespace repository.contract.IAppRepositories
 {
     public interface IAccountRepository : IAppGenericDefaultKeyRepository<Account>
     {
+       Task<Account> GetAccountByUserName(string userName);
     }
 }
