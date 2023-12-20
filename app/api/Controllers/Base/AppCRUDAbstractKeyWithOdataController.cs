@@ -17,20 +17,10 @@ namespace api.Controllers.Base
         public AppCRUDAbstractKeyWithOdataController(IAppCRUDAbstractKeyService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TEntity, TKey> appCRUDService) : base(appCRUDService)
         {
         }
-        public override async Task<TEntityDto> Create([FromODataBody] TCreateEntityDto entityDto)
-        {
-
-            return await appCRUDService.Create(entityDto);
-        }
         [EnableQuery()]
-        public override IActionResult GetAll()
+        public override async Task<IActionResult> GetAll()
         {
-            return base.GetAll();
-        }
-
-        public override async Task<TEntityDto> Update([FromODataBody] TUpdateEntityDto entityDto)
-        {
-            return await base.Update(entityDto);
+            return await base.GetAll();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace service
         public AutoMapperProfile()
         {
             this.CreateMap<Account, AccountDTO>().ReverseMap();
+            this.CreateMap<Account, CreateAccountDTO>().ReverseMap();
+            this.CreateMap<Account, UpdateAccountDTO>().ReverseMap();
 
         }
     }
