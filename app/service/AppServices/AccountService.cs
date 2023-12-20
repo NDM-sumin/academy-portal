@@ -3,7 +3,7 @@ using domain;
 using domain.shared.Exceptions;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
-using service.contract.DTOs;
+using service.contract.DTOs.Account;
 using service.contract.IAppServices;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace service.AppServices
 {
-    public class AccountService : AppCRUDDefaultKeyService<AccountDTO, Account>, IAccountService
+    public class AccountService : AppCRUDDefaultKeyService<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>, IAccountService
     {
 
         private readonly IAccountRepository _accountRepository;

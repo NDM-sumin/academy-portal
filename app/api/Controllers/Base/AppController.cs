@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace api.Controllers.Base
 {
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+   // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [AppActionFilter]
     [Route("api/[controller]")]
     public abstract class AppController : ODataController

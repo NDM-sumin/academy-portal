@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="repository.contract.IGenericAbstractKeyRepository&lt;TDbContext, TEntity, TKey&gt;" Collapsed="true">
+    <Position X="8.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGenericAbstractKeyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IGenericRepository&lt;TDbContext, TEntity&gt;" Collapsed="true">
+    <Position X="7.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAgEAAAAAAAA=</HashCode>
+      <FileName>IGenericRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IGenericSingleKeyRepository&lt;TDbContext, TEntity, TKey&gt;" Collapsed="true">
+    <Position X="10.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGenericSingleKeyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IGenericDefaultKeyRepository&lt;TDbContext, TEntity&gt;" Collapsed="true">
+    <Position X="13" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGenericDefaultKeyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IAppRepositories.Base.IAppGenericRepository&lt;TEntity&gt;" Collapsed="true">
+    <Position X="6.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IAppRepositories\Base\IAppGenericRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IAppRepositories.Base.IAppGenericAbstractKeyRepository&lt;TEntity, TKey&gt;" Collapsed="true">
+    <Position X="7.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IAppRepositories\Base\IAppGenericAbstractKeyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IAppRepositories.Base.IAppGenericDefaultKeyRepository&lt;TEntity&gt;" Collapsed="true">
+    <Position X="11" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IAppRepositories\Base\IAppGenericDefaultKeyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IAppRepositories.Base.IAppGenericSingleKeyRepository&lt;TEntity, TKey&gt;" Collapsed="true">
+    <Position X="9" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IAppRepositories\Base\IAppGenericSingleKeyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="repository.contract.IAppRepositories.IAccountRepository" Collapsed="true">
+    <Position X="11" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IAppRepositories\IAccountRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

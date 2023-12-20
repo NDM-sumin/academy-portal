@@ -5,10 +5,12 @@ using service.contract;
 
 namespace service
 {
-    public class CRUDAbstractKeyService<TEntityDto, TDbContext, TEntity, TKey> : CRUDService<TEntityDto, TDbContext, TEntity>, ICRUDAbstractKeyService<TEntityDto, TDbContext, TEntity, TKey>
+    public class CRUDAbstractKeyService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TDbContext, TEntity, TKey> : CRUDService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TDbContext, TEntity>, ICRUDAbstractKeyService<TEntityDto, TCreateEntityDto, TUpdateEntityDto, TDbContext, TEntity, TKey>
         where TEntity : class
         where TEntityDto : class
         where TDbContext : DbContext
+        where TCreateEntityDto : class
+        where TUpdateEntityDto : class
 
     {
         public CRUDAbstractKeyService(IGenericAbstractKeyRepository<TDbContext, TEntity, TKey> genericRepository, IMapper mapper) : base(genericRepository, mapper)

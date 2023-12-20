@@ -15,9 +15,10 @@ namespace api.Controllers.Base
         {
             var exceptionHandlerFeature = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
 
-            System.IO.File.AppendAllTextAsync(ErrorConstants.ERROR_LOG_PATH, exceptionHandlerFeature.Error.ToString());
+
 
             var response = await Task.Run(() => SpecifyExceptionResult(exceptionHandlerFeature.Error));
+            //await System.IO.File.AppendAllTextAsync(ErrorConstants.ERROR_LOG_PATH, exceptionHandlerFeature.Error.ToString());
             return response;
         }
         ObjectResult SpecifyExceptionResult(Exception exception)

@@ -4,11 +4,12 @@ using domain.shared.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
 using service.contract.DTOs;
+using service.contract.DTOs.Account;
 using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class AccountController : AppCRUDDefaultKeyWithOdataController<AccountDTO, Account>
+    public class AccountController : AppCRUDDefaultKeyWithOdataController<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
     {
         private readonly IAccountService _accountService;
 
