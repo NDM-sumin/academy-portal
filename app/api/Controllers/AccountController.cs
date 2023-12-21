@@ -13,44 +13,31 @@ namespace api.Controllers
 {
     public class AccountController : AppCRUDDefaultKeyWithOdataController<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
     {
-        private readonly IAccountService _accountService;
+
 
         public AccountController(IAccountService appCRUDService) : base(appCRUDService)
         {
-            _accountService = appCRUDService;
+
         }
 
-        [HttpPost]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] AccountDTO accountDTO)
         {
-            var account = await _accountService.GetAccountByUserName(accountDTO.Username);
-
-            if (account == null)
-            {
-                throw new ClientException(5001);
-            }
-
-            if (!accountDTO.Password.Equals(account.Password))
-            {
-                throw new ClientException(5002);
-            }
-
-            return Ok(new
-            {
-                Token = JwtService.GenerateJwtToken(String.Empty, String.Empty, String.Empty, String.Empty, 45, account.Id).token
-            });
+            return Ok(await (appCRUDService as IAccountService).Login(accountDTO));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> ForgotPassword([FromBody] AccountDTO accountDTO)
+        [HttpPut("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
         {
-            var account = await _accountService.GetAccountByUserName(accountDTO.Username);
-            if (account == null) throw new ClientException(5001);
-            
-
-            var accountAfterChange = await _accountService.ChangePassword(account.Id, accountDTO.Password);
-            if (accountAfterChange == null) throw new ClientException();
+            await (appCRUDService as IAccountService).ForgotPassword(forgotPasswordDTO);
             return Ok();
+
+        }
+        [HttpPut("ChangePassword")]
+        public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            await (appCRUDService as IAccountService).ChangePassword(base.GetUserId(), changePasswordDTO);
+
         }
 
     }

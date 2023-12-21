@@ -2,7 +2,7 @@
 
 namespace repository.contract.IAppRepositories.Base
 {
-    public interface IAppGenericDefaultKeyRepository<TEntity> : IAppGenericSingleKeyRepository<TEntity, Guid>, IGenericDefaultKeyRepository<AppDbContext, TEntity>
+    public interface IAppGenericDefaultKeyRepository<TEntity> : IGenericDefaultKeyRepository<AppDbContext, TEntity>
         where TEntity : class
     {
 

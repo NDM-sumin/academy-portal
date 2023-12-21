@@ -8,7 +8,7 @@ namespace repository.contract
     {
         DbSet<TEntity> Entities { get; }
         Task<IQueryable<TEntity>> GetAll();
-        Task<TEntity> Create(TEntity entityDto);
-        Task<TEntity> Update(TEntity entityDto);
+        Task<TEntity> Create(TEntity entity);
+        Task<TEntity> Update(TEntity entity);
     }
 }

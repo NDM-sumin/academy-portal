@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "domain", "domain\domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "domain.shared", "domain.shared\domain.shared.csproj", "{50B3D3B8-B84B-4E25-AF1F-D4A2C447C123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "entityframework", "entityframework\entityframework.csproj", "{264873DE-BB50-4A2D-BEEE-BAF0BE08ADAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "entityframework", "entityframework\entityframework.csproj", "{264873DE-BB50-4A2D-BEEE-BAF0BE08ADAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

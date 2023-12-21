@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using domain;
+using domain.shared.AppSettings;
 using domain.shared.Exceptions;
+using Microsoft.Extensions.Options;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.Account;
@@ -17,23 +19,55 @@ namespace service.AppServices
     {
 
         private readonly IAccountRepository _accountRepository;
-
-        public AccountService(IAccountRepository genericRepository, IMapper mapper)
+        readonly JwtConfiguration jwtConfiguration;
+        readonly IEmailService emailService;
+        public AccountService(IAccountRepository genericRepository, IMapper mapper, IOptions<JwtConfiguration> jwtOptions, IEmailService emailService)
             : base(genericRepository, mapper)
         {
             _accountRepository = genericRepository;
+            jwtConfiguration = jwtOptions.Value;
+            this.emailService = emailService;
         }
 
-        public async Task<Account> GetAccountByUserName(string username)
+        public async Task<AccountNoPasswordDTO> GetAccountById(Guid accountId)
         {
-            var account = await _accountRepository.GetAccountByUserName(username);
-            return account;
+            return Mapper.Map<AccountNoPasswordDTO>(await _accountRepository.Find(accountId));
         }
-        public async Task<Account> ChangePassword(Guid id, string password)
+
+        public async Task ChangePassword(Guid id, ChangePasswordDTO changePasswordDTO)
         {
-            var account = await _accountRepository.GetAccountById(id);
-            if (account == null) return null;
-            return account;
+            var user = await _accountRepository.Find(id);
+            HashService hashService = new HashService(changePasswordDTO.Password, jwtConfiguration.HashSalt);
+            if (!hashService.IsPassed(user.Password))
+            {
+                throw new ClientException(5003);
+            }
+            user.Password = new HashService(changePasswordDTO.Password, jwtConfiguration.HashSalt).EncryptedPassword;
+            await _accountRepository.Update(user);
+        }
+
+        public async Task<(string token, DateTime expire)> Login(AccountDTO accountDTO)
+        {
+            var account = await _accountRepository.GetAccountByUserName(accountDTO.Username);
+            var hashService = new HashService(accountDTO.Password, jwtConfiguration.HashSalt);
+            if (!hashService.IsPassed(account.Password))
+            {
+                throw new UnauthorizeException(5003);
+            }
+            return JwtService.GenerateJwtToken(jwtConfiguration.Key, jwtConfiguration.Subject, jwtConfiguration.Issuer, jwtConfiguration.Audience, jwtConfiguration.ValidTime, account.Id);
+
+        }
+
+        public async Task ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
+        {
+            var account = await _accountRepository.GetAccountByUserName(forgotPasswordDTO.Username);
+            if (account.Email != forgotPasswordDTO.Email) throw new ClientException(5001);
+            string newPassword = Guid.NewGuid().GetHashCode().ToString();
+            account.Password = new HashService(newPassword, jwtConfiguration.HashSalt).EncryptedPassword;
+            var emailMessage = emailService.CreateMailMessage("CHANGE PASSWORD", $"Your password is {newPassword}", receivers: account.Email);
+            await emailService.SendMessage(emailMessage);
+            await _accountRepository.Update(account);
+
         }
     }
 }
