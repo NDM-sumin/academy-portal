@@ -24,16 +24,34 @@ namespace service.AppServices
             _accountRepository = genericRepository;
         }
 
-        public async Task<Account> GetAccountByUserName(string username)
+        public async Task<string> Login(AccountDTO accountDTO)
         {
-            var account = await _accountRepository.GetAccountByUserName(username);
-            return account;
+            var account = await _accountRepository.GetAccountByUserName(accountDTO.Username);
+
+            if (account == null)
+            {
+                throw new ClientException(5001);
+            }
+
+            if (accountDTO.Password.Equals(account.Password))
+            {
+                throw new ClientException(5002);
+            }
+
+            return JwtService.GenerateJwtToken(String.Empty, String.Empty, String.Empty, String.Empty, 45, account.Id).token;
         }
-        public async Task<Account> ChangePassword(Guid id, string password)
+        public async Task<Account> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
         {
-            var account = await _accountRepository.GetAccountById(id);
-            if (account == null) return null;
-            return account;
+            var account = await _accountRepository.GetAccountByUserNameAndEmail(forgotPasswordDTO.Username, forgotPasswordDTO.Email);
+
+            if (account != null)
+            {
+              
+            }
+            else
+            {
+                throw new ClientException(5001);
+            }
         }
     }
 }

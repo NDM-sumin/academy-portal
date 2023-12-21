@@ -7,5 +7,6 @@ namespace repository.contract.IAppRepositories
     {
         Task<Account> GetAccountById(Guid id);
         Task<Account> GetAccountByUserName(string userName);
+        Task<Account> GetAccountByUserNameAndEmail(string username, string email);
     }
 }

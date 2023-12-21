@@ -20,37 +20,20 @@ namespace api.Controllers
             _accountService = appCRUDService;
         }
 
-        [HttpPost]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] AccountDTO accountDTO)
         {
-            var account = await _accountService.GetAccountByUserName(accountDTO.Username);
+            var response = await _accountService.Login(accountDTO);
 
-            if (account == null)
-            {
-                throw new ClientException(5001);
-            }
-
-            if (!accountDTO.Password.Equals(account.Password))
-            {
-                throw new ClientException(5002);
-            }
-
-            return Ok(new
-            {
-                Token = JwtService.GenerateJwtToken(String.Empty, String.Empty, String.Empty, String.Empty, 45, account.Id).token
-            });
+            return Ok(response);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> ForgotPassword([FromBody] AccountDTO accountDTO)
+        [HttpPut("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
         {
-            var account = await _accountService.GetAccountByUserName(accountDTO.Username);
-            if (account == null) throw new ClientException(5001);
+            var response = await _accountService.ForgotPassword(forgotPasswordDTO);
             
-
-            var accountAfterChange = await _accountService.ChangePassword(account.Id, accountDTO.Password);
-            if (accountAfterChange == null) throw new ClientException();
-            return Ok();
+            return Ok(response);
         }
 
     }
