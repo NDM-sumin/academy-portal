@@ -24,11 +24,16 @@ namespace service.AppServices
             _accountRepository = genericRepository;
         }
 
-        public async Task<bool> ValidateCredentials(string username, string password)
+        public async Task<Account> GetAccountByUserName(string username)
         {
-            var user = await _accountRepository.GetAccountByUserName(username);
-
-            return user != null && user.Password == password;
+            var account = await _accountRepository.GetAccountByUserName(username);
+            return account;
+        }
+        public async Task<Account> ChangePassword(Guid id, string password)
+        {
+            var account = await _accountRepository.GetAccountById(id);
+            if (account == null) return null;
+            return account;
         }
     }
 }

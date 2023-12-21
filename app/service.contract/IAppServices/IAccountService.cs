@@ -6,6 +6,7 @@ namespace service.contract.IAppServices
 {
     public interface IAccountService : IAppCRUDDefaultKeyService<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
     {
-        Task<bool> ValidateCredentials(string username, string password);
+        Task<Account> ChangePassword(Guid id, string password);
+        Task<Account> GetAccountByUserName(string username);
     }
 }

@@ -17,5 +17,11 @@ namespace repository.AppRepositories
             var account = await Entities.FirstOrDefaultAsync(a => a.Username == userName);
             return account;
         }
+
+        public async Task<Account> GetAccountById(Guid id)
+        {
+            var account = await Entities.FirstOrDefaultAsync(a => a.Id.Equals(id));
+            return account;
+        }
     }
 }

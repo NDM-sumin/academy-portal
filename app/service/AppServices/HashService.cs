@@ -2,6 +2,7 @@
 using System.Text;
 using domain.shared.Constants;
 using domain.shared.Extensions;
+
 namespace service.AppServices
 {
     public class HashService
