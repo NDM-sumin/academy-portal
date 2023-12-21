@@ -37,7 +37,7 @@ namespace api.Controllers
 
             return Ok(new
             {
-                Token = JwtService.GenerateJwtToken(account.Id.ToString(), account.CreatedAt.ToString(), account.Username, account.ModifiedAt.ToString(), 45, account.Id).token
+                Token = JwtService.GenerateJwtToken(String.Empty, String.Empty, String.Empty, String.Empty, 45, account.Id).token
             });
         }
 
