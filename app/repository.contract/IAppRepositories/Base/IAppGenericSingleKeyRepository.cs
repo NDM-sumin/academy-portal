@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace repository.contract.IAppRepositories.Base
 {
-    public interface IAppGenericSingleKeyRepository<TEntity, TKey> : IAppGenericAbstractKeyRepository<TEntity, TKey>, IGenericSingleKeyRepository<AppDbContext, TEntity, TKey>
+    public interface IAppGenericSingleKeyRepository<TEntity, TKey> :  IGenericSingleKeyRepository<AppDbContext, TEntity, TKey>
         where TEntity : class
         where TKey : struct
     {

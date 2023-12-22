@@ -1,4 +1,5 @@
 ﻿using domain;
+using domain.shared.Exceptions;
 using entityframework;
 using Microsoft.EntityFrameworkCore;
 using repository.AppRepositories.Base;
@@ -15,13 +16,13 @@ namespace repository.AppRepositories
         public async Task<Account> GetAccountByUserName(string userName)
         {
             var account = await Entities.FirstOrDefaultAsync(a => a.Username == userName);
-            return account;
+            return account ?? throw new ClientException(5001);
         }
 
         public async Task<Account> GetAccountById(Guid id)
         {
             var account = await Entities.FirstOrDefaultAsync(a => a.Id.Equals(id));
-            return account;
+            return account ?? throw new ClientException(5001);
         }
 
         public async Task<Account> GetAccountByUserNameAndEmail(string username, string email)

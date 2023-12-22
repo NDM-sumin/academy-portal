@@ -1,4 +1,21 @@
 [
 
-  //{code: 123, message: 'abc'}
+  {
+    "code": 5001,
+    "message": "Not found user"
+  },
+
+  {
+    "code": 5002,
+    "message": "Password is not correct"
+  },
+
+  {
+    "code": 5003,
+    "message": "Not found user"
+  },
+  {
+    "code": 4040,
+    "message": "Not found related data"
+  }
 ]

@@ -13,27 +13,31 @@ namespace api.Controllers
 {
     public class AccountController : AppCRUDDefaultKeyWithOdataController<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
     {
-        private readonly IAccountService _accountService;
+
 
         public AccountController(IAccountService appCRUDService) : base(appCRUDService)
         {
-            _accountService = appCRUDService;
+
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] AccountDTO accountDTO)
         {
-            var response = await _accountService.Login(accountDTO);
-
-            return Ok(response);
+            return Ok(await (appCRUDService as IAccountService).Login(accountDTO));
         }
 
         [HttpPut("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
         {
-            var response = await _accountService.ForgotPassword(forgotPasswordDTO);
-            
-            return Ok(response);
+            await (appCRUDService as IAccountService).ForgotPassword(forgotPasswordDTO);
+            return Ok();
+
+        }
+        [HttpPut("ChangePassword")]
+        public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            await (appCRUDService as IAccountService).ChangePassword(base.GetUserId(), changePasswordDTO);
+
         }
 
     }

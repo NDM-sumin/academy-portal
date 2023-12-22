@@ -1,4 +1,7 @@
-﻿using repository;
+﻿using AutoMapper;
+using domain.shared.AppSettings;
+using Microsoft.Extensions.Options;
+using repository;
 using repository.AppRepositories;
 using repository.AppRepositories.Base;
 using repository.contract;
@@ -8,6 +11,7 @@ using service;
 using service.AppServices;
 using service.AppServices.Base;
 using service.contract;
+using service.contract.DTOs.Email;
 using service.contract.IAppServices;
 using service.contract.IAppServices.Base;
 
@@ -21,20 +25,13 @@ namespace api.Extensions
             return services
                  .AddScoped<IAccountService, AccountService>()
                 .AddScoped<IAccountRepository, AccountRepository>()
-/*                .AddScoped(typeof(IAppGenericDefaultKeyRepository<>), typeof(AppGenericDefaultKeyRepository<>))
-                .AddScoped(typeof(IAppGenericSingleKeyRepository<,>), typeof(AppGenericSingleKeyRepository<,>))
-                .AddScoped(typeof(IGenericSingleKeyRepository<,,>), typeof(GenericSingleKeyRepository<,,>))
-                .AddScoped(typeof(IAppGenericAbstractKeyRepository<,>), typeof(AppGenericAbstractKeyRepository<,>))
-                .AddScoped(typeof(IAppGenericRepository<>), typeof(AppGenericRepository<,>))
-                .AddScoped(typeof(IGenericDefaultKeyRepository<,>), typeof(IGenericSingleKeyRepository<,,>))
-                .AddScoped(typeof(IGenericAbstractKeyRepository<,,>), typeof(GenericAbstractKeyRepository<,,>))
-                .AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>))
-                .AddScoped(typeof(IAppCRUDDefaultKeyService<,,,>), typeof(AppCRUDDefaultKeyService<,,,>))
-                .AddScoped(typeof(IAppCRUDAbstractKeyService<,,,,>), typeof(AppCRUDAbstractKeyService<,,,,>))
-                .AddScoped(typeof(IAppCRUDService<,,,>), typeof(AppCRUDService<,,,>))
-                .AddScoped(typeof(ICRUDDefaultKeyService<,,,,>), typeof(CRUDDefaultKeyService<,,,,>))
-                .AddScoped(typeof(ICRUDAbstractKeyService<,,,,,>), typeof(CRUDAbstractKeyService<,,,,,>))
-                .AddScoped(typeof(ICRUDService<,,,,>), typeof(CRUDService<,,,,>))*/
+                .AddScoped<IEmailService>(impl =>
+                {
+                    var mapper = impl.GetService<IMapper>();
+                    var mailCOnfig = impl.GetService<IOptions<MailConfiguration>>();
+                    var smtpConfig = mapper.Map<SmtpConfigModel>(mailCOnfig.Value);
+                    return new EmailService(smtpConfig);
+                })
 
                ;
         }

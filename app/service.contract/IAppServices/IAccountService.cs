@@ -6,7 +6,9 @@ namespace service.contract.IAppServices
 {
     public interface IAccountService : IAppCRUDDefaultKeyService<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
     {
-        Task<Account> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO);
-        Task<string> Login(AccountDTO accountDTO);
+        Task<AccountNoPasswordDTO> GetAccountById(Guid accountId);
+        Task ChangePassword(Guid id, ChangePasswordDTO changePasswordDTO);
+        Task<(string token, DateTime expire)> Login(AccountDTO accountDTO);
+        Task ForgotPassword(ForgotPasswordDTO forgotPasswordDTO);
     }
 }

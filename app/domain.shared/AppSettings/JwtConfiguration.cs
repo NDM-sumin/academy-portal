@@ -8,5 +8,6 @@
         public string Subject { get; set; } = null!;
         public int ValidTime { get; set; }
         public int RefreshTokenValidTime { get; set; }
+        public string HashSalt { get; set; } = null!;
     }
 }
