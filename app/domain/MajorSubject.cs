@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace domain
 {
-    public class MajorSubject : AppEntityDefaultKey
+    public class MajorSubject
     {
         public Guid MajorId { get; set; }
         public Guid SubjectId { get; set; }

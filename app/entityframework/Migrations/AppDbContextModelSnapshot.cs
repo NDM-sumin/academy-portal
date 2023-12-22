@@ -231,10 +231,6 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.MajorSubject", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -247,7 +243,7 @@ namespace entityframework.Migrations
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasNoKey();
 
                     b.HasIndex("MajorId");
 
@@ -303,9 +299,6 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.RoomAttendance", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AttendanceId")
                         .HasColumnType("uniqueidentifier");
@@ -321,8 +314,8 @@ namespace entityframework.Migrations
 
                     b.Property<Guid>("RoomId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
+                    
+                    b.HasNoKey();
 
                     b.HasIndex("AttendanceId");
 

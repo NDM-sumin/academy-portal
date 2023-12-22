@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace domain
 {
-    public class RoomAttendance : AppEntityDefaultKey
+    public class RoomAttendance
     {
         public Guid RoomId { get; set; }
         public Guid ClassId { get; set; }
