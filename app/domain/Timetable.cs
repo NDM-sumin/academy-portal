@@ -10,9 +10,9 @@ namespace domain
     {
         public Timetable()
         {
-            Attendances = new HashSet<Attendance>();
+            SlotTimeTableAtWeeks = new HashSet<SlotTimeTableAtWeek>();
         }
         public string WeekDay { get; set; } = null!;
-        public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; }
     }
 }

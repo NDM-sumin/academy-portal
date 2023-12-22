@@ -18,11 +18,8 @@ namespace domain
         }
         public string SubjectCode { get; set; } = null!;
         public string SubjectName { get; set; } = null!;
-        public Guid SemesterId { get; set; }
-        [ForeignKey(nameof(SemesterId))]
-        public virtual Semester Semester { get; set; } = null!;
+        public virtual ICollection<FeeDetail> FeeDetails { get; set; }
         public virtual ICollection<MajorSubject> MajorSubjects { get; set; }
         public virtual ICollection<SubjectComponent> SubjectComponents { get; set; }    
-        public virtual ICollection<FeeDetail> FeeDetails { get; set; }
     }
 }

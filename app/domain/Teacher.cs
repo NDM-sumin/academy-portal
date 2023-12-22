@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace domain
 {
-    public class Teacher : AppEntityDefaultKey
+    public class Teacher : Account
     {
         public Teacher()
         {
             Classes = new HashSet<Class>();
+            Role = shared.Enums.Role.Teacher;
         }
-        public Guid AccountId { get; set; }
-        [ForeignKey(nameof(AccountId))]
-        public virtual Account Account { get; set; } = null!;
         public virtual ICollection<Class> Classes { get; set; }
     }
 }

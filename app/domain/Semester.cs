@@ -10,12 +10,12 @@ namespace domain
     {
         public Semester()
         {
-            Subjects = new HashSet<Subject>();
+            FeeDetails = new HashSet<FeeDetail>();
         }
         public string SemesterCode { get; set; } = null!;
         public string SemesterName { get; set; } = null!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public virtual ICollection<Subject> Subjects { get; set; }
+        public virtual ICollection<FeeDetail> FeeDetails { get; set; }
     }
 }

@@ -10,10 +10,10 @@ namespace domain
     {
         public Room()
         {
-            RoomAttendances = new HashSet<RoomAttendance>();
+            RoomAttendances = new HashSet<Attendance>();
         }
         public string RoomCode { get; set; } = null!;
         public int Capacity { get; set; }
-        public virtual ICollection<RoomAttendance> RoomAttendances { get; set; }
+        public virtual ICollection<Attendance> RoomAttendances { get; set; }
     }
 }

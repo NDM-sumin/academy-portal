@@ -10,9 +10,9 @@ namespace domain
     {
         public Week()
         {
-            Attendances = new HashSet<Attendance>();
+            SlotTimeTableAtWeeks = new HashSet<SlotTimeTableAtWeek>();
         }
         public int WeekName { get; set; }
-        public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; }
     }
 }

@@ -10,11 +10,11 @@ namespace domain
     {
         public Slot()
         {
-            Attendances = new HashSet<Attendance>();
+            SlotTimeTableAtWeeks = new HashSet<SlotTimeTableAtWeek>();
         }
         public DateTime StartTime {  get; set; }
         public DateTime EndTime { get; set; }
         public string SlotName { get; set; } = null!;
-        public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; }
     }
 }

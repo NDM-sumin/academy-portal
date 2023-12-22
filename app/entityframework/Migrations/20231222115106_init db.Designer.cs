@@ -12,8 +12,8 @@ using entityframework;
 namespace entityframework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231222083001_add all entity")]
-    partial class addallentity
+    [Migration("20231222115106_init db")]
+    partial class initdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,10 @@ namespace entityframework.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
@@ -60,14 +64,8 @@ namespace entityframework.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -75,16 +73,286 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("TeacherId");
-
                     b.ToTable("Accounts");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Account");
                 });
 
             modelBuilder.Entity("domain.Attendance", b =>
+                {
+                    b.Property<Guid>("SlotTimeTableAtWeekId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FeeDetailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("SlotTimeTableAtWeekId", "RoomId", "FeeDetailId");
+
+                    b.HasIndex("FeeDetailId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("Attendances");
+                });
+
+            modelBuilder.Entity("domain.Class", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ClassCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("domain.FeeDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("ClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PayDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SemesterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("SemesterId", "StudentId", "SubjectId", "ClassId")
+                        .IsUnique()
+                        .HasFilter("[ClassId] IS NOT NULL");
+
+                    b.ToTable("FeeDetails");
+                });
+
+            modelBuilder.Entity("domain.Major", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MajorCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MajorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Majors");
+                });
+
+            modelBuilder.Entity("domain.MajorSubject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("MajorId", "SubjectId")
+                        .IsUnique();
+
+                    b.ToTable("MajorSubjects");
+                });
+
+            modelBuilder.Entity("domain.Room", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RoomCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("domain.Score", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubjectComponentID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SubjectComponentID");
+
+                    b.ToTable("Scores");
+                });
+
+            modelBuilder.Entity("domain.Semester", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SemesterCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SemesterName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Semesters");
+                });
+
+            modelBuilder.Entity("domain.Slot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SlotName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Slots");
+                });
+
+            modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,334 +387,13 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeeDetailId");
-
                     b.HasIndex("SlotId");
 
                     b.HasIndex("TimetableId");
 
                     b.HasIndex("WeekId");
 
-                    b.ToTable("Attendance");
-                });
-
-            modelBuilder.Entity("domain.Class", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ClassCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("Class");
-                });
-
-            modelBuilder.Entity("domain.FeeDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<Guid>("ClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("PayDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SubjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.ToTable("FeeDetail");
-                });
-
-            modelBuilder.Entity("domain.Major", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MajorCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MajorName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Major");
-                });
-
-            modelBuilder.Entity("domain.MajorSubject", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("MajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("SubjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MajorId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.ToTable("MajorSubject");
-                });
-
-            modelBuilder.Entity("domain.Role", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Role");
-                });
-
-            modelBuilder.Entity("domain.Room", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RoomCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Room");
-                });
-
-            modelBuilder.Entity("domain.RoomAttendance", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AttendanceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttendanceId");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("RoomAttendance");
-                });
-
-            modelBuilder.Entity("domain.Score", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("SubjectComponentID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubjectComponentID");
-
-                    b.ToTable("Score");
-                });
-
-            modelBuilder.Entity("domain.Semester", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SemesterCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SemesterName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Semester");
-                });
-
-            modelBuilder.Entity("domain.Slot", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SlotName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Slot");
-                });
-
-            modelBuilder.Entity("domain.Student", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("MajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StudentCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("MajorId");
-
-                    b.ToTable("Student");
+                    b.ToTable("SlotTimeTableAtWeeks");
                 });
 
             modelBuilder.Entity("domain.Subject", b =>
@@ -461,9 +408,6 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("SemesterId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("SubjectCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -474,9 +418,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SemesterId");
-
-                    b.ToTable("Subject");
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("domain.SubjectComponent", b =>
@@ -505,29 +447,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("SubjectID");
 
-                    b.ToTable("SubjectComponent");
-                });
-
-            modelBuilder.Entity("domain.Teacher", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Teacher");
+                    b.ToTable("SubjectComponents");
                 });
 
             modelBuilder.Entity("domain.Timetable", b =>
@@ -548,7 +468,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Timetable");
+                    b.ToTable("Timetables");
                 });
 
             modelBuilder.Entity("domain.Week", b =>
@@ -568,34 +488,26 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Week");
+                    b.ToTable("Weeks");
                 });
 
-            modelBuilder.Entity("domain.Account", b =>
+            modelBuilder.Entity("domain.Student", b =>
                 {
-                    b.HasOne("domain.Role", "Role")
-                        .WithMany("Accounts")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("domain.Account");
 
-                    b.HasOne("domain.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("domain.Teacher", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("MajorId");
 
-                    b.Navigation("Role");
+                    b.HasDiscriminator().HasValue("Student");
+                });
 
-                    b.Navigation("Student");
+            modelBuilder.Entity("domain.Teacher", b =>
+                {
+                    b.HasBaseType("domain.Account");
 
-                    b.Navigation("Teacher");
+                    b.HasDiscriminator().HasValue("Teacher");
                 });
 
             modelBuilder.Entity("domain.Attendance", b =>
@@ -606,31 +518,23 @@ namespace entityframework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Slot", "Slot")
-                        .WithMany("Attendances")
-                        .HasForeignKey("SlotId")
+                    b.HasOne("domain.Room", "Room")
+                        .WithMany("RoomAttendances")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Timetable", "Timetable")
+                    b.HasOne("domain.SlotTimeTableAtWeek", "SlotTimeTableAtWeek")
                         .WithMany("Attendances")
-                        .HasForeignKey("TimetableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("domain.Week", "Week")
-                        .WithMany("Attendances")
-                        .HasForeignKey("WeekId")
+                        .HasForeignKey("SlotTimeTableAtWeekId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FeeDetail");
 
-                    b.Navigation("Slot");
+                    b.Navigation("Room");
 
-                    b.Navigation("Timetable");
-
-                    b.Navigation("Week");
+                    b.Navigation("SlotTimeTableAtWeek");
                 });
 
             modelBuilder.Entity("domain.Class", b =>
@@ -648,7 +552,11 @@ namespace entityframework.Migrations
                 {
                     b.HasOne("domain.Class", "Class")
                         .WithMany("FeeDetails")
-                        .HasForeignKey("ClassId")
+                        .HasForeignKey("ClassId");
+
+                    b.HasOne("domain.Semester", "Semester")
+                        .WithMany("FeeDetails")
+                        .HasForeignKey("SemesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -658,13 +566,19 @@ namespace entityframework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Subject", null)
+                    b.HasOne("domain.Subject", "Subject")
                         .WithMany("FeeDetails")
-                        .HasForeignKey("SubjectId");
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Class");
 
+                    b.Navigation("Semester");
+
                     b.Navigation("Student");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("domain.MajorSubject", b =>
@@ -686,72 +600,50 @@ namespace entityframework.Migrations
                     b.Navigation("Subject");
                 });
 
-            modelBuilder.Entity("domain.RoomAttendance", b =>
-                {
-                    b.HasOne("domain.Attendance", "Attendance")
-                        .WithMany("RoomAttendances")
-                        .HasForeignKey("AttendanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("domain.Class", "Class")
-                        .WithMany("RoomAttendances")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("domain.Room", "Room")
-                        .WithMany("RoomAttendances")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Attendance");
-
-                    b.Navigation("Class");
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("domain.Score", b =>
                 {
+                    b.HasOne("domain.Student", "Student")
+                        .WithMany("Scores")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("domain.SubjectComponent", "SubjectComponent")
                         .WithMany("Scores")
                         .HasForeignKey("SubjectComponentID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Student");
+
                     b.Navigation("SubjectComponent");
                 });
 
-            modelBuilder.Entity("domain.Student", b =>
+            modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
                 {
-                    b.HasOne("domain.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
+                    b.HasOne("domain.Slot", "Slot")
+                        .WithMany("SlotTimeTableAtWeeks")
+                        .HasForeignKey("SlotId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Major", "Major")
-                        .WithMany("Students")
-                        .HasForeignKey("MajorId")
+                    b.HasOne("domain.Timetable", "Timetable")
+                        .WithMany("SlotTimeTableAtWeeks")
+                        .HasForeignKey("TimetableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
-
-                    b.Navigation("Major");
-                });
-
-            modelBuilder.Entity("domain.Subject", b =>
-                {
-                    b.HasOne("domain.Semester", "Semester")
-                        .WithMany("Subjects")
-                        .HasForeignKey("SemesterId")
+                    b.HasOne("domain.Week", "Week")
+                        .WithMany("SlotTimeTableAtWeeks")
+                        .HasForeignKey("WeekId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Semester");
+                    b.Navigation("Slot");
+
+                    b.Navigation("Timetable");
+
+                    b.Navigation("Week");
                 });
 
             modelBuilder.Entity("domain.SubjectComponent", b =>
@@ -765,27 +657,20 @@ namespace entityframework.Migrations
                     b.Navigation("Subject");
                 });
 
-            modelBuilder.Entity("domain.Teacher", b =>
+            modelBuilder.Entity("domain.Student", b =>
                 {
-                    b.HasOne("domain.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
+                    b.HasOne("domain.Major", "Major")
+                        .WithMany("Students")
+                        .HasForeignKey("MajorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("domain.Attendance", b =>
-                {
-                    b.Navigation("RoomAttendances");
+                    b.Navigation("Major");
                 });
 
             modelBuilder.Entity("domain.Class", b =>
                 {
                     b.Navigation("FeeDetails");
-
-                    b.Navigation("RoomAttendances");
                 });
 
             modelBuilder.Entity("domain.FeeDetail", b =>
@@ -800,11 +685,6 @@ namespace entityframework.Migrations
                     b.Navigation("Students");
                 });
 
-            modelBuilder.Entity("domain.Role", b =>
-                {
-                    b.Navigation("Accounts");
-                });
-
             modelBuilder.Entity("domain.Room", b =>
                 {
                     b.Navigation("RoomAttendances");
@@ -812,17 +692,17 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Semester", b =>
                 {
-                    b.Navigation("Subjects");
+                    b.Navigation("FeeDetails");
                 });
 
             modelBuilder.Entity("domain.Slot", b =>
                 {
-                    b.Navigation("Attendances");
+                    b.Navigation("SlotTimeTableAtWeeks");
                 });
 
-            modelBuilder.Entity("domain.Student", b =>
+            modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
                 {
-                    b.Navigation("FeeDetails");
+                    b.Navigation("Attendances");
                 });
 
             modelBuilder.Entity("domain.Subject", b =>
@@ -839,19 +719,26 @@ namespace entityframework.Migrations
                     b.Navigation("Scores");
                 });
 
-            modelBuilder.Entity("domain.Teacher", b =>
-                {
-                    b.Navigation("Classes");
-                });
-
             modelBuilder.Entity("domain.Timetable", b =>
                 {
-                    b.Navigation("Attendances");
+                    b.Navigation("SlotTimeTableAtWeeks");
                 });
 
             modelBuilder.Entity("domain.Week", b =>
                 {
-                    b.Navigation("Attendances");
+                    b.Navigation("SlotTimeTableAtWeeks");
+                });
+
+            modelBuilder.Entity("domain.Student", b =>
+                {
+                    b.Navigation("FeeDetails");
+
+                    b.Navigation("Scores");
+                });
+
+            modelBuilder.Entity("domain.Teacher", b =>
+                {
+                    b.Navigation("Classes");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using domain.shared.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace domain
 {
@@ -12,14 +13,6 @@ namespace domain
         public bool Gender { get; set; }
         public string? Phone { get; set; }
         public string? Img { get; set; }
-        public Guid RoleId { get; set; }
-        public Guid TeacherId { get; set; }
-        public Guid StudentId { get; set; }
-        [ForeignKey(nameof(RoleId))]
-        public virtual Role Role { get; set; } = null!;
-        [ForeignKey(nameof(TeacherId))]
-        public virtual Teacher Teacher { get; set; } = null!;
-        [ForeignKey(nameof(StudentId))]
-        public virtual Student Student { get; set; } = null!;
+        public Role Role { get; set; }
     }
 }

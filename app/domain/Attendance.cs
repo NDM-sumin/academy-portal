@@ -7,27 +7,22 @@ using System.Threading.Tasks;
 
 namespace domain
 {
-    public class Attendance : AppEntityDefaultKey
+    public class Attendance : AppEntity
     {
-        public Attendance()
-        {
-            RoomAttendances = new HashSet<RoomAttendance>();
-        }
-        public Guid SlotId { get; set; }
-        public Guid TimetableId { get; set; }
-        public bool IsAttendance { get; set; }
-        public string? Note { get; set; }
-        public DateTime Date { get; set; }
-        public Guid WeekId { get; set; }    
+        public Guid RoomId { get; set; }
+        public Guid SlotTimeTableAtWeekId { get; set; }
         public Guid FeeDetailId { get; set; }
-        [ForeignKey(nameof(SlotId))]
-        public virtual Slot Slot { get; set; } = null!;
-        [ForeignKey(nameof(WeekId))]
-        public virtual Week Week { get; set; } = null!;
-        [ForeignKey(nameof(TimetableId))]
-        public virtual Timetable Timetable { get; set; } = null!;
+
+
+        [ForeignKey(nameof(RoomId))]
+        public virtual Room Room { get; set; } = null!;
+
+
+        [ForeignKey(nameof(SlotTimeTableAtWeekId))]
+        public virtual SlotTimeTableAtWeek SlotTimeTableAtWeek { get; set; } = null!;
+
+
         [ForeignKey(nameof(FeeDetailId))]
         public virtual FeeDetail FeeDetail { get; set; } = null!;
-        public virtual ICollection<RoomAttendance> RoomAttendances { get; set; }
     }
 }

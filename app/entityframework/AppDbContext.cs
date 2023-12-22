@@ -1,4 +1,5 @@
 ﻿using domain;
+using domain.CompositeKeys;
 using Microsoft.EntityFrameworkCore;
 
 namespace entityframework
@@ -25,14 +26,22 @@ namespace entityframework
         public DbSet<Class> Classes { get; set; } = null!;
         public DbSet<FeeDetail> FeeDetails { get; set; } = null!;
         public DbSet<Major> Majors { get; set; } = null!;
-        public DbSet<MajorSubject> majorSubjects { get; set; } = null!;
-        public DbSet<Role> Roles { get; set; } = null!;
+        public DbSet<MajorSubject> MajorSubjects { get; set; } = null!;
         public DbSet<Room> Rooms { get; set; } = null!;
-        public DbSet<RoomAttendance> RoomAttendances { get; set; } = null!;
         public DbSet<Attendance> Attendances { get; set; } = null!;
+        public DbSet<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; } = null!;
         public DbSet<Slot> Slots { get; set; } = null!;
         public DbSet<SubjectComponent> SubjectComponents { get; set; } = null!;
         public DbSet<Timetable> Timetables { get; set; } = null!;
         public DbSet<Week> Weeks { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Attendance>().HasKey(ra => new { ra.SlotTimeTableAtWeekId, ra.RoomId, ra.FeeDetailId });
+            modelBuilder.Entity<MajorSubject>().HasIndex(ra => new { ra.MajorId, ra.SubjectId }).IsUnique();
+            //modelBuilder.Entity<FeeDetail>().HasKey(ra => new { ra.SemesterId, ra.StudentId, ra.SubjectId, ra.ClassId });
+            modelBuilder.Entity<FeeDetail>().HasIndex(ra => new { ra.SemesterId, ra.StudentId, ra.SubjectId, ra.ClassId }).IsUnique();
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
