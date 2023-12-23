@@ -1,5 +1,6 @@
 ﻿using domain;
 using service.contract.DTOs.Account;
+using service.contract.DTOs.Subject;
 using service.contract.IAppServices.Base;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace service.AppServices
 {
-    public interface ISubjectService : IAppCRUDDefaultKeyService<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Subject>
+    public interface ISubjectService : IAppCRUDDefaultKeyService<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>
     {
     }
 }

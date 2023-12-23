@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using domain;
+using repository.AppRepositories;
 using repository.contract.IAppRepositories.Base;
 using service.AppServices.Base;
 using service.contract.DTOs.Account;
+using service.contract.DTOs.Class;
 using service.contract.IAppServices;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,9 @@ using System.Threading.Tasks;
 
 namespace service.AppServices
 {
-    public class ClassService : AppCRUDDefaultKeyService<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Class>, IClassService
+    public class ClassService : AppCRUDDefaultKeyService<ClassDTO, CreateClassDTO, UpdateClassDTO, Class>, IClassService
     {
-        public ClassService(IAppGenericDefaultKeyRepository<Class> genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        public ClassService(IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
         }
     }

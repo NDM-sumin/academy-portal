@@ -1,6 +1,7 @@
 ﻿using domain;
 using entityframework;
 using repository.AppRepositories.Base;
+using repository.contract.IAppRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace repository.AppRepositories
 {
-    public class ClassRepository : AppGenericDefaultKeyRepository<Class>, IClassRepository
+    public class SemesterRepository : AppGenericDefaultKeyRepository<Semester>, ISemesterRepository
     {
-        public ClassRepository(AppDbContext context) : base(context)
+        public SemesterRepository(AppDbContext context) : base(context)
         {
         }
     }

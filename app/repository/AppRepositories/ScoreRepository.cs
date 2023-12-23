@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using domain;
+using entityframework;
+using repository.AppRepositories.Base;
 
 namespace repository.AppRepositories
 {
-    internal class ScoreRepository
+    public class ScoreRepository : AppGenericDefaultKeyRepository<Score>, IScoreRepository
     {
+        public ScoreRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

@@ -6,12 +6,13 @@ using Microsoft.OpenApi.Extensions;
 using service.AppServices;
 using service.contract.DTOs;
 using service.contract.DTOs.Account;
+using service.contract.DTOs.Major;
 using service.contract.IAppServices;
 using System.Security.Principal;
 
 namespace api.Controllers
 {
-    public class MajorController : AppCRUDDefaultKeyWithOdataController<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Major>
+    public class MajorController : AppCRUDDefaultKeyWithOdataController<MajorDTO, CreateMajorDTO, UpdateMajorDTO, Major>
     {
 
 

@@ -24,7 +24,9 @@ namespace api.Extensions
 
             return services
                  .AddScoped<IAccountService, AccountService>()
+                 .AddScoped<IMajorService, MajorService>()
                 .AddScoped<IAccountRepository, AccountRepository>()
+                .AddScoped<IMajorRepository, MajorRepository>()
                 .AddScoped<IEmailService>(impl =>
                 {
                     var mapper = impl.GetService<IMapper>();

@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using domain;
+using entityframework;
+using repository.AppRepositories.Base;
 
 namespace repository.AppRepositories
 {
-    internal class SubjectRepository
+    public class SubjectRepository : AppGenericDefaultKeyRepository<Subject>, ISubjectRepository
     {
+        public SubjectRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }
