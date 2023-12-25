@@ -20,6 +20,10 @@ namespace api.Extensions
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
 
             builder.EntitySet<Account>(nameof(Account));
+            builder.EntitySet<Student>(nameof(Student));
+            builder.EntitySet<Subject>(nameof(Subject));
+            builder.EntitySet<Score>(nameof(Score));
+            builder.EntitySet<Major>(nameof(Major));
             builder.EnableLowerCamelCase();
             return builder.GetEdmModel();
         }

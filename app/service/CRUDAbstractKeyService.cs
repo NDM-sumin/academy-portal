@@ -17,14 +17,14 @@ namespace service
         {
         }
 
-        public async Task<TEntityDto> Delete(TKey keys)
+        public virtual async Task<TEntityDto> Delete(TKey keys)
         {
 
             var deletedEntity = await (Repository as IGenericAbstractKeyRepository<TDbContext, TEntity, TKey>).Delete(keys);
             return Mapper.Map<TEntityDto>(deletedEntity);
         }
 
-        public async Task<TEntityDto> Get(TKey key, bool includeChild = true)
+        public virtual async Task<TEntityDto> Get(TKey key, bool includeChild = true)
         {
             var data = await (Repository as IGenericAbstractKeyRepository<TDbContext, TEntity, TKey>).Find(key, includeChild);
             return Mapper.Map<TEntityDto>(data);

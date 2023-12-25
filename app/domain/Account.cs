@@ -1,4 +1,5 @@
-﻿using domain.shared.Enums;
+﻿using domain.shared.Attributes;
+using domain.shared.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace domain
@@ -9,6 +10,7 @@ namespace domain
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string FullName { get; set; } = null!;
+        [Column(TypeName = "date")]
         public DateTime Dob { get; set; }
         public bool Gender { get; set; }
         public string? Phone { get; set; }
