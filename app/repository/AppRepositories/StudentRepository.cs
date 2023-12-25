@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using domain;
+using entityframework;
+using repository.AppRepositories.Base;
 
 namespace repository.AppRepositories
 {
-    internal class StudentRepository
+    public class StudentRepository : AppGenericDefaultKeyRepository<Student>, IStudentRepository
     {
+        public StudentRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

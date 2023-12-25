@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace repository.AppRepositories
 {
-    public interface IStudentRepository : IAppGenericDefaultKeyRepository<Student>
+    public interface ITeacherRepository : IAppGenericDefaultKeyRepository<Teacher>
     {
     }
 }

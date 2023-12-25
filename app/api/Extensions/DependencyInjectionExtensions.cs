@@ -23,8 +23,23 @@ namespace api.Extensions
         {
 
             return services
-                 .AddScoped<IAccountService, AccountService>()
+                .AddScoped<IAccountService, AccountService>()
+                .AddScoped<IMajorService, MajorService>()
+                .AddScoped<IClassService, ClassService>()
+                .AddScoped<ISubjectService, SubjectService>()
+                .AddScoped<ITeacherService, TeacherService>()
+                .AddScoped<IStudentService, StudentService>()
+                .AddScoped<IScoreService, ScoreService>()
+                .AddScoped<ISemesterService, SemesterService>()
+
                 .AddScoped<IAccountRepository, AccountRepository>()
+                .AddScoped<IMajorRepository, MajorRepository>()
+                .AddScoped<IClassRepository, ClassRepository>()
+                .AddScoped<ISubjectRepository, SubjectRepository>()
+                .AddScoped<ITeacherRepository, TeacherRepository>()
+                .AddScoped<IStudentRepository, StudentRepository>()
+                .AddScoped<IScoreRepository, ScoreRepository>()
+                .AddScoped<ISemesterRepository, SemesterRepository>()
                 .AddScoped<IEmailService>(impl =>
                 {
                     var mapper = impl.GetService<IMapper>();

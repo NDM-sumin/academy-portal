@@ -1,5 +1,7 @@
 ﻿using domain;
 using service.contract.DTOs.Account;
+using service.contract.DTOs.Subject;
+using service.contract.DTOs.Teacher;
 using service.contract.IAppServices.Base;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace service.AppServices
 {
-    public interface IStudentService : IAppCRUDDefaultKeyService<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Student>
+    public interface ITeacherService : IAppCRUDDefaultKeyService<TeacherDTO, CreateTeacherDTO, UpdateTeacherDTO, Teacher>
     {
     }
 }
