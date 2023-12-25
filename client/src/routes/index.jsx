@@ -5,7 +5,7 @@ import { ROLE } from "../utils/constants";
 import { ADMIN_ROUTES } from "./admin.routes";
 import { TEACHER_ROUTES } from "./teacher.routes";
 import { STUDENT_ROLES } from "./student.roles";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { AUTH_ROUTES } from "./auth.routes";
 const AppRoutes = () => {
 
@@ -35,8 +35,7 @@ const AppRoutes = () => {
             navigate('/auth/login');
         })
     }, [JSON.stringify(appContext.routes)])
-
     return useRoutes(appContext.routes);
 
 }
-export default AppRoutes
+export default memo(AppRoutes)

@@ -14,6 +14,11 @@
     "code": 5003,
     "message": "Mật khẩu không chính xác"
   },
+
+  {
+    "code": 5004,
+    "message": "Mật khẩu mới không được trùng với mật khẩu hiện tại."
+  },
   {
     "code": 4040,
     "message": "Không tìm thấy thông tin liên quan, vui lòng kiểm tra lại"

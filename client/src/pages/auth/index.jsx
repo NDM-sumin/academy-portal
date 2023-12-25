@@ -1,6 +1,6 @@
 import { Card, Col, Layout, Row } from "antd";
 import './index.css'
-import EPULogo from '../../../assets/images/epu-logo.png';
+import EPULogo from '../../assets/images/epu-logo.png';
 import { Outlet } from "react-router-dom";
 
 const colSpan = {

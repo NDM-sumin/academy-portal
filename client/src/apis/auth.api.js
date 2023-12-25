@@ -19,11 +19,11 @@ const useAuthApi = () => {
         return axios
             .put('api/Account/ForgotPassword', { username: username, email: email })
     }
-    const changePassword = ({ oldPassword, newPassword }) => {
-        return axios.put('api/Account/ChangePassword', { password: newPassword, oldPassword: oldPassword })
+    const changePassword = ({ oldPassword, password }) => {
+        return axios.put('api/Account/ChangePassword', { password: password, oldPassword: oldPassword })
     }
-    const getCurrentUser = ({ isShowError }) => {
-        return axios.get('api/Account/CurrentUser', { isShowError: isShowError });
+    const getCurrentUser = (config) => {
+        return axios.get('api/Account/CurrentUser', { isShowError: config?.isShowError });
     }
     return {
         login,

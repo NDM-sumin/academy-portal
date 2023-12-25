@@ -37,19 +37,24 @@ namespace service.AppServices
         }
         public async Task<AccountNoPasswordDTO> GetAccountById(Guid accountId)
         {
-       
+
             return Mapper.Map<AccountNoPasswordDTO>(await _accountRepository.Find(accountId));
         }
 
         public async Task ChangePassword(Guid id, ChangePasswordDTO changePasswordDTO)
         {
             var user = await _accountRepository.Find(id);
-            HashService hashService = new HashService(changePasswordDTO.Password, jwtConfiguration.HashSalt);
+            HashService hashService = new HashService(changePasswordDTO.OldPassword, jwtConfiguration.HashSalt);
             if (!hashService.IsPassed(user.Password))
             {
                 throw new ClientException(5003);
             }
-            user.Password = new HashService(changePasswordDTO.Password, jwtConfiguration.HashSalt).EncryptedPassword;
+            var newHashedPassword = new HashService(changePasswordDTO.Password, jwtConfiguration.HashSalt).EncryptedPassword;
+            if (newHashedPassword.Equals(hashService.EncryptedPassword))
+            {
+                throw new ClientException(5004);
+            }
+            user.Password = newHashedPassword;
             await _accountRepository.Update(user);
         }
 

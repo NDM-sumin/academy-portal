@@ -1,6 +1,6 @@
 import ForgotPassword from "../pages/auth/forgot-password";
 import Login from "../pages/auth/login";
-import AuthLayout from "../pages/layouts/auth";
+import AuthLayout from "../pages/auth/index";
 
 export const AUTH_ROUTES = [
     {

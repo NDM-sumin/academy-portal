@@ -45,7 +45,7 @@ const useAxios = (setLoading) => {
         (error) => {
 
             setLoading(false);
-            if ((error.config.isShowError ?? true) === true)
+            if ((error?.config?.isShowError ?? true) === true)
                 errorHandler(error);
             return Promise.reject(error);
         },
