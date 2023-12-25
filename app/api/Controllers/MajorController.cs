@@ -7,6 +7,7 @@ using service.AppServices;
 using service.contract.DTOs;
 using service.contract.DTOs.Account;
 using service.contract.DTOs.Major;
+using service.contract.DTOs.Subject;
 using service.contract.IAppServices;
 using System.Security.Principal;
 
@@ -21,5 +22,11 @@ namespace api.Controllers
 
         }
 
+        [HttpGet("GetSubjectByMajor")]
+        public async Task<SubjectDTO> GetSubjectByMajor([FromBody] Guid majorId)
+        {
+            var response = await (appCRUDService as IMajorService).GetSubjectByMajor(majorId);
+            return response;
+        }
     }
 }

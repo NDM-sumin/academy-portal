@@ -37,8 +37,8 @@ namespace entityframework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Student>().HasQueryFilter(s => s.Role == domain.shared.Enums.Role.Student);
-            modelBuilder.Entity<Teacher>().HasQueryFilter(s => s.Role == domain.shared.Enums.Role.Teacher);
+            modelBuilder.Entity<Account>().HasQueryFilter(s => s.Role == domain.shared.Enums.Role.Student);
+            modelBuilder.Entity<Account>().HasQueryFilter(s => s.Role == domain.shared.Enums.Role.Teacher);
             modelBuilder.Entity<Attendance>().HasKey(ra => new { ra.SlotTimeTableAtWeekId, ra.RoomId, ra.FeeDetailId });
             modelBuilder.Entity<MajorSubject>().HasIndex(ra => new { ra.MajorId, ra.SubjectId }).IsUnique();
             //modelBuilder.Entity<FeeDetail>().HasKey(ra => new { ra.SemesterId, ra.StudentId, ra.SubjectId, ra.ClassId });

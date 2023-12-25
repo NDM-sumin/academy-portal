@@ -9,7 +9,7 @@ namespace service.contract.DTOs.Major
 {
     public class CreateMajorDTO : AppEntityDefaultKey
     {
-        public string SubjectCode { get; set; } = null!;
-        public string SubjectName { get; set; } = null!;
+        public string MajorCode { get; set; } = null!;
+        public string MajorName { get; set; } = null!;
     }
 }

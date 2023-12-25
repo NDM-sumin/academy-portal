@@ -1,7 +1,7 @@
 ﻿using domain;
 using service.contract.DTOs.Account;
-using service.contract.DTOs.Major;
 using service.contract.DTOs.Subject;
+using service.contract.DTOs.Teacher;
 using service.contract.IAppServices.Base;
 using System;
 using System.Collections.Generic;
@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 
 namespace service.AppServices
 {
-    public interface IMajorService : IAppCRUDDefaultKeyService<MajorDTO, CreateMajorDTO, UpdateMajorDTO, Major>
+    public interface ITeacherService : IAppCRUDDefaultKeyService<TeacherDTO, CreateTeacherDTO, UpdateTeacherDTO, Teacher>
     {
-        Task<SubjectDTO> GetSubjectByMajor(Guid majorId);
     }
 }
