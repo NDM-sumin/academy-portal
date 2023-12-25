@@ -18,10 +18,10 @@ namespace entityframework
         }
 
         public DbSet<Account> Accounts { get; set; } = null!;
-        public DbSet<Score> Scores { get; set; } = null!;
-        public DbSet<Subject> Subjects { get; set; } = null!;
         public DbSet<Student> Students { get; set; } = null!;
         public DbSet<Teacher> Teachers { get; set; } = null!;
+        public DbSet<Score> Scores { get; set; } = null!;
+        public DbSet<Subject> Subjects { get; set; } = null!;
         public DbSet<Semester> Semesters { get; set; } = null!;
         public DbSet<Class> Classes { get; set; } = null!;
         public DbSet<FeeDetail> FeeDetails { get; set; } = null!;
@@ -37,8 +37,9 @@ namespace entityframework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Student>().HasQueryFilter(s => s.Role == domain.shared.Enums.Role.Student);
-            modelBuilder.Entity<Teacher>().HasQueryFilter(s => s.Role == domain.shared.Enums.Role.Teacher);
+            modelBuilder.Entity<Account>().HasIndex(ra =>  ra.Username).IsUnique();
+            modelBuilder.Entity<Account>().HasIndex(ra =>  ra.Email).IsUnique();
+
             modelBuilder.Entity<Attendance>().HasKey(ra => new { ra.SlotTimeTableAtWeekId, ra.RoomId, ra.FeeDetailId });
             modelBuilder.Entity<MajorSubject>().HasIndex(ra => new { ra.MajorId, ra.SubjectId }).IsUnique();
             //modelBuilder.Entity<FeeDetail>().HasKey(ra => new { ra.SemesterId, ra.StudentId, ra.SubjectId, ra.ClassId });

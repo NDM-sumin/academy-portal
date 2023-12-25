@@ -16,30 +16,30 @@ const Login = () => {
         <Col span={12} style={{ textAlign: 'start' }}>
             <Form.Item name="remember" valuePropName="checked">
                 <Checkbox>
-                    Remember me
+                    Nhớ mật khẩu
                 </Checkbox>
             </Form.Item>
 
         </Col>
         <Col span={12} style={{ textAlign: 'end' }}>
             <Button type='link' onClick={forgotPassword}>
-                Forgot password
+                Quên mật khẩu
             </Button>
         </Col>
     </Row>)
     return (
         <Form layout="vertical" onFinish={onFinished} className="login-page-form">
 
-            <Form.Item hasFeedback label='Username' name="username" rules={[{ required: true, message: 'Please enter username' },]}>
-                <Input prefix={<UserOutlined />} placeholder='Enter your username' />
+            <Form.Item hasFeedback label='Tên người dùng' name="username" rules={[{ required: true, message: 'Vui lòng nhập tên người dùng' },]}>
+                <Input prefix={<UserOutlined />} placeholder='Nhập tên người dùng' />
             </Form.Item>
-            <Form.Item hasFeedback label='Password' name="password" rules={[{ required: true, message: 'Please enter password' }]}>
-                <Input.Password prefix={<LockOutlined />} type="password" placeholder='Enter your password' />
+            <Form.Item hasFeedback label='Mật khẩu' name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}>
+                <Input.Password prefix={<LockOutlined />} type="password" placeholder='Nhập mật khẩu' />
             </Form.Item>
             {formToolBar}
             <Form.Item style={{textAlign:"center"}}>
                 <Button htmlType="submit" type="primary" >
-                    Login
+                    Đăng nhập
                 </Button>
             </Form.Item>
         </Form >

@@ -29,8 +29,15 @@ namespace service.AppServices
             this.emailService = emailService;
         }
 
+        public override Task<AccountDTO> Create(CreateAccountDTO entityDto)
+        {
+            HashService hashService = new HashService(entityDto.Password, jwtConfiguration.HashSalt);
+            entityDto.Password = hashService.EncryptedPassword;
+            return base.Create(entityDto);
+        }
         public async Task<AccountNoPasswordDTO> GetAccountById(Guid accountId)
         {
+       
             return Mapper.Map<AccountNoPasswordDTO>(await _accountRepository.Find(accountId));
         }
 
@@ -46,13 +53,13 @@ namespace service.AppServices
             await _accountRepository.Update(user);
         }
 
-        public async Task<(string token, DateTime expire)> Login(AccountDTO accountDTO)
+        public async Task<(string token, DateTime expire)> Login(LoginDTO accountDTO)
         {
             var account = await _accountRepository.GetAccountByUserName(accountDTO.Username);
             var hashService = new HashService(accountDTO.Password, jwtConfiguration.HashSalt);
             if (!hashService.IsPassed(account.Password))
             {
-                throw new UnauthorizeException(5003);
+                throw new UnauthorizeException(5002);
             }
             return JwtService.GenerateJwtToken(jwtConfiguration.Key, jwtConfiguration.Subject, jwtConfiguration.Issuer, jwtConfiguration.Audience, jwtConfiguration.ValidTime, account.Id);
         }

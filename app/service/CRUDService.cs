@@ -20,7 +20,7 @@ namespace service
             this.Mapper = mapper;
         }
 
-        public async Task<TEntityDto> Create(TCreateEntityDto entityDto)
+        public virtual async Task<TEntityDto> Create(TCreateEntityDto entityDto)
         {
 
             var entity = Mapper.Map<TEntity>(entityDto);
@@ -30,12 +30,12 @@ namespace service
         }
 
 
-        public async Task<IQueryable<TEntity>> GetQueryable()
+        public virtual async Task<IQueryable<TEntity>> GetQueryable()
         {
             return await Repository.GetAll();
         }
 
-        public async Task<TEntityDto> Update(TUpdateEntityDto entityDto)
+        public virtual async Task<TEntityDto> Update(TUpdateEntityDto entityDto)
         {
 
             var entity = Mapper.Map<TEntity>(entityDto);
@@ -43,7 +43,7 @@ namespace service
             return Mapper.Map<TEntityDto>(deletedEntity);
         }
 
-        public async Task<IEnumerable<TEntityDto>> GetAll()
+        public virtual async Task<IEnumerable<TEntityDto>> GetAll()
         {
             var data = await Repository.GetAll();
             return Mapper.Map<IEnumerable<TEntityDto>>(data.AsEnumerable());

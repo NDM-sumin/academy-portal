@@ -8,7 +8,7 @@ namespace service.contract.IAppServices
     {
         Task<AccountNoPasswordDTO> GetAccountById(Guid accountId);
         Task ChangePassword(Guid id, ChangePasswordDTO changePasswordDTO);
-        Task<(string token, DateTime expire)> Login(AccountDTO accountDTO);
+        Task<(string token, DateTime expire)> Login(LoginDTO accountDTO);
         Task ForgotPassword(ForgotPasswordDTO forgotPasswordDTO);
     }
 }

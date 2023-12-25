@@ -12,12 +12,12 @@ const ForgotPassword = () => {
     const actionButtons = (<Row>
         <Col span={12} >
             <Button htmlType="submit" type="primary" style={{ width: '100%' }}>
-                Forgot Password
+                Quên mật khẩu
             </Button>
         </Col>
         <Col span={12}>
             <Button type="link" style={{ width: '100%' }} onClick={backToLogin}>
-                Back to login
+                Quay lại đăng nhập
             </Button>
         </Col>
     </Row>)
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
         {
             required: true,
             type: "email",
-            message: 'Email is not valid'
+            message: 'Email không hợp lệ'
         }
     ]
 
@@ -37,13 +37,13 @@ const ForgotPassword = () => {
 
         <Form.Item
             hasFeedback
-            label='Username'
+            label='Tên người dùng'
             name="username"
-            rules={[{ required: true, message: 'Please enter username' }]}
+            rules={[{ required: true, message: 'Vui lòng nhập tên người dùng' }]}
         >
             <Input
                 prefix={<UserOutlined />}
-                placeholder="Enter your username"
+                placeholder="Nhập tên người dùng"
             />
         </Form.Item>
         <Form.Item
@@ -54,7 +54,7 @@ const ForgotPassword = () => {
         >
             <Input
                 prefix={<MailOutlined />}
-                placeholder="Enter your email"
+                placeholder="Nhập email"
 
             />
         </Form.Item>

@@ -27,7 +27,7 @@ namespace service.AppServices
                 claims,
                 expires: expires,
                 signingCredentials: signIn);
-            return (new JwtSecurityTokenHandler().WriteToken(jwtToken), expires);
+            return (new JwtSecurityTokenHandler().WriteToken(jwtToken), expires.ToLocalTime());
         }
        
 

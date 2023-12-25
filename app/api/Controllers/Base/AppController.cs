@@ -1,4 +1,5 @@
 ﻿using api.Attributes;
+using domain.shared.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using System.Security.Claims;
 namespace api.Controllers.Base
 {
     [ApiController]
-   // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [AppActionFilter]
     [Route("api/[controller]")]
     public abstract class AppController : ODataController
@@ -18,7 +19,7 @@ namespace api.Controllers.Base
         public Guid GetUserId()
         {
             var user = this.User;
-            return Guid.Parse(user.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Name)?.Value);
+            return Guid.Parse(user.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Name)?.Value ?? throw new UnauthorizeException());
         }
     }
 }

@@ -11,12 +11,13 @@ const useAxios = () => {
 
     const errorHandler = (error) => {
         if (!error) return;
+        //Xử lý khi token hết hạn -> logout
         if (error.request?.status === 401) {
             navigate('/login');
             return;
         }
         //Xử lý khi response trả về là arraybuffer
-        const description = error?.response?.data?.message
+        let description = error?.response?.data?.message
         if (error.request?.responseType === 'arraybuffer') {
             description = JSON.parse(new TextDecoder().decode(error?.response?.data));
         }
