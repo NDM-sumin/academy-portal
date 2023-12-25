@@ -1,12 +1,12 @@
 import { createContext, useContext } from "react";
+import { AUTH_ROUTES } from "../../routes/auth.routes";
 
 
 export const AppContext = createContext({
     loading: false,
     setLoading: (value) => { },
-    user: {},
-    setUser: (user) => { },
-    axios: null
+    routes: AUTH_ROUTES,
+    setRoutes: (value) => { }
 })
 
 export const useAppContext = () => useContext(AppContext);

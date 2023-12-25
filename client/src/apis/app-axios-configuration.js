@@ -1,49 +1,52 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
-import { App } from 'antd';
+import { notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../hooks/context/app-bounding-context';
+import { AUTH_SCHEME, USER_TOKEN_KEY } from '../utils/constants';
 
-const useAxios = () => {
-    const app = App.useApp();
+const useAxios = (setLoading) => {
     const navigate = useNavigate();
-    const appBoundingContext = useAppContext();
-
     const errorHandler = (error) => {
         if (!error) return;
         //Xử lý khi token hết hạn -> logout
-        if (error.request?.status === 401) {
-            navigate('/login');
-            return;
-        }
+
         //Xử lý khi response trả về là arraybuffer
         let description = error?.response?.data?.message
         if (error.request?.responseType === 'arraybuffer') {
             description = JSON.parse(new TextDecoder().decode(error?.response?.data));
         }
-        app.notification.error({
-            message: 'An error has occured',
+        notification.error({
+            message: 'Có lỗi xảy ra',
             description: description,
             placement: 'topRight',
         });
+        if (error.request?.status === 401) {
+            localStorage.removeItem(USER_TOKEN_KEY);
+            navigate('/auth/login');
+            return;
+        }
     };
     const _axios = axios.create({
-        baseURL: import.meta.env.VITE_API_GATEWAY,
+        baseURL: import.meta.env.VITE_API_URL,
         xsrfHeaderName: 'RequestVerificationToken',
         withCredentials: true,
     });
     _axios.interceptors.request.use((config) => {
-        appBoundingContext.setLoading(true);
+        const token = JSON.parse(localStorage.getItem(USER_TOKEN_KEY) ?? JSON.stringify({}))?.token;
+        config.headers.Authorization = `${AUTH_SCHEME} ${token}`;
+        setLoading(true);
         return config;
     });
     _axios.interceptors.response.use(
         (response) => {
-            appBoundingContext.setLoading(false);
+            setLoading(false);
             return Promise.resolve(response.data);
         },
         (error) => {
-            appBoundingContext.setLoading(false);
-            errorHandler(error);
+
+            setLoading(false);
+            if ((error.config.isShowError ?? true) === true)
+                errorHandler(error);
             return Promise.reject(error);
         },
     );

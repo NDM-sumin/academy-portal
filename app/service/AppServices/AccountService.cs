@@ -67,7 +67,7 @@ namespace service.AppServices
         public async Task ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
         {
             var account = await _accountRepository.GetAccountByUserName(forgotPasswordDTO.Username);
-            if (account.Email == forgotPasswordDTO.Email) throw new ClientException(5001);
+            if (account.Email != forgotPasswordDTO.Email) throw new ClientException(5001);
             string newPassword = Guid.NewGuid().GetHashCode().ToString();
             account.Password = new HashService(newPassword, jwtConfiguration.HashSalt).EncryptedPassword;
             var emailMessage = emailService.CreateMailMessage("CHANGE PASSWORD", $"Your password is {newPassword}", receivers: account.Email);

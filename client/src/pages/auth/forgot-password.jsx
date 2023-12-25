@@ -1,17 +1,21 @@
 import { MailOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import './auth-style.css'
+import { useAppContext } from "../../hooks/context/app-bounding-context";
+import useAuthApi from "../../apis/auth.api";
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
+    const appContext = useAppContext();
+    const authApi = useAuthApi();
     const backToLogin = () => {
         navigate('/auth/login');
     }
 
     const actionButtons = (<Row>
         <Col span={12} >
-            <Button htmlType="submit" type="primary" style={{ width: '100%' }}>
+            <Button loading={appContext.loading} htmlType="submit" type="primary" style={{ width: '100%' }}>
                 Quên mật khẩu
             </Button>
         </Col>
@@ -30,7 +34,18 @@ const ForgotPassword = () => {
     ]
 
     const onFinished = (value) => {
-
+        authApi
+            .logout()
+            .then(() => {
+                return authApi.forgotPassword(value);
+            })
+            .then(response => {
+                notification.success({
+                    message: "Khôi phục mật khẩu thành công",
+                    description: 'Vui lòng kiểm tra mail để lấy mật khẩu mới'
+                })
+                navigate('/auth/login')
+            })
     }
 
     return (<Form layout="vertical" onFinish={onFinished} className="login-page-form">

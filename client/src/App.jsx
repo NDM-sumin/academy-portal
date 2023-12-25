@@ -1,28 +1,29 @@
 import { useState } from 'react'
 import './App.css'
 import useAxios from './apis/app-axios-configuration'
-import { BrowserRouter } from 'react-router-dom';
-import { App as AntdApp, ConfigProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import { AppContext } from './hooks/context/app-bounding-context';
 import AppRoutes from './routes';
+import { AUTH_ROUTES } from './routes/auth.routes';
 function App() {
-  const axios = useAxios();
-  const [isLoading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [routes, setRoutes] = useState(AUTH_ROUTES);
+
 
   const contextValue = {
-    isLoading: isLoading,
+    loading: loading,
     setLoading: setLoading,
-    axios: axios,
-    user: null,
-    setUser: () => { }
+    axios: useAxios(setLoading),
+    routes: routes,
+    setRoutes: setRoutes
   }
   return (
     <ConfigProvider>
       <AppContext.Provider value={contextValue} >
 
-  
-          <AppRoutes />
-       
+
+        <AppRoutes />
+
 
       </AppContext.Provider>
     </ConfigProvider>

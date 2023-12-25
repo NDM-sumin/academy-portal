@@ -2,20 +2,20 @@
 
   {
     "code": 5001,
-    "message": "Not found user"
+    "message": "Không tìm thấy người dùng"
   },
 
   {
     "code": 5002,
-    "message": "Password is not correct"
+    "message": "Tên đăng nhập hoặc mật khẩu không chính xác"
   },
 
   {
     "code": 5003,
-    "message": "Not found user"
+    "message": "Mật khẩu không chính xác"
   },
   {
     "code": 4040,
-    "message": "Not found related data"
+    "message": "Không tìm thấy thông tin liên quan, vui lòng kiểm tra lại"
   }
 ]

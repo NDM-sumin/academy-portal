@@ -2,12 +2,25 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Col, Form, Input, Row } from "antd";
 import { useNavigate } from "react-router-dom";
 import './auth-style.css'
+import useAuthApi from "../../apis/auth.api";
+import { useAppContext } from "../../hooks/context/app-bounding-context";
 
 
 const Login = () => {
     const navigate = useNavigate();
+    const authApi = useAuthApi();
+    const appContext = useAppContext();
     const onFinished = (values) => {
+        authApi
+            .logout()
+            .then(() => {
+                return authApi.login(values)
+            })
+            .then(response => {
+                appContext.setRoutes([]);
+                navigate('/');
 
+            })
     }
     const forgotPassword = () => {
         navigate('/auth/forgot-password')
@@ -37,8 +50,8 @@ const Login = () => {
                 <Input.Password prefix={<LockOutlined />} type="password" placeholder='Nhập mật khẩu' />
             </Form.Item>
             {formToolBar}
-            <Form.Item style={{textAlign:"center"}}>
-                <Button htmlType="submit" type="primary" >
+            <Form.Item style={{ textAlign: "center" }}>
+                <Button loading={appContext.loading} htmlType="submit" type="primary" >
                     Đăng nhập
                 </Button>
             </Form.Item>

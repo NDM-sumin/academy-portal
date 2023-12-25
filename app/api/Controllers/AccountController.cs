@@ -32,6 +32,7 @@ namespace api.Controllers
         }
 
         [HttpPut("ForgotPassword")]
+          [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
         {
             await (appCRUDService as IAccountService).ForgotPassword(forgotPasswordDTO);
