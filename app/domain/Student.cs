@@ -11,7 +11,7 @@ namespace domain
     {
         public Student()
         {
-            FeeDetails = new HashSet<FeeDetail>();
+            StudentSemesters = new HashSet<StudentSemester>();
             Scores = new HashSet<Score>();
             Role = shared.Enums.Role.Student;
         }
@@ -20,6 +20,6 @@ namespace domain
         public virtual Major Major { get; set; } = null!;
 
         public virtual ICollection<Score> Scores { get; set; }
-        public virtual ICollection<FeeDetail> FeeDetails { get; set; }
+        public virtual ICollection<StudentSemester> StudentSemesters { get; set; }
     }
 }

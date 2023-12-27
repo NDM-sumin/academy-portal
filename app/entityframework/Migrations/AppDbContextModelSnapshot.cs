@@ -167,10 +167,7 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("PayDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("SemesterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StudentId")
+                    b.Property<Guid>("StudentSemesterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SubjectId")
@@ -180,11 +177,9 @@ namespace entityframework.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("StudentSemesterId");
 
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("SemesterId", "StudentId", "SubjectId", "ClassId")
+                    b.HasIndex("SubjectId", "StudentSemesterId", "ClassId")
                         .IsUnique()
                         .HasFilter("[ClassId] IS NOT NULL");
 
@@ -231,10 +226,15 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("SemesterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SemesterId");
 
                     b.HasIndex("SubjectId");
 
@@ -307,11 +307,17 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("EndDay")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EndMonth")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("NextSemesterId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SemesterCode")
                         .IsRequired()
@@ -321,10 +327,17 @@ namespace entityframework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("StartDay")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartMonth")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NextSemesterId")
+                        .IsUnique()
+                        .HasFilter("[NextSemesterId] IS NOT NULL");
 
                     b.ToTable("Semesters");
                 });
@@ -398,6 +411,37 @@ namespace entityframework.Migrations
                     b.HasIndex("WeekId");
 
                     b.ToTable("SlotTimeTableAtWeeks");
+                });
+
+            modelBuilder.Entity("domain.StudentSemester", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsNow")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SemesterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SemesterId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("StudentSemester");
                 });
 
             modelBuilder.Entity("domain.Subject", b =>
@@ -558,15 +602,9 @@ namespace entityframework.Migrations
                         .WithMany("FeeDetails")
                         .HasForeignKey("ClassId");
 
-                    b.HasOne("domain.Semester", "Semester")
+                    b.HasOne("domain.StudentSemester", "StudentSemester")
                         .WithMany("FeeDetails")
-                        .HasForeignKey("SemesterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("domain.Student", "Student")
-                        .WithMany("FeeDetails")
-                        .HasForeignKey("StudentId")
+                        .HasForeignKey("StudentSemesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -578,9 +616,7 @@ namespace entityframework.Migrations
 
                     b.Navigation("Class");
 
-                    b.Navigation("Semester");
-
-                    b.Navigation("Student");
+                    b.Navigation("StudentSemester");
 
                     b.Navigation("Subject");
                 });
@@ -593,6 +629,12 @@ namespace entityframework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("domain.Semester", "Semester")
+                        .WithMany("MajorSubjects")
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("domain.Subject", "Subject")
                         .WithMany("MajorSubjects")
                         .HasForeignKey("SubjectId")
@@ -600,6 +642,8 @@ namespace entityframework.Migrations
                         .IsRequired();
 
                     b.Navigation("Major");
+
+                    b.Navigation("Semester");
 
                     b.Navigation("Subject");
                 });
@@ -621,6 +665,15 @@ namespace entityframework.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("SubjectComponent");
+                });
+
+            modelBuilder.Entity("domain.Semester", b =>
+                {
+                    b.HasOne("domain.Semester", "NextSemester")
+                        .WithOne("PrevSemester")
+                        .HasForeignKey("domain.Semester", "NextSemesterId");
+
+                    b.Navigation("NextSemester");
                 });
 
             modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
@@ -648,6 +701,25 @@ namespace entityframework.Migrations
                     b.Navigation("Timetable");
 
                     b.Navigation("Week");
+                });
+
+            modelBuilder.Entity("domain.StudentSemester", b =>
+                {
+                    b.HasOne("domain.Semester", "Semester")
+                        .WithMany("StudentSemesters")
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("domain.Student", "Student")
+                        .WithMany("StudentSemesters")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Semester");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("domain.SubjectComponent", b =>
@@ -696,7 +768,11 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Semester", b =>
                 {
-                    b.Navigation("FeeDetails");
+                    b.Navigation("MajorSubjects");
+
+                    b.Navigation("PrevSemester");
+
+                    b.Navigation("StudentSemesters");
                 });
 
             modelBuilder.Entity("domain.Slot", b =>
@@ -707,6 +783,11 @@ namespace entityframework.Migrations
             modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
                 {
                     b.Navigation("Attendances");
+                });
+
+            modelBuilder.Entity("domain.StudentSemester", b =>
+                {
+                    b.Navigation("FeeDetails");
                 });
 
             modelBuilder.Entity("domain.Subject", b =>
@@ -735,9 +816,9 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Student", b =>
                 {
-                    b.Navigation("FeeDetails");
-
                     b.Navigation("Scores");
+
+                    b.Navigation("StudentSemesters");
                 });
 
             modelBuilder.Entity("domain.Teacher", b =>

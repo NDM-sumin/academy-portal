@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +11,24 @@ namespace domain
     {
         public Semester()
         {
-            FeeDetails = new HashSet<FeeDetail>();
+            StudentSemesters = new HashSet<StudentSemester>();
+            MajorSubjects = new HashSet<MajorSubject>();
         }
         public string SemesterCode { get; set; } = null!;
         public string SemesterName { get; set; } = null!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public virtual ICollection<FeeDetail> FeeDetails { get; set; }
+
+        public int StartMonth { get; set; }
+        public int StartDay { get; set; }
+        public int EndMonth { get; set; }
+        public int EndDay { get; set; }
+
+        public Guid? NextSemesterId { get; set; }
+        public Semester? NextSemester { get; set; }
+
+        public Semester? PrevSemester { get; set; }
+
+
+        public virtual ICollection<StudentSemester> StudentSemesters { get; set; }
+        public virtual ICollection<MajorSubject> MajorSubjects { get; set; }
     }
 }

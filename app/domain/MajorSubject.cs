@@ -20,6 +20,10 @@ namespace domain
         [ForeignKey(nameof(SubjectId))]
         public virtual Subject Subject { get; set; } = null!;
 
+        public Guid SemesterId {  get; set; }
+        [ForeignKey(nameof(SemesterId))]
+        public virtual Semester Semester { get; set; } = null!;
+
       
     }
 }

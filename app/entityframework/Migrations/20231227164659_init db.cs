@@ -46,14 +46,22 @@ namespace entityframework.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SemesterCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SemesterName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartMonth = table.Column<int>(type: "int", nullable: false),
+                    StartDay = table.Column<int>(type: "int", nullable: false),
+                    EndMonth = table.Column<int>(type: "int", nullable: false),
+                    EndDay = table.Column<int>(type: "int", nullable: false),
+                    NextSemesterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Semesters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Semesters_Semesters_NextSemesterId",
+                        column: x => x.NextSemesterId,
+                        principalTable: "Semesters",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -120,11 +128,11 @@ namespace entityframework.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Dob = table.Column<DateTime>(type: "date", nullable: false),
                     Gender = table.Column<bool>(type: "bit", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -152,6 +160,7 @@ namespace entityframework.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MajorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SemesterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -162,6 +171,12 @@ namespace entityframework.Migrations
                         name: "FK_MajorSubjects_Majors_MajorId",
                         column: x => x.MajorId,
                         principalTable: "Majors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MajorSubjects_Semesters_SemesterId",
+                        column: x => x.SemesterId,
+                        principalTable: "Semesters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -256,6 +271,34 @@ namespace entityframework.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StudentSemester",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SemesterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsNow = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentSemester", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentSemester_Accounts_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentSemester_Semesters_SemesterId",
+                        column: x => x.SemesterId,
+                        principalTable: "Semesters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Scores",
                 columns: table => new
                 {
@@ -293,9 +336,8 @@ namespace entityframework.Migrations
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PayDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SemesterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentSemesterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -303,20 +345,14 @@ namespace entityframework.Migrations
                 {
                     table.PrimaryKey("PK_FeeDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FeeDetails_Accounts_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_FeeDetails_Classes_ClassId",
                         column: x => x.ClassId,
                         principalTable: "Classes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_FeeDetails_Semesters_SemesterId",
-                        column: x => x.SemesterId,
-                        principalTable: "Semesters",
+                        name: "FK_FeeDetails_StudentSemester_StudentSemesterId",
+                        column: x => x.StudentSemesterId,
+                        principalTable: "StudentSemester",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -361,9 +397,21 @@ namespace entityframework.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Accounts_Email",
+                table: "Accounts",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Accounts_MajorId",
                 table: "Accounts",
                 column: "MajorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_Username",
+                table: "Accounts",
+                column: "Username",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attendances_FeeDetailId",
@@ -386,27 +434,27 @@ namespace entityframework.Migrations
                 column: "ClassId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FeeDetails_SemesterId_StudentId_SubjectId_ClassId",
+                name: "IX_FeeDetails_StudentSemesterId",
                 table: "FeeDetails",
-                columns: new[] { "SemesterId", "StudentId", "SubjectId", "ClassId" },
+                column: "StudentSemesterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeeDetails_SubjectId_StudentSemesterId_ClassId",
+                table: "FeeDetails",
+                columns: new[] { "SubjectId", "StudentSemesterId", "ClassId" },
                 unique: true,
                 filter: "[ClassId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FeeDetails_StudentId",
-                table: "FeeDetails",
-                column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FeeDetails_SubjectId",
-                table: "FeeDetails",
-                column: "SubjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MajorSubjects_MajorId_SubjectId",
                 table: "MajorSubjects",
                 columns: new[] { "MajorId", "SubjectId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MajorSubjects_SemesterId",
+                table: "MajorSubjects",
+                column: "SemesterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MajorSubjects_SubjectId",
@@ -424,6 +472,13 @@ namespace entityframework.Migrations
                 column: "SubjectComponentID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Semesters_NextSemesterId",
+                table: "Semesters",
+                column: "NextSemesterId",
+                unique: true,
+                filter: "[NextSemesterId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SlotTimeTableAtWeeks_SlotId",
                 table: "SlotTimeTableAtWeeks",
                 column: "SlotId");
@@ -437,6 +492,17 @@ namespace entityframework.Migrations
                 name: "IX_SlotTimeTableAtWeeks_WeekId",
                 table: "SlotTimeTableAtWeeks",
                 column: "WeekId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentSemester_SemesterId_StudentId",
+                table: "StudentSemester",
+                columns: new[] { "SemesterId", "StudentId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentSemester_StudentId",
+                table: "StudentSemester",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubjectComponents_SubjectID",
@@ -471,7 +537,7 @@ namespace entityframework.Migrations
                 name: "Classes");
 
             migrationBuilder.DropTable(
-                name: "Semesters");
+                name: "StudentSemester");
 
             migrationBuilder.DropTable(
                 name: "Slots");
@@ -487,6 +553,9 @@ namespace entityframework.Migrations
 
             migrationBuilder.DropTable(
                 name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Semesters");
 
             migrationBuilder.DropTable(
                 name: "Majors");
