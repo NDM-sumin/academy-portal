@@ -17,6 +17,5 @@ namespace api.Controllers.Base
             : base(appCRUDService)
         {
         }
-
     }
 }

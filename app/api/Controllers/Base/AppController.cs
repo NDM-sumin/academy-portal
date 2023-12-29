@@ -3,6 +3,7 @@ using domain.shared.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Attributes;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Security.Claims;
 
@@ -12,6 +13,7 @@ namespace api.Controllers.Base
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [AppActionFilter]
     [Route("api/[controller]")]
+    [ODataRouteComponent("odata")]
     public abstract class AppController : ODataController
     {
         [ApiExplorerSettings(IgnoreApi = true)]

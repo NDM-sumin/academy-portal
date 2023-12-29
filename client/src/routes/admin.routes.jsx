@@ -1,3 +1,4 @@
+import Major from "../pages/admin/Major";
 import LayoutPage from "../pages/index";
 
 
@@ -10,7 +11,8 @@ export const ADMIN_ROUTES = [
             {
                 inMenu: true,
                 path: 'major',
-                title: "Quản lý chuyên ngành"
+                title: "Quản lý chuyên ngành",
+                element: <Major />
             },
             {
                 inMenu: true,

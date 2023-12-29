@@ -22,10 +22,10 @@ namespace api.Controllers
 
         }
 
-        [HttpGet("GetSubjectByMajor")]
-        public async Task<SubjectDTO> GetSubjectByMajor([FromBody] Guid majorId)
+        [HttpGet("{id}/Subjects")]
+        public async Task<SubjectDTO> GetSubjectByMajor(Guid id)
         {
-            var response = await (appCRUDService as IMajorService).GetSubjectByMajor(majorId);
+            var response = await (appCRUDService as IMajorService).GetSubjectByMajor(id);
             return response;
         }
     }

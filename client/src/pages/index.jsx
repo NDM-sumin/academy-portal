@@ -21,7 +21,7 @@ const LayoutPage = () => {
                 <AppMenu />
             </Sider>
             <Layout style={{ margin: '0 10px' }}>
-                <Content style={{ backgroundColor: colorBgContainer, marginBottom: '10px' }}>
+                <Content style={{ backgroundColor: colorBgContainer, marginBottom: '10px', padding:'10px' }}>
                     <Outlet></Outlet>
 
                 </Content>

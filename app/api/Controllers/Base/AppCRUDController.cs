@@ -18,9 +18,9 @@ namespace api.Controllers.Base
         }
 
         [HttpGet]
-        public virtual async Task<IActionResult> GetAll()
+        public virtual async Task<IActionResult> Get()
         {
-            return Ok(await appCRUDService.GetQueryable());
+            return Ok(await appCRUDService.GetAll());
         }
 
         [HttpPost]
