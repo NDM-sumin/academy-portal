@@ -4,6 +4,7 @@ import Subject from "../pages/admin/Subject";
 import Teacher from "../pages/admin/Teacher";
 import Student from "../pages/admin/Student";
 import LayoutPage from "../pages/index";
+import Semester from "../pages/admin/Semester";
 
 export const ADMIN_ROUTES = [
 	{
@@ -21,6 +22,7 @@ export const ADMIN_ROUTES = [
 				inMenu: true,
 				path: "semester",
 				title: "Quản lý học kì",
+                element: <Semester />
 			},
 			{
 				inMenu: true,

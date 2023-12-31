@@ -33,11 +33,11 @@ namespace api.Controllers.Base
         {
             var mapper = this.HttpContext.RequestServices.GetService<IMapper>()!;
             var odataFeature = HttpContext.ODataFeature();
-           
+            var data = await (await appCRUDService.GetQueryable()).GetQueryAsync<TEntityDto, TEntity>(mapper, odataOptions);
             var response = new PageResponse<TEntityDto>()
             {
-                TotalItems = odataFeature.TotalCount ?? 0,
-                Items = await (await appCRUDService.GetQueryable()).GetQueryAsync<TEntityDto, TEntity>(mapper, odataOptions),
+                TotalItems =data.Count(),
+                Items = data,
             };
             return Ok(response);
 

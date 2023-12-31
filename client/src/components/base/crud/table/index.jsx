@@ -13,7 +13,6 @@ const CRUDTable = () => {
         }
     ]
 
-    console.log(context.queryState);
     return <Table
         columns={columns}
         dataSource={context.dataState[0].items}
