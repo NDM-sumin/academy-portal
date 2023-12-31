@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "build": "dotnet publish app/api/api.csproj -o academy_portal_production/app && npm run build --prefix client",
+        "build": "dotnet publish -c release app/api/api.csproj -o academy_portal_production/app && npm run build --prefix client",
         "dbmigrate": "dotnet ef migrations add -p app/entityframework/entityframework.csproj -s app/api/api.csproj",
         "dbmigrate_remove": "dotnet ef migrations remove -p app/entityframework/entityframework.csproj -s app/api/api.csproj",
         "dbupdate": "dotnet ef database update -p app/entityframework/entityframework.csproj -s app/api/api.csproj",
