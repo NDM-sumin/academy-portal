@@ -11,7 +11,12 @@ namespace service.contract.DTOs.Semester
     {
         public string SemesterCode { get; set; } = null!;
         public string SemesterName { get; set; } = null!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+
+        public int StartMonth { get; set; }
+        public int StartDay { get; set; }
+        public int EndMonth { get; set; }
+        public int EndDay { get; set; }
+
+        public Guid? PrevSemesterId { get; set; }
     }
 }

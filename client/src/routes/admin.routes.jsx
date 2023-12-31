@@ -1,4 +1,5 @@
 import Major from "../pages/admin/Major";
+import Semester from "../pages/admin/Semester";
 import LayoutPage from "../pages/index";
 
 
@@ -17,7 +18,8 @@ export const ADMIN_ROUTES = [
             {
                 inMenu: true,
                 path: 'semester',
-                title: "Quản lý học kì"
+                title: "Quản lý học kì",
+                element: <Semester />
             },
             {
                 inMenu: true,

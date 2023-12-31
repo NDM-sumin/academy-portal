@@ -46,7 +46,7 @@ namespace entityframework
             modelBuilder.Entity<FeeDetail>().HasIndex(ra => new { ra.SubjectId, ra.StudentSemesterId, ra.ClassId }).IsUnique();
 
 
-            modelBuilder.Entity<Semester>().HasOne<Semester>(s => s.NextSemester).WithOne(s => s.PrevSemester);
+            modelBuilder.Entity<Semester>().HasOne<Semester>(s => s.PrevSemester).WithOne(s => s.NextSemester);
 
             base.OnModelCreating(modelBuilder);
         }
