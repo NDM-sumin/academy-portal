@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "build": "dotnet publish app/api/api.csproj -o academy_portal_production/app && npm run build --prefix client"
+    }
+}
