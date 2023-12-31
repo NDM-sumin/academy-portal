@@ -89,6 +89,14 @@ const Teacher = () => {
 			<Input type="email" />
 		</Form.Item>,
 		<Form.Item
+			key={4}
+			label="Mật khẩu"
+			name="password"
+			rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+		>
+			<Input.Password />
+		</Form.Item>,
+		<Form.Item
 			key={5}
 			label="Ngày sinh"
 			name="dob"
