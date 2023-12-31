@@ -53,9 +53,9 @@ const Student = () => {
 	const studentApi = useStudentApi();
 	const majorApi = useMajorApi();
 	const get = (query) => {
+		console.log(data.items);
 		return studentApi.get(query).then((response) => {
 			console.log(response);
-			setStudentData(response);
 			return Promise.resolve({
 				totalItems: response.totalItems,
 				items: response.items.map((item) => ({
@@ -72,9 +72,11 @@ const Student = () => {
 		search: get,
 		delete: studentApi.del,
 	};
+
 	useEffect(() => {
-		majorApi.get(query).then((result) => {
-			setData(result);
+		majorApi.get().then((result) => {
+			console.log(result.items);
+			setStudentData(result);
 		});
 	}, []);
 	const searchBarItems = [];
@@ -105,18 +107,6 @@ const Student = () => {
 		</Form.Item>,
 		<Form.Item
 			key={4}
-			label="Mật khẩu"
-			name="password"
-			rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
-		>
-			<Input.Password
-				disabled={studentData.items.some(
-					(item) => item !== null && item !== undefined
-				)}
-			/>
-		</Form.Item>,
-		<Form.Item
-			key={5}
 			label="Ngày sinh"
 			name="dob"
 			rules={[{ required: true, message: "Vui lòng nhập ngày sinh" }]}
@@ -125,7 +115,7 @@ const Student = () => {
 		</Form.Item>,
 
 		<Form.Item
-			key={6}
+			key={5}
 			label="Số điện thoại"
 			name="phone"
 			rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
@@ -133,7 +123,7 @@ const Student = () => {
 			<Input />
 		</Form.Item>,
 		<Form.Item
-			key={7}
+			key={6}
 			label="Giới tính"
 			name="gender"
 			rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}
@@ -144,15 +134,15 @@ const Student = () => {
 			</Radio.Group>
 		</Form.Item>,
 		<Form.Item
-			key={8}
+			key={7}
 			label="Chuyên ngành"
-			name="majorName"
+			name="majorId"
 			rules={[{ required: true, message: "Vui lòng chọn chuyên ngành" }]}
 		>
 			<Select>
-				{data.items.map((major) => (
-					<Select.Option key={major.id} value={major.id}>
-						{major.majorName}
+				{studentData.items.map((item) => (
+					<Select.Option key={item.id} value={item.id}>
+						{item.majorName}
 					</Select.Option>
 				))}
 			</Select>

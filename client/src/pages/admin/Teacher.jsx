@@ -1,8 +1,9 @@
 import { useState } from "react";
 import CRUDPage from "../../components/base/crud";
 import { useForm } from "antd/es/form/Form";
-import { Form, Input, Radio, message } from "antd";
+import { Form, Input, Radio, message, DatePicker } from "antd";
 import useTeacherApi from "../../apis/teacher.api";
+import dayjs from "dayjs";
 
 const Teacher = () => {
 	const [data, setData] = useState({ totalItems: 0, items: [] });
@@ -30,10 +31,7 @@ const Teacher = () => {
 		{
 			title: "ngày sinh",
 			dataIndex: "dob",
-			render: (dob) => {
-				const formattedDob = new Date(dob).toLocaleDateString("vi-VN");
-				return formattedDob;
-			},
+			render: (dob, _, __) => dayjs(dob).format("DD/MM/YYYY"),
 		},
 		{
 			title: "Số điện thoại",
@@ -45,11 +43,23 @@ const Teacher = () => {
 			render: (gender) => (gender ? "Nam" : "Nữ"),
 		},
 	];
+	const get = (query) => {
+		return teacherApi.get(query).then((response) => {
+			console.log(response);
+			return Promise.resolve({
+				totalItems: response.totalItems,
+				items: response.items.map((item) => ({
+					...item,
+					dob: dayjs(item.dob),
+				})),
+			});
+		});
+	};
 	const teacherApi = useTeacherApi();
 	const crudApi = {
 		create: teacherApi.create,
 		update: teacherApi.update,
-		search: teacherApi.get,
+		search: get,
 		delete: teacherApi.del,
 	};
 	const searchBarItems = [];
@@ -92,7 +102,7 @@ const Teacher = () => {
 			name="dob"
 			rules={[{ required: true, message: "Vui lòng nhập ngày sinh" }]}
 		>
-			<Input type="date" />
+			<DatePicker format="DD/MM/YYYY" />
 		</Form.Item>,
 
 		<Form.Item

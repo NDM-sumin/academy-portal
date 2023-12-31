@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using domain;
+using domain.shared.AppSettings;
+using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using repository.AppRepositories;
 using repository.contract.IAppRepositories.Base;
@@ -18,10 +20,12 @@ namespace service.AppServices
 {
     public class StudentService : AppCRUDDefaultKeyService<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>, IStudentService
     {
+        readonly JwtConfiguration _jwtConfiguration;
         private IStudentRepository _studentRepository;
-        public StudentService(IStudentRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        public StudentService(IStudentRepository genericRepository, IMapper mapper,IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
         {
             _studentRepository = genericRepository;
+            _jwtConfiguration = jwtConfiguration.Value;
         }
 
         public List<StudentDTO> ImportStudentsFromExcel(string filePath)
@@ -48,6 +52,14 @@ namespace service.AppServices
             }
 
             return students;
+        }
+
+        public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
+        {
+            entityDto.Password = Guid.NewGuid().ToString();
+            HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
+            entityDto.Password = hashService.EncryptedPassword;
+            return base.Create(entityDto);
         }
 
         public async Task RegisterSubject(CreateFeeDetailDTO createFeeDetailDTO)

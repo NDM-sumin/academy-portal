@@ -12,13 +12,11 @@ namespace service.contract.DTOs.Student
     {
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string Password { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public DateTime Dob { get; set; }
         public bool Gender { get; set; }
         public string? Phone { get; set; }
         public Guid MajorId { get; set; }
         public MajorDTO Major { get; set; }
-        public string DobFormatted => Dob.ToString("dd/MM/yyyy");
     }
 }
