@@ -19,6 +19,5 @@ namespace service.contract.DTOs.Student
         public string? Phone { get; set; }
         public Guid MajorId { get; set; }
         public MajorDTO Major { get; set; }
-        public string DobFormatted => Dob.ToString("MM/dd/yyyy");
     }
 }
