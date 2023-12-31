@@ -1,34 +1,32 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
+import useAxios from './apis/app-axios-configuration'
+import { ConfigProvider } from 'antd';
+import { AppContext } from './hooks/context/app-bounding-context';
+import AppRoutes from './routes';
+import { AUTH_ROUTES } from './routes/auth.routes';
 function App() {
-  const [count, setCount] = useState(0)
+  const [loading, setLoading] = useState(false);
+  const [routes, setRoutes] = useState(AUTH_ROUTES);
 
+
+  const contextValue = {
+    loading: loading,
+    setLoading: setLoading,
+    axios: useAxios(setLoading),
+    routes: routes,
+    setRoutes: setRoutes
+  }
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ConfigProvider>
+      <AppContext.Provider value={contextValue} >
+
+
+        <AppRoutes />
+
+
+      </AppContext.Provider>
+    </ConfigProvider>
   )
 }
 
