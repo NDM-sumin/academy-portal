@@ -13,7 +13,6 @@ namespace api.Controllers.Base
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [AppActionFilter]
     [Route("api/[controller]")]
-    [AppActionFilter]
     [ODataRouteComponent("odata")]
     public abstract class AppController : ODataController
     {
