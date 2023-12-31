@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.AspNet.OData;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Extensions;
@@ -28,16 +29,15 @@ namespace api.Controllers.Base
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(ODataQueryOptions<TEntity> odataOptions)
+        public async Task<IActionResult> Get(ODataQueryOptions<TEntityDto> odataOptions)
         {
             var mapper = this.HttpContext.RequestServices.GetService<IMapper>()!;
-            var data = odataOptions.ApplyTo(await appCRUDService.GetQueryable()) as IQueryable<TEntity>;
             var odataFeature = HttpContext.ODataFeature();
-
+            var data = await (await appCRUDService.GetQueryable()).GetQueryAsync<TEntityDto, TEntity>(mapper, odataOptions);
             var response = new PageResponse<TEntityDto>()
             {
-                TotalItems = odataFeature.TotalCount ?? 0,
-                Items = mapper.Map<IEnumerable<TEntity>, IEnumerable<TEntityDto>>(data?.AsEnumerable() ?? Enumerable.Empty<TEntity>()),
+                TotalItems =data.Count(),
+                Items = data,
             };
             return Ok(response);
 

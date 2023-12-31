@@ -1,4 +1,5 @@
 ﻿using domain;
+using service.contract.DTOs.Major;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,7 @@ namespace service.contract.DTOs.Student
         public bool Gender { get; set; }
         public string? Phone { get; set; }
         public Guid MajorId { get; set; }
+        public MajorDTO Major { get; set; }
+        public string DobFormatted => Dob.ToString("MM/dd/yyyy");
     }
 }

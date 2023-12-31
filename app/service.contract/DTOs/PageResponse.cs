@@ -10,9 +10,9 @@ namespace service.contract.DTOs
     {
         public PageResponse()
         {
-            Items = Enumerable.Empty<T>();
+            Items = Enumerable.Empty<T>().AsQueryable<T>();
         }
         public long TotalItems { get; set; }
-        public IEnumerable<T> Items { get; set; }
+        public IQueryable<T> Items { get; set; }
     }
 }

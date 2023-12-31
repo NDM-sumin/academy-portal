@@ -13,6 +13,7 @@ const Semester = () => {
     const [query, setQuery] = useState({
         $skip: 0,
         $top: 50,
+        $expand: 'NextSemester,PrevSemester'
     });
     const [modalProps, setModalProps] = useState({
         open: false
@@ -41,9 +42,9 @@ const Semester = () => {
         return {
             ...formValues,
             startMonth: dayjs(formValues.duration[0]).month() + 1,
-            startDay: 1,
+            startDay: dayjs(formValues.duration[0]).date(),
             endMonth: dayjs(formValues.duration[1]).month() + 1,
-            endDay: 1,
+            endDay: dayjs(formValues.duration[1]).date(),
         }
     }
     const onCreate = (formValues) => {
@@ -54,24 +55,27 @@ const Semester = () => {
     }
     const onGet = (query) => {
         return api.get(query).then(response => {
-
-            return Promise.resolve({
+            const mappedData = {
                 totalItems: response.totalItems,
-                items: response.items.map(item => ({
-                    ...item,
-                    duration: [
-                        dayjs(`${dayjs().year()}/${item.startMonth}/${item.startDay}`),
-                        dayjs(`${dayjs().year()}/${item.endMonth}/${item.endDay}`)
-                    ]
-                }))
-            })
+                items: response.items.map(item => {
+                    return ({
+                        ...item,
+                        duration: [
+                            dayjs(`${dayjs().year()}/${String(item.startMonth).padStart(2, '0')}/${String(item.startDay).padStart(2, '0')}`, 'YYYY-MM-DD'),
+                            dayjs(`${dayjs().year()}/${String(item.endMonth).padStart(2, '0')}/${String(item.endDay).padStart(2, '0')}`, 'YYYY-MM-DD')
+                        ]
+                    })
+                })
+            }
+            return Promise.resolve(mappedData)
 
         })
     }
-    const [semesters, setSemesters] = useState();
+    const [semesters, setSemesters] = useState([]);
+    const [disabledDate, setDisabledDate] = useState(null);
     useEffect(() => {
-        api.get().then(response => setSemesters(response.items));
-    }, [data.totalItems])
+        onGet({ $expand: 'NextSemester,PrevSemester' }).then(response => setSemesters(response.items));
+    }, [JSON.stringify(data)])
 
     const crudApi = {
         create: onCreate,
@@ -96,19 +100,31 @@ const Semester = () => {
             <Input />
         </Form.Item>,
         <Form.Item
+            key={4}
+            label='Học kì trước đó'
+            name='prevSemesterId'
+
+        >
+            <Select
+                allowClear
+                options={semesters
+                    .filter(item => {
+                        const notHaveNextSmt = !Boolean(item.nextSemester)
+                        return notHaveNextSmt
+                    })
+                    .map(item => ({ value: item.id, label: item.semesterName }))}
+            />
+        </Form.Item>,
+        <Form.Item
             key={3}
             label='Thời gian diễn ra'
             name='duration'
             rules={[{ required: true, message: 'Vui lòng chọn khoảng thời gian của học kì' }]}>
-            <DatePicker.RangePicker picker="month" format={'01/MM'} />
+            <DatePicker.RangePicker
+                picker="date"
+            />
         </Form.Item>,
-        <Form.Item
-            key={4}
-            label='Học kì trước đó'
-            name='prevSemesterId'
-            rules={[{ required: semesters.length > 0, message: 'Vui lòng chọn học kì đã kết thúc trước học kì này' }]}>
-            <Select options={semesters.map(item => ({value: item.id, label: item.semesterName}))} />
-        </Form.Item>
+
     ]
     const form = {
         instance: useForm()[0],
