@@ -18,11 +18,21 @@ const useStudentApi = () => {
 	const del = (id) => {
 		return axios.delete(`api/Student/${id}`);
 	};
+
+	const importData = (file) => {
+		return axios.post("api/Student/Import", file, {
+			headers: {
+				"Content-Type":
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			},
+		});
+	};
 	return {
 		create,
 		update,
 		get,
 		del,
+		importData,
 	};
 };
 export default useStudentApi;

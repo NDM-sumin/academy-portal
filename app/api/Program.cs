@@ -1,6 +1,7 @@
 using api.Extensions;
 using domain.shared.AppSettings;
 using domain.shared.Constants;
+using Microsoft.AspNetCore.Builder;
 using service;
 
 var builder = WebApplication.CreateBuilder(args);

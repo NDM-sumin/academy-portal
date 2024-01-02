@@ -27,6 +27,7 @@ namespace entityframework
         public DbSet<FeeDetail> FeeDetails { get; set; } = null!;
         public DbSet<Major> Majors { get; set; } = null!;
         public DbSet<MajorSubject> MajorSubjects { get; set; } = null!;
+        public DbSet<StudentSemester> StudentSemesters { get; set; } = null!;
         public DbSet<Room> Rooms { get; set; } = null!;
         public DbSet<Attendance> Attendances { get; set; } = null!;
         public DbSet<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; } = null!;

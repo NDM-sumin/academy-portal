@@ -10,5 +10,6 @@ namespace repository.AppRepositories
 {
     public interface ISubjectRepository : IAppGenericDefaultKeyRepository<Subject>
     {
+        List<MajorSubject> GetMajorSubjects(Guid majorId, Guid semesterId);
     }
 }

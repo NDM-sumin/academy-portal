@@ -1,5 +1,6 @@
 ﻿using domain;
 using entityframework;
+using Microsoft.EntityFrameworkCore;
 using repository.AppRepositories.Base;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,13 @@ namespace repository.AppRepositories
     {
         public MajorRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public async Task<Major> GetMajorByCode(string code) => await Entities.FirstOrDefaultAsync(m => m.MajorCode.Equals(code));
+
+        public Major GetMajorByStudent(Guid studentId)
+        {
+            return Context.Students.FirstOrDefault(s => s.Id.Equals(studentId)).Major;
         }
     }
 }

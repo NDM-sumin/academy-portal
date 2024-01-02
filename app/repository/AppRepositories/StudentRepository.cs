@@ -9,5 +9,10 @@ namespace repository.AppRepositories
         public StudentRepository(AppDbContext context) : base(context)
         {
         }
+
+        public async Task AddRange(List<Student> students)
+        {
+            await base.Entities.AddRangeAsync(students);
+        }
     }
 }

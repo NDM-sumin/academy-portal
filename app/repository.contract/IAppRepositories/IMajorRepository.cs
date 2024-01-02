@@ -10,5 +10,7 @@ namespace repository.AppRepositories
 {
     public interface IMajorRepository : IAppGenericDefaultKeyRepository<Major>
     {
+        Task<Major> GetMajorByCode(string code);
+        Major GetMajorByStudent(Guid studentId);
     }
 }

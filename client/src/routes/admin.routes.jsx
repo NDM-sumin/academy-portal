@@ -24,6 +24,11 @@ export const ADMIN_ROUTES = [
 			},
 			{
 				inMenu: true,
+				path: "room",
+				title: "Quản lý phòng",
+			},
+			{
+				inMenu: true,
 				path: "subject",
 				title: "Quản lý môn học",
 				element: <Subject />,

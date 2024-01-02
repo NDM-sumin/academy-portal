@@ -12,5 +12,6 @@ namespace service.AppServices
 {
     public interface ISubjectService : IAppCRUDDefaultKeyService<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>
     {
+        List<SubjectDTO> GetRegisterSubjects(Guid studentId);
     }
 }

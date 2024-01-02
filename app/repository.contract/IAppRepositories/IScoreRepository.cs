@@ -10,5 +10,6 @@ namespace repository.AppRepositories
 {
     public interface IScoreRepository : IAppGenericDefaultKeyRepository<Score>
     {
+        List<Subject> getOweSubject(Guid studentId);
     }
 }

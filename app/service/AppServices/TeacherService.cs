@@ -28,6 +28,7 @@ namespace service.AppServices
 
         public override Task<TeacherDTO> Create(CreateTeacherDTO entityDto)
         {
+            entityDto.Id = Guid.NewGuid();
             entityDto.Password = Guid.NewGuid().ToString();
             HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
             entityDto.Password = hashService.EncryptedPassword;

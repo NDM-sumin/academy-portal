@@ -10,5 +10,6 @@ namespace repository.AppRepositories
 {
     public interface IStudentRepository : IAppGenericDefaultKeyRepository<Student>
     {
+        Task AddRange(List<Student> students);
     }
 }

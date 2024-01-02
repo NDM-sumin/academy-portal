@@ -1,4 +1,5 @@
 ﻿using domain;
+using Microsoft.AspNetCore.Http;
 using service.contract.DTOs.Account;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
@@ -14,6 +15,7 @@ namespace service.AppServices
 {
     public interface IStudentService : IAppCRUDDefaultKeyService<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>
     {
+        Task ImportStudentsFromExcel(IFormFile file);
         Task RegisterSubject(CreateFeeDetailDTO createFeeDetailDTO);
     }
 }
