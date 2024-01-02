@@ -1,19 +1,11 @@
 ﻿using AutoMapper;
 using domain.shared.AppSettings;
 using Microsoft.Extensions.Options;
-using repository;
 using repository.AppRepositories;
-using repository.AppRepositories.Base;
-using repository.contract;
 using repository.contract.IAppRepositories;
-using repository.contract.IAppRepositories.Base;
-using service;
 using service.AppServices;
-using service.AppServices.Base;
-using service.contract;
 using service.contract.DTOs.Email;
 using service.contract.IAppServices;
-using service.contract.IAppServices.Base;
 
 namespace api.Extensions
 {

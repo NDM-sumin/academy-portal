@@ -9,7 +9,22 @@ namespace api.Attributes
         {
 
             var appDbContext = filterContext.HttpContext.RequestServices.GetService<AppDbContext>();
-            appDbContext.SaveChanges();
+            var transaction = appDbContext.Database.BeginTransaction();
+            try
+            {
+                appDbContext.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+
             base.OnResultExecuting(filterContext);
         }
     }

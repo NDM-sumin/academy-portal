@@ -1,5 +1,4 @@
-﻿using domain.shared.Attributes;
-using domain.shared.Enums;
+﻿using domain.shared.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace domain

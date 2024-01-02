@@ -244,6 +244,74 @@ namespace entityframework.Migrations
                     b.ToTable("MajorSubjects");
                 });
 
+            modelBuilder.Entity("domain.PaymentTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("money");
+
+                    b.Property<string>("BankCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankTranNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FeeDetailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PayDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ResponseCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecureHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecureHashType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TransactionNo")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TransactionStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TxnRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeeDetailId")
+                        .IsUnique();
+
+                    b.HasIndex("TxnRef")
+                        .IsUnique();
+
+                    b.ToTable("PaymentTransactions");
+                });
+
             modelBuilder.Entity("domain.Room", b =>
                 {
                     b.Property<Guid>("Id")
@@ -316,7 +384,7 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("NextSemesterId")
+                    b.Property<Guid?>("PrevSemesterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SemesterCode")
@@ -335,9 +403,9 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NextSemesterId")
+                    b.HasIndex("PrevSemesterId")
                         .IsUnique()
-                        .HasFilter("[NextSemesterId] IS NOT NULL");
+                        .HasFilter("[PrevSemesterId] IS NOT NULL");
 
                     b.ToTable("Semesters");
                 });
@@ -648,6 +716,17 @@ namespace entityframework.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("domain.PaymentTransaction", b =>
+                {
+                    b.HasOne("domain.FeeDetail", "FeeDetail")
+                        .WithOne("PaymentTransaction")
+                        .HasForeignKey("domain.PaymentTransaction", "FeeDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeeDetail");
+                });
+
             modelBuilder.Entity("domain.Score", b =>
                 {
                     b.HasOne("domain.Student", "Student")
@@ -669,11 +748,11 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Semester", b =>
                 {
-                    b.HasOne("domain.Semester", "NextSemester")
-                        .WithOne("PrevSemester")
-                        .HasForeignKey("domain.Semester", "NextSemesterId");
+                    b.HasOne("domain.Semester", "PrevSemester")
+                        .WithOne("NextSemester")
+                        .HasForeignKey("domain.Semester", "PrevSemesterId");
 
-                    b.Navigation("NextSemester");
+                    b.Navigation("PrevSemester");
                 });
 
             modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
@@ -752,6 +831,9 @@ namespace entityframework.Migrations
             modelBuilder.Entity("domain.FeeDetail", b =>
                 {
                     b.Navigation("Attendances");
+
+                    b.Navigation("PaymentTransaction")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("domain.Major", b =>
@@ -770,7 +852,7 @@ namespace entityframework.Migrations
                 {
                     b.Navigation("MajorSubjects");
 
-                    b.Navigation("PrevSemester");
+                    b.Navigation("NextSemester");
 
                     b.Navigation("StudentSemesters");
                 });

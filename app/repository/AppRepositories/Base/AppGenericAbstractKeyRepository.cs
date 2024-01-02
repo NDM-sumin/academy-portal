@@ -1,5 +1,4 @@
 ﻿using entityframework;
-using repository.contract;
 using repository.contract.IAppRepositories.Base;
 
 namespace repository.AppRepositories.Base

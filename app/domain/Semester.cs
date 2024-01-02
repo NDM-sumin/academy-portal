@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace domain
+﻿namespace domain
 {
     public class Semester : AppEntityDefaultKey
     {
@@ -22,7 +15,7 @@ namespace domain
         public int EndMonth { get; set; }
         public int EndDay { get; set; }
 
-        public Guid? NextSemesterId { get; set; }
+        public Guid? PrevSemesterId { get; set; }
         public Semester? NextSemester { get; set; }
 
         public Semester? PrevSemester { get; set; }

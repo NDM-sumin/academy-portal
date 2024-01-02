@@ -2,7 +2,6 @@
 using domain.shared.Enums;
 using entityframework;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace api.Attributes

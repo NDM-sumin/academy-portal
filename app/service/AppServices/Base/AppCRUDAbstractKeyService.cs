@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using entityframework;
 using repository.contract;
-using repository.contract.IAppRepositories.Base;
 using service.contract.IAppServices.Base;
 
 namespace service.AppServices.Base

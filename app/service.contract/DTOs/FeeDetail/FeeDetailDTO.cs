@@ -1,13 +1,6 @@
-﻿using domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace service.contract.DTOs.FeeDetail
+﻿namespace service.contract.DTOs.FeeDetail
 {
-    public class FeeDetailDTO : AppEntityDefaultKey
+    public class FeeDetailDTO : AppEntityDefaultKeyDTO
     {
         public float Amount { get; set; }
         public string? Content { get; set; }

@@ -1,5 +1,4 @@
 ﻿using domain;
-using domain.CompositeKeys;
 using Microsoft.EntityFrameworkCore;
 
 namespace entityframework
@@ -35,6 +34,7 @@ namespace entityframework
         public DbSet<SubjectComponent> SubjectComponents { get; set; } = null!;
         public DbSet<Timetable> Timetables { get; set; } = null!;
         public DbSet<Week> Weeks { get; set; } = null!;
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,7 +47,9 @@ namespace entityframework
             modelBuilder.Entity<FeeDetail>().HasIndex(ra => new { ra.SubjectId, ra.StudentSemesterId, ra.ClassId }).IsUnique();
 
 
-            modelBuilder.Entity<Semester>().HasOne<Semester>(s => s.NextSemester).WithOne(s => s.PrevSemester);
+            modelBuilder.Entity<Semester>().HasOne<Semester>(s => s.PrevSemester).WithOne(s => s.NextSemester);
+
+            modelBuilder.Entity<PaymentTransaction>().HasIndex(c => c.TxnRef).IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

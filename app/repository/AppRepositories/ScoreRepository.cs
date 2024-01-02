@@ -2,6 +2,7 @@
 using entityframework;
 using Microsoft.EntityFrameworkCore;
 using repository.AppRepositories.Base;
+using repository.contract.IAppRepositories;
 
 namespace repository.AppRepositories
 {

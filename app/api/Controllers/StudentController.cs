@@ -1,10 +1,9 @@
 ﻿using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
-using service.AppServices;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
-using service.contract.DTOs.Subject;
+using service.contract.IAppServices;
 
 namespace api.Controllers
 {

@@ -19,6 +19,11 @@
     "code": 5004,
     "message": "Mật khẩu mới không được trùng với mật khẩu hiện tại."
   },
+
+  {
+    "code": 5005,
+    "message": "Không tìm thấy giao dịch"
+  },
   {
     "code": 4040,
     "message": "Không tìm thấy thông tin liên quan, vui lòng kiểm tra lại"

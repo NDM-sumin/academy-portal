@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace repository.contract
 {
@@ -10,5 +11,7 @@ namespace repository.contract
         Task<IQueryable<TEntity>> GetAll();
         Task<TEntity> Create(TEntity entity);
         Task<TEntity> Update(TEntity entity);
+        Task<int> SaveChange();
+        Task<int> SaveChange(IDbContextTransaction dbContextTransaction);
     }
 }

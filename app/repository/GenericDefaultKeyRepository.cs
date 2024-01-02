@@ -1,5 +1,4 @@
-﻿using domain.shared.Exceptions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using repository.contract;
 
 namespace repository

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Attributes;
 using service.contract.IAppServices.Base;
 
 namespace api.Controllers.Base

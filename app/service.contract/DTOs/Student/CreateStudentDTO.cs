@@ -1,14 +1,6 @@
-﻿using domain;
-using domain.shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace service.contract.DTOs.Student
+﻿namespace service.contract.DTOs.Student
 {
-    public class CreateStudentDTO : AppEntityDefaultKey
+    public class CreateStudentDTO : AppEntityDefaultKeyDTO
     {
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;

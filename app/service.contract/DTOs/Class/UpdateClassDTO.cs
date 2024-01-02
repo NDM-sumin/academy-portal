@@ -1,13 +1,6 @@
-﻿using domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace service.contract.DTOs.Class
+﻿namespace service.contract.DTOs.Class
 {
-    public class UpdateClassDTO : AppEntityDefaultKey
+    public class UpdateClassDTO : AppEntityDefaultKeyDTO
     {
         public string ClassCode { get; set; } = null!;
         public DateTime StartDate { get; set; }

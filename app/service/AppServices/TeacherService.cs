@@ -10,11 +10,7 @@ using service.contract.DTOs.Account;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using service.contract.IAppServices;
 
 namespace service.AppServices
 {

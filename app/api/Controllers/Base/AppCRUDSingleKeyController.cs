@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Formatter;
-using Microsoft.AspNetCore.OData.Query;
-using service.contract.IAppServices.Base;
+﻿using service.contract.IAppServices.Base;
 
 namespace api.Controllers.Base
 {

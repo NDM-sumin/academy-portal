@@ -3,6 +3,7 @@ using domain;
 using Microsoft.AspNetCore.Mvc;
 using service.AppServices;
 using service.contract.DTOs.Subject;
+using service.contract.IAppServices;
 
 namespace api.Controllers
 {
