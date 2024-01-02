@@ -1,11 +1,6 @@
 ﻿using domain.shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using repository.contract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace repository
 {

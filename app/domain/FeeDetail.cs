@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace domain
 {
@@ -31,5 +26,7 @@ namespace domain
         public Guid StudentSemesterId { get; set; }
         [ForeignKey(nameof(StudentSemesterId))]
         public StudentSemester StudentSemester { get; set; } = null!;
+
+        public virtual PaymentTransaction PaymentTransaction { get; set; } = null!;
     }
 }

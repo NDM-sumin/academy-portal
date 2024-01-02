@@ -1,8 +1,7 @@
 ﻿using api.Controllers.Base;
 using domain;
-using service.AppServices;
-using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
+using service.contract.IAppServices;
 
 namespace api.Controllers
 {

@@ -77,7 +77,7 @@ namespace entityframework.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Account");
                 });
@@ -105,7 +105,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Attendances", (string)null);
+                    b.ToTable("Attendances");
                 });
 
             modelBuilder.Entity("domain.Class", b =>
@@ -137,7 +137,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Classes", (string)null);
+                    b.ToTable("Classes");
                 });
 
             modelBuilder.Entity("domain.FeeDetail", b =>
@@ -183,7 +183,7 @@ namespace entityframework.Migrations
                         .IsUnique()
                         .HasFilter("[ClassId] IS NOT NULL");
 
-                    b.ToTable("FeeDetails", (string)null);
+                    b.ToTable("FeeDetails");
                 });
 
             modelBuilder.Entity("domain.Major", b =>
@@ -208,7 +208,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Majors", (string)null);
+                    b.ToTable("Majors");
                 });
 
             modelBuilder.Entity("domain.MajorSubject", b =>
@@ -241,7 +241,75 @@ namespace entityframework.Migrations
                     b.HasIndex("MajorId", "SubjectId")
                         .IsUnique();
 
-                    b.ToTable("MajorSubjects", (string)null);
+                    b.ToTable("MajorSubjects");
+                });
+
+            modelBuilder.Entity("domain.PaymentTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("money");
+
+                    b.Property<string>("BankCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankTranNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FeeDetailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PayDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ResponseCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecureHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecureHashType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TransactionNo")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TransactionStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TxnRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeeDetailId")
+                        .IsUnique();
+
+                    b.HasIndex("TxnRef")
+                        .IsUnique();
+
+                    b.ToTable("PaymentTransactions");
                 });
 
             modelBuilder.Entity("domain.Room", b =>
@@ -265,7 +333,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Rooms", (string)null);
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("domain.Score", b =>
@@ -295,7 +363,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("SubjectComponentID");
 
-                    b.ToTable("Scores", (string)null);
+                    b.ToTable("Scores");
                 });
 
             modelBuilder.Entity("domain.Semester", b =>
@@ -339,7 +407,7 @@ namespace entityframework.Migrations
                         .IsUnique()
                         .HasFilter("[PrevSemesterId] IS NOT NULL");
 
-                    b.ToTable("Semesters", (string)null);
+                    b.ToTable("Semesters");
                 });
 
             modelBuilder.Entity("domain.Slot", b =>
@@ -366,7 +434,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Slots", (string)null);
+                    b.ToTable("Slots");
                 });
 
             modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
@@ -410,7 +478,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("WeekId");
 
-                    b.ToTable("SlotTimeTableAtWeeks", (string)null);
+                    b.ToTable("SlotTimeTableAtWeeks");
                 });
 
             modelBuilder.Entity("domain.StudentSemester", b =>
@@ -441,7 +509,7 @@ namespace entityframework.Migrations
                     b.HasIndex("SemesterId", "StudentId")
                         .IsUnique();
 
-                    b.ToTable("StudentSemester", (string)null);
+                    b.ToTable("StudentSemester");
                 });
 
             modelBuilder.Entity("domain.Subject", b =>
@@ -466,7 +534,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("domain.SubjectComponent", b =>
@@ -495,7 +563,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("SubjectID");
 
-                    b.ToTable("SubjectComponents", (string)null);
+                    b.ToTable("SubjectComponents");
                 });
 
             modelBuilder.Entity("domain.Timetable", b =>
@@ -516,7 +584,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Timetables", (string)null);
+                    b.ToTable("Timetables");
                 });
 
             modelBuilder.Entity("domain.Week", b =>
@@ -536,7 +604,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Weeks", (string)null);
+                    b.ToTable("Weeks");
                 });
 
             modelBuilder.Entity("domain.Student", b =>
@@ -648,6 +716,17 @@ namespace entityframework.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("domain.PaymentTransaction", b =>
+                {
+                    b.HasOne("domain.FeeDetail", "FeeDetail")
+                        .WithOne("PaymentTransaction")
+                        .HasForeignKey("domain.PaymentTransaction", "FeeDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeeDetail");
+                });
+
             modelBuilder.Entity("domain.Score", b =>
                 {
                     b.HasOne("domain.Student", "Student")
@@ -752,6 +831,9 @@ namespace entityframework.Migrations
             modelBuilder.Entity("domain.FeeDetail", b =>
                 {
                     b.Navigation("Attendances");
+
+                    b.Navigation("PaymentTransaction")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("domain.Major", b =>

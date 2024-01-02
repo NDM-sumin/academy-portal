@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.AspNet.OData;
-using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Extensions;
-using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Attributes;
 using service.contract.DTOs;
 using service.contract.IAppServices.Base;
 

@@ -11,6 +11,7 @@ using service.contract.DTOs.Semester;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
+using service.contract.DTOs.VNPay;
 
 namespace service
 {
@@ -55,6 +56,8 @@ namespace service
             this.CreateMap<FeeDetail, CreateFeeDetailDTO>().ReverseMap();
 
             this.CreateMap<MailConfiguration, SmtpConfigModel>().ReverseMap();
+
+            this.CreateMap<PaymentTransaction, PaymentTransactionDto>().ReverseMap();   
 
         }
     }

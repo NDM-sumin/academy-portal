@@ -1,6 +1,4 @@
-﻿
-using Microsoft.Extensions.Options;
-using service.contract.DTOs.Email;
+﻿using service.contract.DTOs.Email;
 using service.contract.IAppServices;
 using System.Net;
 using System.Net.Mail;

@@ -1,14 +1,8 @@
-﻿using domain;
-using service.contract.DTOs.Major;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using service.contract.DTOs.Major;
 
 namespace service.contract.DTOs.Student
 {
-    public class UpdateStudentDTO : AppEntityDefaultKey
+    public class UpdateStudentDTO : AppEntityDefaultKeyDTO
     {
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;

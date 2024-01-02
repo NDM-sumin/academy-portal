@@ -1,8 +1,6 @@
-﻿using domain;
-
-namespace service.contract.DTOs.Semester
+﻿namespace service.contract.DTOs.Semester
 {
-    public class SemesterDTO : AppEntityDefaultKey
+    public class SemesterDTO : AppEntityDefaultKeyDTO
     {
         public SemesterDTO()
         {

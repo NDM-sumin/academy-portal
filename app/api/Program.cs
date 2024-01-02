@@ -1,4 +1,5 @@
 using api.Extensions;
+using api.Hubs;
 using domain.shared.AppSettings;
 using domain.shared.Constants;
 using service;
@@ -18,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<MailConfiguration>(builder.Configuration.GetSection("Mail"));
+builder.Services.Configure<VNPayConfiguration>(builder.Configuration.GetSection("VNPay"));
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsConstants.PolicyName,
@@ -30,6 +32,7 @@ builder.Services.AddAppDefaultDbContext(builder.Configuration);
 builder.Services.RegisterAppServices();
 builder.Services.AddJwtAuthentication();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -45,5 +48,6 @@ app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
 app.UseCors(CorsConstants.PolicyName);
+app.MapHub<PaymentHub>("/payment");
 
 app.Run();
