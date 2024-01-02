@@ -55,7 +55,6 @@ const Student = () => {
 	const get = (query) => {
 		console.log(data.items);
 		return studentApi.get(query).then((response) => {
-			console.log(response);
 			return Promise.resolve({
 				totalItems: response.totalItems,
 				items: response.items.map((item) => ({
@@ -71,11 +70,11 @@ const Student = () => {
 		update: studentApi.update,
 		search: get,
 		delete: studentApi.del,
+		importData: studentApi.importData,
 	};
 
 	useEffect(() => {
 		majorApi.get().then((result) => {
-			console.log(result.items);
 			setStudentData(result);
 		});
 	}, []);

@@ -45,7 +45,6 @@ const Teacher = () => {
 	];
 	const get = (query) => {
 		return teacherApi.get(query).then((response) => {
-			console.log(response);
 			return Promise.resolve({
 				totalItems: response.totalItems,
 				items: response.items.map((item) => ({

@@ -16,6 +16,14 @@ namespace api.Controllers
 
         }
 
+        [HttpPost("Import")]
+        public async Task<IActionResult> Import(IFormFile? formFile)
+        {
+
+            await (appCRUDService as IStudentService).ImportStudentsFromExcel(formFile);
+            return Ok();
+        }
+
         [HttpPost("RegisterSubject")]
         public async Task<IActionResult> RegisterSubject([FromBody] CreateFeeDetailDTO createFeeDetailDTO)
         {

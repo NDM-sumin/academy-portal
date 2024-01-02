@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
 using domain;
 using domain.shared.AppSettings;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.Extensions.Options;
-using repository.contract.IAppRepositories;
+using repository.AppRepositories;
+using repository.contract.IAppRepositories.Base;
 using service.AppServices.Base;
+using service.contract.DTOs.Account;
+using service.contract.DTOs.Student;
+using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
 using service.contract.IAppServices;
 
@@ -19,6 +24,7 @@ namespace service.AppServices
 
         public override Task<TeacherDTO> Create(CreateTeacherDTO entityDto)
         {
+            entityDto.Id = Guid.NewGuid();
             entityDto.Password = Guid.NewGuid().ToString();
             HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
             entityDto.Password = hashService.EncryptedPassword;

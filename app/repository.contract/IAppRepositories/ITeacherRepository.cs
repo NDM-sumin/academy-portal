@@ -5,5 +5,6 @@ namespace repository.contract.IAppRepositories
 {
     public interface IStudentRepository : IAppGenericDefaultKeyRepository<Student>
     {
+        Task AddRange(List<Student> students);
     }
 }
