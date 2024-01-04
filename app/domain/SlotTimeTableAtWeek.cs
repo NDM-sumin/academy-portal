@@ -11,11 +11,7 @@ namespace domain
         public Guid SlotId { get; set; }
         public Guid TimetableId { get; set; }
 
-        public Guid WeekId { get; set; }
-        public bool IsAttendance { get; set; }
-        public string? Note { get; set; }
-        public DateTime Date { get; set; }
-        public Guid FeeDetailId { get; set; }
+        public Guid? WeekId { get; set; }
 
         [ForeignKey(nameof(SlotId))]
         public virtual Slot Slot { get; set; } = null!;

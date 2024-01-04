@@ -31,7 +31,8 @@ namespace api.Extensions
                 .AddScoped<ITeacherRepository, TeacherRepository>()
                 .AddScoped<IStudentRepository, StudentRepository>()
                 .AddScoped<IScoreRepository, ScoreRepository>()
-                .AddScoped<ISemesterRepository, SemesterRepository>()
+                 .AddScoped<ISemesterRepository, SemesterRepository>()
+                .AddScoped<IRoomRepository, RoomRepository>()
                 .AddScoped<IEmailService>(impl =>
                 {
                     var mapper = impl.GetService<IMapper>();

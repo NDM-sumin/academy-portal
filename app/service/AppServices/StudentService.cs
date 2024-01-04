@@ -8,7 +8,9 @@ using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
+using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
+using System.Dynamic;
 
 namespace service.AppServices
 {
@@ -17,10 +19,16 @@ namespace service.AppServices
         readonly JwtConfiguration _jwtConfiguration;
         private IStudentRepository _studentRepository;
         private IMajorRepository _majorRepository;
-        public StudentService(IStudentRepository genericRepository,IMajorRepository majorRepository, IMapper mapper, IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
+        private ISemesterRepository _semesterRepository;
+        private ISubjectRepository _subjectRepository;
+        private IRoomRepository _roomRepository;
+        public StudentService(IStudentRepository genericRepository, IRoomRepository roomRepository, ISubjectRepository subjectRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper, IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
         {
             _studentRepository = genericRepository;
             _majorRepository = majorRepository;
+            _semesterRepository = semesterRepository;
+            _subjectRepository = subjectRepository;
+            _roomRepository = roomRepository;
             _jwtConfiguration = jwtConfiguration.Value;
         }
 
@@ -67,17 +75,27 @@ namespace service.AppServices
             return base.Create(entityDto);
         }
 
-        public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
-        {
-            entityDto.Password = Guid.NewGuid().ToString();
-            HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
-            entityDto.Password = hashService.EncryptedPassword;
-            return base.Create(entityDto);
-        }
-
         public async Task RegisterSubject(CreateFeeDetailDTO createFeeDetailDTO)
         {
-            
+
+        }
+
+        public async Task<List<TimeTableDTO>> GetTimeTable(Guid studentId)
+        {
+            List<TimeTableDTO> result = new();
+
+            var currentSemester = _semesterRepository.getCurrentSemester(studentId);
+            var fees = await _studentRepository.GetFeeDetails(currentSemester.Id, studentId);
+            foreach (var item in fees)
+            {
+                TimeTableDTO timeTable = new();
+                timeTable.Subject = item.Subject;
+                timeTable.Room = await _roomRepository.Find(item.Attendances.FirstOrDefault().RoomId);
+                List<SlotTimeTableAtWeek> lists = await _studentRepository.GetSlotTimeTableAtWeeks(item.Id);
+                timeTable.AtWeek.AddRange(lists);
+                result.Add(timeTable);
+            }
+            return result;
         }
     }
 }
