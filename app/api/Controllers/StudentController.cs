@@ -1,8 +1,10 @@
-﻿using api.Controllers.Base;
+﻿using api.Attributes;
+using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
+using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
 
 namespace api.Controllers
@@ -30,5 +32,12 @@ namespace api.Controllers
             await (appCRUDService as IStudentService).RegisterSubject(createFeeDetailDTO);
             return Ok();
         }
+
+        [HttpGet("GetTimeTable")]
+        public async Task<List<TimeTableDTO>> GetTimeTable(Guid studentId)
+        {
+            return await (appCRUDService as IStudentService).GetTimeTable(studentId);
+        }
+
     }
 }

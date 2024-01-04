@@ -6,8 +6,8 @@
         {
             SlotTimeTableAtWeeks = new HashSet<SlotTimeTableAtWeek>();
         }
-        public DateTime StartTime {  get; set; }
-        public DateTime EndTime { get; set; }
+        public string StartTime {  get; set; }
+        public string EndTime { get; set; }
         public string SlotName { get; set; } = null!;
         public virtual ICollection<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; }
     }

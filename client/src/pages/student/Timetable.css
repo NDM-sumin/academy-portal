@@ -1,0 +1,23 @@
+.timetable-table {
+	margin-top: 20px;
+}
+
+.timetable-header {
+	background-color: #f0f0f0;
+	font-weight: bold;
+}
+
+.timetable-row {
+	text-align: center;
+}
+
+.absent-cell {
+	background-color: #ffcccc;
+}
+
+.attended-cell {
+	background-color: #ccffcc;
+}
+.timetable-header {
+	text-align: center;
+}
