@@ -7,44 +7,47 @@ using OfficeOpenXml;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.FeeDetail;
+using service.contract.DTOs.Major;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
-using System.Dynamic;
 
 namespace service.AppServices
 {
     public class StudentService : AppCRUDDefaultKeyService<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>, IStudentService
     {
         readonly JwtConfiguration _jwtConfiguration;
-        private IStudentRepository _studentRepository;
-        private IMajorRepository _majorRepository;
-        private ISemesterRepository _semesterRepository;
-        private ISubjectRepository _subjectRepository;
-        private IRoomRepository _roomRepository;
-        public StudentService(IStudentRepository genericRepository, IRoomRepository roomRepository, ISubjectRepository subjectRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper, IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
+        readonly IMajorService _majorService;
+        readonly ISemesterService _semesterService;
+        readonly IRoomRepository _roomRepository;
+        readonly IStudentSemesterRepository _studentSemesterRepository;
+        public StudentService(IStudentRepository genericRepository,
+            IRoomRepository roomRepository,
+            ISemesterService semesterService,
+            IMajorService majorService,
+            IMapper mapper,
+            IOptions<JwtConfiguration> jwtConfiguration,
+            IStudentSemesterRepository studentSemesterRepository) : base(genericRepository, mapper)
         {
-            _studentRepository = genericRepository;
-            _majorRepository = majorRepository;
-            _semesterRepository = semesterRepository;
-            _subjectRepository = subjectRepository;
+            _majorService = majorService;
+            _semesterService = semesterService;
             _roomRepository = roomRepository;
             _jwtConfiguration = jwtConfiguration.Value;
+            _studentSemesterRepository = studentSemesterRepository;
         }
 
         public async Task ImportStudentsFromExcel(IFormFile file)
         {
-            var students = new List<Student>();
+            var studentDtos = new List<StudentDTO>();
 
             using (var stream = file.OpenReadStream())
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets[0];
-
                 for (int row = 2; row <= worksheet.Dimension.Rows; row++)
                 {
-
-                    var student = new Student
+                    MajorDTO major = await _majorService.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString());
+                    var student = new StudentDTO
                     {
                         Username = worksheet.Cells[row, 1].Value.ToString(),
                         FullName = worksheet.Cells[row, 2].Value.ToString(),
@@ -52,18 +55,18 @@ namespace service.AppServices
                         Dob = DateTime.Parse(worksheet.Cells[row, 4].Value.ToString()),
                         Gender = Convert.ToBoolean(worksheet.Cells[row, 5].Value),
                         Phone = worksheet.Cells[row, 6].Value.ToString(),
-                        MajorId = _majorRepository.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString()).Result.Id,
-                        Major = _majorRepository.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString()).Result
+                        MajorId = major.Id,
+                        Major = major
                     };
                     student.Id = Guid.NewGuid();
                     student.Password = Guid.NewGuid().ToString();
                     HashService hashService = new(student.Password, _jwtConfiguration.HashSalt);
                     student.Password = hashService.EncryptedPassword;
-                    students.Add(student);
+                    studentDtos.Add(student);
                 }
             }
-
-            await _studentRepository.AddRange(students);
+            var students = Mapper.Map<List<Student>>(studentDtos);
+            await base.Repository.AddRange(students);
         }
 
         public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
@@ -82,20 +85,7 @@ namespace service.AppServices
 
         public async Task<List<TimeTableDTO>> GetTimeTable(Guid studentId)
         {
-            List<TimeTableDTO> result = new();
-
-            var currentSemester = _semesterRepository.getCurrentSemester(studentId);
-            var fees = await _studentRepository.GetFeeDetails(currentSemester.Id, studentId);
-            foreach (var item in fees)
-            {
-                TimeTableDTO timeTable = new();
-                timeTable.Subject = item.Subject;
-                timeTable.Room = await _roomRepository.Find(item.Attendances.FirstOrDefault().RoomId);
-                List<SlotTimeTableAtWeek> lists = await _studentRepository.GetSlotTimeTableAtWeeks(item.Id);
-                timeTable.AtWeek.AddRange(lists);
-                result.Add(timeTable);
-            }
-            return result;
+            throw new NotImplementedException();
         }
     }
 }

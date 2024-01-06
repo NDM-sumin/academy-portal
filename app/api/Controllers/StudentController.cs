@@ -1,5 +1,4 @@
-﻿using api.Attributes;
-using api.Controllers.Base;
+﻿using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
 using service.contract.DTOs.FeeDetail;

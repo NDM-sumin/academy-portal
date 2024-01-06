@@ -6,9 +6,11 @@ using service.contract.DTOs.Class;
 using service.contract.DTOs.Email;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Major;
+using service.contract.DTOs.MajorSubject;
 using service.contract.DTOs.Score;
 using service.contract.DTOs.Semester;
 using service.contract.DTOs.Student;
+using service.contract.DTOs.StudentSemester;
 using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
 using service.contract.DTOs.VNPay;
@@ -58,6 +60,8 @@ namespace service
             this.CreateMap<MailConfiguration, SmtpConfigModel>().ReverseMap();
 
             this.CreateMap<PaymentTransaction, PaymentTransactionDto>().ReverseMap();   
+            this.CreateMap<MajorSubject, MajorSubjectDto>().ReverseMap();   
+            this.CreateMap<StudentSemester, StudentSemesterDto>().ReverseMap();   
 
         }
     }

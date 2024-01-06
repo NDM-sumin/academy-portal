@@ -17,7 +17,7 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}/Subjects")]
-        public async Task<SubjectDTO> GetSubjectByMajor(Guid id)
+        public async Task<List<SubjectDTO>> GetSubjectByMajor(Guid id)
         {
             var response = await (appCRUDService as IMajorService).GetSubjectByMajor(id);
             return response;

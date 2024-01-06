@@ -2,7 +2,6 @@ using api.Extensions;
 using api.Hubs;
 using domain.shared.AppSettings;
 using domain.shared.Constants;
-using Microsoft.AspNetCore.Builder;
 using service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +29,7 @@ builder.Services.AddCors(options =>
         .AllowCredentials().SetIsOriginAllowed(hostName => true).Build());
 });
 builder.Services.AddAppDefaultDbContext(builder.Configuration);
+builder.Services.RegisterAppRepositories();
 builder.Services.RegisterAppServices();
 builder.Services.AddJwtAuthentication();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
 using domain;
 using domain.shared.AppSettings;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.Extensions.Options;
-using repository.AppRepositories;
 using repository.contract.IAppRepositories;
-using repository.contract.IAppRepositories.Base;
 using service.AppServices.Base;
-using service.contract.DTOs.Account;
-using service.contract.DTOs.Student;
-using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
 using service.contract.IAppServices;
 

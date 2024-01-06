@@ -16,11 +16,15 @@ const useSubjectApi = () => {
 	const del = (id) => {
 		return axios.delete(`api/Subject/${id}`);
 	};
+	const getRegisterableSubjects = () => {
+		return axios.get('api/Subject/GetRegisterableSubjects');
+	}
 	return {
 		create,
 		update,
 		get,
 		del,
+		getRegisterableSubjects
 	};
 };
 export default useSubjectApi;

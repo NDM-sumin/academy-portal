@@ -5,12 +5,10 @@ using repository.contract.IAppRepositories;
 
 namespace repository.AppRepositories
 {
-    public class SubjectRepository : AppGenericDefaultKeyRepository<Subject>, ISubjectRepository
+    public class FeeDetailRepository : AppGenericDefaultKeyRepository<FeeDetail>, IFeeDetailRepository
     {
-        public SubjectRepository(AppDbContext context) : base(context)
+        public FeeDetailRepository(AppDbContext context) : base(context)
         {
         }
-
-
     }
 }

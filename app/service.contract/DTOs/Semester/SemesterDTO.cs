@@ -1,9 +1,14 @@
-﻿namespace service.contract.DTOs.Semester
+﻿using service.contract.DTOs.MajorSubject;
+using service.contract.DTOs.StudentSemester;
+
+namespace service.contract.DTOs.Semester
 {
     public class SemesterDTO : AppEntityDefaultKeyDTO
     {
         public SemesterDTO()
         {
+            StudentSemesters = new HashSet<StudentSemesterDto>();
+            MajorSubjects = new HashSet<MajorSubjectDto>();
         }
         public string SemesterCode { get; set; } = null!;
         public string SemesterName { get; set; } = null!;
@@ -18,8 +23,8 @@
 
         public SemesterDTO? PrevSemester { get; set; }
 
-/*
-        public virtual ICollection<StudentSemester> StudentSemesters { get; set; }
-        public virtual ICollection<MajorSubject> MajorSubjects { get; set; }*/
+
+        public virtual ICollection<StudentSemesterDto> StudentSemesters { get; set; }
+        public virtual ICollection<MajorSubjectDto> MajorSubjects { get; set; }
     }
 }

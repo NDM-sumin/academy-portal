@@ -3,8 +3,7 @@ using repository.contract.IAppRepositories.Base;
 
 namespace repository.contract.IAppRepositories
 {
-    public interface ISubjectRepository : IAppGenericDefaultKeyRepository<Subject>
+    public interface IMajorSubjectRepository : IAppGenericDefaultKeyRepository<MajorSubject>
     {
-       
     }
 }

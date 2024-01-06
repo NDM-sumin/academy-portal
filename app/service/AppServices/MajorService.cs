@@ -10,15 +10,19 @@ namespace service.AppServices
 {
     public class MajorService : AppCRUDDefaultKeyService<MajorDTO, CreateMajorDTO, UpdateMajorDTO, Major>, IMajorService
     {
-        private IMajorRepository _majorRepository;
+
         public MajorService(IMajorRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
-            _majorRepository = genericRepository;
         }
 
-        public async Task<SubjectDTO> GetSubjectByMajor(Guid majorId)
+        public Task<MajorDTO> GetMajorByCode(string code)
         {
-            return Mapper.Map<SubjectDTO>(await _majorRepository.Find(majorId));
+            return Task.FromResult(Mapper.Map<MajorDTO>(Repository.Entities.FirstOrDefault(m => m.MajorCode.Equals(code))));
+        }
+
+        public async Task<List<SubjectDTO>> GetSubjectByMajor(Guid majorId)
+        {
+            return Mapper.Map<List<SubjectDTO>>((await (Repository as IMajorRepository).Find(majorId)).MajorSubjects.Select(ms => ms.Subject));
         }
     }
 }

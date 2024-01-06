@@ -7,6 +7,7 @@ namespace repository.contract
         where TDbContext : DbContext
         where TEntity : class
     {
+        Task AddRange(List<TEntity> entities);
         DbSet<TEntity> Entities { get; }
         Task<IQueryable<TEntity>> GetAll();
         Task<TEntity> Create(TEntity entity);

@@ -1,7 +1,6 @@
 ﻿using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
-using service.AppServices;
 using service.contract.DTOs.Subject;
 using service.contract.IAppServices;
 
@@ -16,10 +15,10 @@ namespace api.Controllers
 
         }
 
-        [HttpGet("GetRegisterSubject")]
-        public async Task<List<SubjectDTO>> GetRegisterSubject(Guid studentId)
+        [HttpGet("GetRegisterableSubjects")]
+        public async Task<List<SubjectDTO>> GetRegisterableSubjects()
         {
-            return (appCRUDService as ISubjectService).GetRegisterSubjects(studentId);
+            return await (appCRUDService as ISubjectService).GetRegisterableSubjects(this.GetUserId());
         }
     }
 }

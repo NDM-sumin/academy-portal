@@ -7,6 +7,7 @@ namespace service.contract.IAppServices
 {
     public interface IMajorService : IAppCRUDDefaultKeyService<MajorDTO, CreateMajorDTO, UpdateMajorDTO, Major>
     {
-        Task<SubjectDTO> GetSubjectByMajor(Guid majorId);
+        Task<List<SubjectDTO>> GetSubjectByMajor(Guid majorId);
+        Task<MajorDTO> GetMajorByCode(string code);
     }
 }
