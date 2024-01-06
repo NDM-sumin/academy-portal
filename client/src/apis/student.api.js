@@ -3,24 +3,24 @@ import { useAppContext } from "../hooks/context/app-bounding-context";
 const useStudentApi = () => {
 	const globalContext = useAppContext();
 	const axios = globalContext.axios;
-	const baseUrl = "odata/Student";
+	const baseUrl = "api/Student";
 	const create = (student) => {
-		return axios.post("api/Student", student);
+		return axios.post(baseUrl, student);
 	};
 	const update = (student) => {
-		return axios.put("api/Student", student);
+		return axios.put(baseUrl, student);
 	};
 	const get = (query) => {
-		return axios.get("api/Student", {
+		return axios.get(baseUrl, {
 			params: { $count: true, ...query, $expand: "Major" },
 		});
 	};
 	const del = (id) => {
-		return axios.delete(`api/Student/${id}`);
+		return axios.delete(`${baseUrl}/${id}`);
 	};
 
 	const importData = (file) => {
-		return axios.post("api/Student/Import", file, {
+		return axios.post(`${baseUrl}/Import`, file, {
 			headers: {
 				"Content-Type":
 					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

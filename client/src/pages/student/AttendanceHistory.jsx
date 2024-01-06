@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Select } from "antd";
 import useStudentApi from "../../apis/student.api";
+import useSemesterApi from "../../apis/semester.api";
+import useSubjectApi from "../../apis/subject.api";
 import useAuthApi from "../../apis/auth.api";
 const AttendanceHistory = () => {
 	const fakeAttendanceData = [
@@ -15,14 +17,18 @@ const AttendanceHistory = () => {
 		},
 	];
 	const studentApi = useStudentApi();
+	const semesterApi = useSemesterApi();
+	const subjectApi = useSubjectApi();
 	const authApi = useAuthApi();
 
 	const currentYear = new Date().getFullYear();
-	const [selectedYear, setSelectedYear] = useState(currentYear.toString());
-	const [selectedWeek, setSelectedWeek] = useState("");
+	const [selectedSemester, setselectedSemester] = useState("");
+	const [selectedSubject, setSelectedSubject] = useState("");
 	const [timetableData, setTimetableData] = useState([]);
-
-	const generateSemesterList = () => {};
+	const user = authApi.getCurrentUser();
+	const generateSemesterList = () => {
+		semesterApi.getSemesters(user.id);
+	};
 
 	const generateSubjectList = () => {};
 
@@ -34,12 +40,13 @@ const AttendanceHistory = () => {
 	};
 
 	useEffect(() => {
+		generateSemesterList();
 		fetchData();
-	}, [selectedYear]);
+	}, [selectedSemester]);
 
-	const handleYearChange = (value) => {};
+	const handleSemesterChange = (value) => {};
 
-	const handleWeekChange = (value) => {
+	const handleSubjectChange = (value) => {
 		fetchData(value);
 	};
 
@@ -60,12 +67,12 @@ const AttendanceHistory = () => {
 	return (
 		<div>
 			<Select
-				value
-				onChange
+				value={selectedSemester}
+				onChange={handleSemesterChange}
 				style={{ marginRight: 10, marginBottom: 10 }}
 			></Select>
 
-			<Select value onChange></Select>
+			<Select value={selectedSubject} onChange={handleSubjectChange}></Select>
 
 			<Table dataSource={fakeAttendanceData} columns={columns} />
 		</div>

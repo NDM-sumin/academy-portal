@@ -7,5 +7,7 @@ namespace repository.contract.IAppRepositories
     {
         StudentSemester GetCurrentSemester(Guid studentId);
         StudentSemester GetStudentSemester(Guid studentId, Guid semesterId);
+        List<Semester> GetSemesterByStudent(Guid studentId);
+
     }
 }

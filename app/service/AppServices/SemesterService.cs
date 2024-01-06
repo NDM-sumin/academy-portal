@@ -13,5 +13,10 @@ namespace service.AppServices
         {
             _semesterRepository = genericRepository;
         }
+
+        public List<Semester> GetSemesterByStudent(Guid studentId)
+        {
+            return _semesterRepository.GetSemesterByStudent(studentId);
+        }
     }
 }

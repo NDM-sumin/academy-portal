@@ -17,7 +17,7 @@ namespace service.AppServices
         public IMajorRepository _majorRepository;
         public IScoreRepository _scoreRepository;
 
-        public SubjectService(ISubjectRepository genericRepository,IScoreRepository scoreRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper) : base(genericRepository, mapper)
+        public SubjectService(ISubjectRepository genericRepository, IScoreRepository scoreRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper) : base(genericRepository, mapper)
         {
             _subjectRepository = genericRepository;
             _semesterRepository = semesterRepository;
@@ -32,10 +32,39 @@ namespace service.AppServices
 
             listSubject.AddRange((IEnumerable<SubjectDTO>)_scoreRepository.getOweSubject(studentId));
 
-            var semester = _semesterRepository.getCurrentSemester(studentId);
+            var semester = _semesterRepository.GetCurrentSemester(studentId);
             if (semester != null)
             {
-                var majorSubjects = _subjectRepository.GetMajorSubjects(semester.Id, major.Id);
+                var majorSubjects = _subjectRepository.GetMajorSubjects(semester.SemesterId, major.Id);
+                foreach (var item in majorSubjects)
+                {
+                    var subject = new SubjectDTO
+                    {
+                        Id = item.Subject.Id,
+                        SubjectName = item.Subject.SubjectName,
+                        SubjectCode = item.Subject.SubjectCode,
+                    };
+
+                    listSubject.Add(subject);
+                }
+            }
+            else
+            {
+                throw new ServerException(4000);
+            }
+
+            return listSubject;
+        }
+
+        public List<SubjectDTO> GetSubjects(Guid semesterId, Guid studentId)
+        {
+            List<SubjectDTO> listSubject = new();
+            var major = _majorRepository.GetMajorByStudent(studentId);
+
+            var semester = _semesterRepository.GetCurrentSemester(studentId);
+            if (semester != null)
+            {
+                var majorSubjects = _subjectRepository.GetMajorSubjects(semesterId, major.Id);
                 foreach (var item in majorSubjects)
                 {
                     var subject = new SubjectDTO
