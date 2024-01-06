@@ -34,7 +34,7 @@ const useStudentApi = () => {
 	};
 
 	const getSlots = () => {
-		return axios.get("api/Student/GetSlots");
+		return axios.get("api/Slot/GetAll");
 	};
 	return {
 		create,
