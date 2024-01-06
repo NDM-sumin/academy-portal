@@ -5,6 +5,7 @@ namespace repository.contract.IAppRepositories
 {
     public interface ISemesterRepository : IAppGenericDefaultKeyRepository<Semester>
     {
-        Semester getCurrentSemester(Guid studentId);
+        StudentSemester GetCurrentSemester(Guid studentId);
+        StudentSemester GetStudentSemester(Guid studentId, Guid semesterId);
     }
 }

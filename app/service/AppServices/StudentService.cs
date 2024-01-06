@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.Timetable;
@@ -17,18 +18,20 @@ namespace service.AppServices
     public class StudentService : AppCRUDDefaultKeyService<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>, IStudentService
     {
         readonly JwtConfiguration _jwtConfiguration;
-        private IStudentRepository _studentRepository;
-        private IMajorRepository _majorRepository;
-        private ISemesterRepository _semesterRepository;
-        private ISubjectRepository _subjectRepository;
-        private IRoomRepository _roomRepository;
-        public StudentService(IStudentRepository genericRepository, IRoomRepository roomRepository, ISubjectRepository subjectRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper, IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
+        private readonly IStudentRepository _studentRepository;
+        private readonly IMajorRepository _majorRepository;
+        private readonly ISemesterRepository _semesterRepository;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly IRoomRepository _roomRepository;
+        private readonly ITeacherRepository _teacherRepository;
+        public StudentService(IStudentRepository genericRepository,ITeacherRepository teacherRepository, IRoomRepository roomRepository, ISubjectRepository subjectRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper, IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
         {
             _studentRepository = genericRepository;
             _majorRepository = majorRepository;
             _semesterRepository = semesterRepository;
             _subjectRepository = subjectRepository;
             _roomRepository = roomRepository;
+            _teacherRepository = teacherRepository;
             _jwtConfiguration = jwtConfiguration.Value;
         }
 
@@ -80,22 +83,51 @@ namespace service.AppServices
 
         }
 
+        public async Task<AttendanceHistory> GetAttendances(Guid studentId, Guid semesterId, Guid subjectId)
+        {
+            AttendanceHistory attendanceHistory = new();
+            var studentSemester = _semesterRepository.GetStudentSemester(studentId,semesterId);
+            FeeDetail fee = await _studentRepository.GetFeeDetailBySubject(studentSemester.Id,subjectId);
+            attendanceHistory.Class = fee.Class;
+            attendanceHistory.Teacher = await _teacherRepository.GetTeacherByClass(fee.ClassId);
+            List<Attendance> list = fee.Attendances.ToList();
+            attendanceHistory.Attendances.AddRange(list);
+            return attendanceHistory;
+        }
+
         public async Task<List<TimeTableDTO>> GetTimeTable(Guid studentId)
         {
             List<TimeTableDTO> result = new();
 
-            var currentSemester = _semesterRepository.getCurrentSemester(studentId);
+            var currentSemester = _semesterRepository.GetCurrentSemester(studentId).Semester;
             var fees = await _studentRepository.GetFeeDetails(currentSemester.Id, studentId);
+
+            var year = currentSemester.CreatedAt.Year;
+            DateTime startOfTerm = new DateTime(year, currentSemester.StartMonth, currentSemester.StartDay);
+            if (currentSemester.StartMonth > currentSemester.EndMonth) { year++; }
+            DateTime endOfTerm = new DateTime(year, currentSemester.EndMonth, currentSemester.EndDay);
+
             foreach (var item in fees)
             {
                 TimeTableDTO timeTable = new();
                 timeTable.Subject = item.Subject;
+                timeTable.StartDate = startOfTerm;
+                timeTable.EndDate = endOfTerm;
                 timeTable.Room = await _roomRepository.Find(item.Attendances.FirstOrDefault().RoomId);
-                List<SlotTimeTableAtWeek> lists = await _studentRepository.GetSlotTimeTableAtWeeks(item.Id);
-                timeTable.AtWeek.AddRange(lists);
+                List<SlotTimeTableAtWeek> list = await _studentRepository.GetSlotTimeTableAtWeeks(item.Id,studentId);
+                timeTable.AtWeek.AddRange(list);
                 result.Add(timeTable);
             }
             return result;
+        }
+
+        public async Task<List<Slot>> GetSlots()
+        {
+           return await _studentRepository.GetSlots();
+        }
+        public async Task<List<Timetable>> GetTimetables()
+        {
+            return await _studentRepository.GetTimetables();
         }
     }
 }

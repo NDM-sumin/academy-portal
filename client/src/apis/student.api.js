@@ -1,5 +1,4 @@
 import { useAppContext } from "../hooks/context/app-bounding-context";
-import { USER_TOKEN_KEY } from "../utils/constants";
 
 const useStudentApi = () => {
 	const globalContext = useAppContext();
@@ -30,8 +29,11 @@ const useStudentApi = () => {
 	};
 
 	const getTimeTable = (studentId) => {
-		studentId = "9F130625-F329-4417-8B55-B1777022CE57";
 		return axios.get("api/Student/GetTimeTable?studentId=" + studentId);
+	};
+
+	const getSlots = () => {
+		return axios.get("api/Student/GetSlots");
 	};
 	return {
 		create,
@@ -40,6 +42,7 @@ const useStudentApi = () => {
 		del,
 		importData,
 		getTimeTable,
+		getSlots,
 	};
 };
 export default useStudentApi;

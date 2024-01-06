@@ -12,9 +12,14 @@ namespace repository.AppRepositories
         {
         }
 
-        public Semester getCurrentSemester(Guid studentId)
+        public StudentSemester GetCurrentSemester(Guid studentId)
         {
-            return Context.StudentSemesters.Include(ss => ss.Semester).FirstOrDefault(ss => ss.IsNow == true && ss.StudentId.Equals(studentId)).Semester;
+            return Context.StudentSemesters.Include(ss => ss.Semester).FirstOrDefault(ss => ss.IsNow == true && ss.StudentId.Equals(studentId));
         }
+        public StudentSemester GetStudentSemester(Guid studentId, Guid semesterId)
+        {
+            return Context.StudentSemesters.FirstOrDefault(ss => ss.SemesterId.Equals(semesterId) && ss.StudentId.Equals(studentId));
+        }
+
     }
 }

@@ -7,12 +7,18 @@ import {
 	startOfWeek as startOfWeek2,
 	endOfWeek as endOfWeek2,
 	isThisWeek,
+	startOfWeek,
+	addDays,
 } from "date-fns";
 import "./Timetable.css";
+
 import useStudentApi from "../../apis/student.api";
+import useAuthApi from "../../apis/auth.api";
 
 const Timetable = () => {
 	const studentApi = useStudentApi();
+	const authApi = useAuthApi();
+
 	const currentYear = new Date().getFullYear();
 	const [selectedYear, setSelectedYear] = useState(currentYear.toString());
 	const [selectedWeek, setSelectedWeek] = useState("");
@@ -27,12 +33,10 @@ const Timetable = () => {
 	};
 
 	const generateWeekList = () => {
-		const currentDate = new Date();
 		let currentWeek = null;
 
 		const weeks = [];
 		for (let i = 0; i < 52; i++) {
-			console.log(selectedYear);
 			const startOfWeek = startOfWeek2(
 				addWeeks(new Date(selectedYear, 0, 1), i)
 			);
@@ -45,104 +49,106 @@ const Timetable = () => {
 
 			weeks.push(weekLabel);
 
-			if (isThisWeek(currentDate, { startOfWeek, weekStartsOn: 1 })) {
+			if (isThisWeek(startOfWeek, { weekStartsOn: 1 })) {
 				currentWeek = weekLabel;
 			}
 		}
-
 		return currentWeek ? weeks : weeks.slice(0, 1);
 	};
 
-	const fetchData = async () => {
+	const fetchData = async (currentWeek) => {
 		try {
-			const response = await studentApi.getTimeTable();
+			const user = await authApi.getCurrentUser();
+			const response = await studentApi.getTimeTable(user.id);
+			const slots = await studentApi.getSlots();
 
-			if (Array.isArray(response)) {
-				const result = [
-					{ StartTime: "7h", EndTime: "8h30", SlotName: "Slot_1" },
-					{ StartTime: "8h40", EndTime: "10h10", SlotName: "Slot_2" },
-					{ StartTime: "10h20", EndTime: "11h50", SlotName: "Slot_3" },
-					{ StartTime: "12h30", EndTime: "14h", SlotName: "Slot_4" },
-					{ StartTime: "14h10", EndTime: "15h40", SlotName: "Slot_5" },
-					{ StartTime: "15h50", EndTime: "17h20", SlotName: "Slot_6" },
-				];
-				const atWeekArray = response.map((item) => item.atWeek);
-				const subject = response.map((item) => item.subject);
-				const timeTableArray = response.map((item) => item.timetable);
+			const result = slots.map((item) => ({
+				StartTime: item.startTime,
+				EndTime: item.endTime,
+				SlotName: "Slot_" + item.slotName,
+			}));
 
-				const formattedData = result.map((slot) => {
-					const timetableEntry = [];
+			const formattedData = result.map((slot) => {
+				const timetableEntry = [];
+				const slotData = {
+					SlotName:
+						slot.SlotName + " (" + `${slot.StartTime} - ${slot.EndTime}` + ")",
+				};
+				response.forEach((item) => {
+					const slotTimeTableAtWeeks = item.atWeek;
 
-					atWeekArray.forEach((item) => {
-						console.log(item);
-						const slotTime = item.map((item) => item.slot);
-
-						if (slotTime) {
-							const isSlotName = (element) => {
-								console.log(slotTime);
-								console.log("element: " + element.SlotName);
-								console.log("slotTime: " + slotTime[0].slotName);
-								return element.slotName === slotTime.slotName;
-							};
-							const resultIndex = result.findIndex(isSlotName);
-
-							timetableEntry.push({
-								index: resultIndex,
-								data: {
-									subject: item.subject,
-									room: item.room,
-									isAbsent: item.isAttendance === false,
-								},
-							});
-						}
-					});
-
-					return {
-						SlotName: slot,
-						monday:
-							timetableEntry && timeTableArray.weekDay === "Mon"
-								? subject.subjectName
-								: "-",
-						tuesday:
-							timetableEntry && timeTableArray.weekDay === "Tue"
-								? subject.subjectName
-								: "-",
-
-						wednesday:
-							timetableEntry && timeTableArray.weekDay === "Wed"
-								? subject.subjectName
-								: "-",
-
-						thursday:
-							timetableEntry && timeTableArray.weekDay === "Thu"
-								? subject.subjectName
-								: "-",
-						friday:
-							timetableEntry && timeTableArray.weekDay === "Fri"
-								? subject.subjectName
-								: "-",
-						saturday:
-							timetableEntry && timeTableArray.weekDay === "Sat"
-								? subject.subjectName
-								: "-",
-						sunday:
-							timetableEntry && timeTableArray.weekDay === "Sun"
-								? subject.subjectName
-								: "-",
-					};
+					if (slotTimeTableAtWeeks && Array.isArray(slotTimeTableAtWeeks)) {
+						slotTimeTableAtWeeks.forEach((slotTimeTable) => {
+							if (
+								"Slot_" + slotTimeTable.slot.slotName === slot.SlotName &&
+								isWithinCurrentSemester(
+									item.startDate,
+									item.endDate,
+									currentWeek
+								)
+							) {
+								const dayOfWeek = slotTimeTable.timetable.weekDay.toLowerCase();
+								slotData[dayOfWeek] = {
+									subjectName: item.subject.subjectName,
+									roomCode: item.room.roomCode,
+								};
+							}
+						});
+					}
 				});
-				setTimetableData(formattedData);
-			} else {
-				console.error("Invalid response format. Expected an array.");
-			}
+
+				return slotData;
+			});
+			setTimetableData(formattedData);
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
 		}
 	};
 
+	const isWithinCurrentSemester = (startDate, endDate, currentWeek) => {
+		const [start, end] = currentWeek.split(" To ");
+		const [startDay, startMonth] = start.split("/");
+		const [endDay, endMonth] = end.split("/");
+		var _startDate;
+		if (startMonth > endMonth) {
+			_startDate = new Date(selectedYear - 1, startMonth - 1, startDay);
+		} else {
+			_startDate = new Date(selectedYear, startMonth - 1, startDay);
+		}
+		const _endDate = new Date(selectedYear, endMonth - 1, endDay);
+		console.log(endDate);
+		if (_startDate >= new Date(startDate) && _endDate <= new Date(endDate)) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
 	useEffect(() => {
-		fetchData();
-		setSelectedWeek(generateWeekList()[0]);
+		const weeks = generateWeekList();
+
+		const currentDate = new Date();
+		var currentWeek;
+		for (let i = 0; i < weeks.length; i++) {
+			const [start, end] = weeks[i].split(" To ");
+			const [startDay, startMonth] = start.split("/");
+			const [endDay, endMonth] = end.split("/");
+			var startDate;
+			if (weeks[0]) {
+				startDate = new Date(selectedYear - 1, startMonth - 1, startDay);
+			} else {
+				startDate = new Date(selectedYear, startMonth - 1, startDay);
+			}
+			const endDate = new Date(selectedYear, endMonth - 1, endDay);
+
+			if (currentDate >= startDate && currentDate <= endDate) {
+				setSelectedWeek(weeks[i]);
+				currentWeek = weeks[i];
+				break;
+			}
+		}
+
+		fetchData(currentWeek);
 	}, [selectedYear]);
 
 	const handleYearChange = (value) => {
@@ -152,6 +158,7 @@ const Timetable = () => {
 
 	const handleWeekChange = (value) => {
 		setSelectedWeek(value);
+		fetchData(value);
 	};
 
 	const columns = [
@@ -160,70 +167,132 @@ const Timetable = () => {
 			dataIndex: "SlotName",
 			key: "SlotName",
 			align: "center",
-			render: (text) => (
-				<div>
-					{text.SlotName}
-					<br />
-					{text.StartTime}-{text.EndTime}
-				</div>
-			),
 		},
 		{
 			title: "MON",
-			dataIndex: "monday",
-			key: "monday",
+			dataIndex: "mon",
+			key: "mon",
 			align: "center",
-			render: (text, record, index) => {
-				console.log(text);
-				// Hiển thị văn bản đặc biệt ở ô đầu
-				if (index === 0) {
-					return <div>{text}</div>;
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
 				}
-
-				// Hiển thị văn bản đặc biệt ở ô cuối
-				if (index === timetableData.length - 1) {
-					return <div>{text}</div>;
-				}
-
-				// Các ô trung gian không có văn bản đặc biệt
-				return <div>{text}</div>;
+				return null;
 			},
 		},
 		{
 			title: "TUE",
-			dataIndex: "tuesday",
-			key: "tuesday",
+			dataIndex: "tue",
+			key: "tue",
 			align: "center",
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
+				}
+				return null;
+			},
 		},
 		{
 			title: "WED",
-			dataIndex: "wednesday",
-			key: "wednesday",
+			dataIndex: "wed",
+			key: "wed",
 			align: "center",
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
+				}
+				return null;
+			},
 		},
 		{
 			title: "THU",
-			dataIndex: "thursday",
-			key: "thursday",
+			dataIndex: "thu",
+			key: "thu",
 			align: "center",
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
+				}
+				return null;
+			},
 		},
 		{
 			title: "FRI",
-			dataIndex: "friday",
-			key: "friday",
+			dataIndex: "fri",
+			key: "fri",
 			align: "center",
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
+				}
+				return null;
+			},
 		},
 		{
 			title: "SAT",
-			dataIndex: "saturday",
-			key: "saturday",
+			dataIndex: "sat",
+			key: "sat",
 			align: "center",
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
+				}
+				return null;
+			},
 		},
 		{
 			title: "SUN",
-			dataIndex: "sunday",
-			key: "sunday",
+			dataIndex: "sun",
+			key: "sun",
 			align: "center",
+			render: (text) => {
+				if (text) {
+					return (
+						<div>
+							<a>{text.subjectName}</a>
+							<br />
+							tại phòng {text.roomCode}
+						</div>
+					);
+				}
+				return null;
+			},
 		},
 	];
 
@@ -259,11 +328,6 @@ const Timetable = () => {
 				onHeaderRow={() => {
 					return {
 						className: "timetable-header",
-					};
-				}}
-				onRow={() => {
-					return {
-						className: "timetable-row",
 					};
 				}}
 			/>

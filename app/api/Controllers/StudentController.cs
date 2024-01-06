@@ -2,6 +2,7 @@
 using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.Timetable;
@@ -39,5 +40,22 @@ namespace api.Controllers
             return await (appCRUDService as IStudentService).GetTimeTable(studentId);
         }
 
+        [HttpGet("GetAttendances")]
+        public async Task<AttendanceHistory> GetAttendances(Guid studentId,Guid semesterId,Guid subjectId)
+        {
+            return await (appCRUDService as IStudentService).GetAttendances(studentId, semesterId, subjectId);
+        }
+
+        [HttpGet("GetSlots")]
+        public async Task<List<Slot>> GetSlots()
+        {
+            return await (appCRUDService as IStudentService).GetSlots();
+        }
+
+        [HttpGet("GetTimetables")]
+        public async Task<List<Timetable>> GetTimetables()
+        {
+            return await (appCRUDService as IStudentService).GetTimetables();
+        }
     }
 }
