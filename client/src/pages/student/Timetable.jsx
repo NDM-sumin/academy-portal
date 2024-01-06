@@ -33,10 +33,12 @@ const Timetable = () => {
 	};
 
 	const generateWeekList = () => {
+		const currentDate = new Date();
 		let currentWeek = null;
 
 		const weeks = [];
 		for (let i = 0; i < 52; i++) {
+			console.log(selectedYear);
 			const startOfWeek = startOfWeek2(
 				addWeeks(new Date(selectedYear, 0, 1), i)
 			);
@@ -53,6 +55,7 @@ const Timetable = () => {
 				currentWeek = weekLabel;
 			}
 		}
+
 		return currentWeek ? weeks : weeks.slice(0, 1);
 	};
 
@@ -68,12 +71,12 @@ const Timetable = () => {
 				SlotName: "Slot_" + item.slotName,
 			}));
 
-			const formattedData = result.map((slot) => {
-				const timetableEntry = [];
+				const formattedData = result.map((slot) => {
+					const timetableEntry = [];
 				const slotData = {
 					SlotName:
 						slot.SlotName + " (" + `${slot.StartTime} - ${slot.EndTime}` + ")",
-				};
+							};
 				response.forEach((item) => {
 					const slotTimeTableAtWeeks = item.atWeek;
 
@@ -93,13 +96,16 @@ const Timetable = () => {
 									roomCode: item.room.roomCode,
 								};
 							}
-						});
-					}
-				});
+							});
+						}
+					});
 
 				return slotData;
-			});
-			setTimetableData(formattedData);
+				});
+				setTimetableData(formattedData);
+			} else {
+				console.error("Invalid response format. Expected an array.");
+			}
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
 		}
@@ -167,6 +173,13 @@ const Timetable = () => {
 			dataIndex: "SlotName",
 			key: "SlotName",
 			align: "center",
+			render: (text) => (
+				<div>
+					{text.SlotName}
+					<br />
+					{text.StartTime}-{text.EndTime}
+				</div>
+			),
 		},
 		{
 			title: "MON",
@@ -328,6 +341,11 @@ const Timetable = () => {
 				onHeaderRow={() => {
 					return {
 						className: "timetable-header",
+					};
+				}}
+				onRow={() => {
+					return {
+						className: "timetable-row",
 					};
 				}}
 			/>
