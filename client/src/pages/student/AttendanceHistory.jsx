@@ -1,6 +1,10 @@
-import React from "react";
-import { Table } from "antd";
-
+import React, { useState, useEffect } from "react";
+import { Table, Select } from "antd";
+import useStudentApi from "../../apis/student.api";
+import useSemesterApi from "../../apis/semester.api";
+import useSubjectApi from "../../apis/subject.api";
+import useAuthApi from "../../apis/auth.api";
+const AttendanceHistory = () => {
 const fakeAttendanceData = [
 	{
 		id: 1,
@@ -13,6 +17,39 @@ const fakeAttendanceData = [
 	},
 	// Add more fake data as needed
 ];
+	const studentApi = useStudentApi();
+	const semesterApi = useSemesterApi();
+	const subjectApi = useSubjectApi();
+	const authApi = useAuthApi();
+
+	const currentYear = new Date().getFullYear();
+	const [selectedSemester, setselectedSemester] = useState("");
+	const [selectedSubject, setSelectedSubject] = useState("");
+	const [timetableData, setTimetableData] = useState([]);
+	const user = authApi.getCurrentUser();
+	const generateSemesterList = () => {
+		semesterApi.getSemesters(user.id);
+	};
+
+	const generateSubjectList = () => {};
+
+	const fetchData = async (currentWeek) => {
+		try {
+		} catch (error) {
+			console.error("Error fetching timetable data", error);
+		}
+	};
+
+	useEffect(() => {
+		generateSemesterList();
+		fetchData();
+	}, [selectedSemester]);
+
+	const handleSemesterChange = (value) => {};
+
+	const handleSubjectChange = (value) => {
+		fetchData(value);
+	};
 
 const columns = [
 	{ title: "NO.", dataIndex: "id", key: "id" },
@@ -20,7 +57,7 @@ const columns = [
 	{ title: "SLOT", dataIndex: "slot", key: "slot" },
 	{ title: "ROOM", dataIndex: "room", key: "room" },
 	{ title: "LECTURER", dataIndex: "lecturer", key: "lecturer" },
-	{ title: "GROUP NAME", dataIndex: "groupName", key: "groupName" },
+		{ title: "CLASS", dataIndex: "class", key: "class" },
 	{
 		title: "ATTENDANCE STATUS",
 		dataIndex: "attendanceStatus",
@@ -31,6 +68,14 @@ const columns = [
 const AttendanceHistory = () => {
 	return (
 		<div>
+			<Select
+				value={selectedSemester}
+				onChange={handleSemesterChange}
+				style={{ marginRight: 10, marginBottom: 10 }}
+			></Select>
+
+			<Select value={selectedSubject} onChange={handleSubjectChange}></Select>
+
 			<Table dataSource={fakeAttendanceData} columns={columns} />
 		</div>
 	);

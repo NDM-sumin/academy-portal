@@ -21,3 +21,13 @@
 .timetable-header {
 	text-align: center;
 }
+.vertical-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.vertical-header div {
+	margin: 5px 0;
+}

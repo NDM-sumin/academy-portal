@@ -26,7 +26,10 @@ namespace api.Extensions
                 .AddScoped<IStudentSemesterRepository, StudentSemesterRepository>()
                 .AddScoped<IMajorSubjectRepository, MajorSubjectRepository>()
                 .AddScoped<IFeeDetailRepository, FeeDetailRepository>()
-
+                .AddScoped<ISlotRepository, SlotRepository>()
+                .AddScoped<ITimeTableRepository, TimeTableRepository>()
+                .AddScoped<ISlotTimeTableAtWeekRepository, SlotTimeTableAtWeekRepository>()
+                .AddScoped<IAttedanceRepository, AttendanceRepository>()
 
 
                 ;
@@ -48,6 +51,10 @@ namespace api.Extensions
                 .AddScoped<IFeeDetailService, FeeDetailService>()
                 .AddScoped<IMajorSubjectService, MajorSubjectService>()
                 .AddScoped<IStudentSemesterService, StudentSemesterService>()
+                .AddScoped<ISlotService, SlotService>()
+                .AddScoped<ITimeTableService, TimeTableService>()
+                .AddScoped<ISlotTimeTableAtWeekService, SlotTimeTableAtWeekService>()
+                .AddScoped<IAttendanceService, AttendanceService>()
 
                 .AddScoped<IEmailService>(impl =>
                 {

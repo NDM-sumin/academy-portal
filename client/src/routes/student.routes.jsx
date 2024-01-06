@@ -1,6 +1,8 @@
 import RegisterSubject from "../pages/student/registerSubject";
 import TimeTable from "../pages/student/Timetable";
 import Attendance from "../pages/student/AttendanceHistory";
+import ScoreHistory from "../pages/student/ScoreHistory";
+
 import LayoutPage from "../pages/index";
 
 export const STUDENT_ROUTES = [
@@ -26,6 +28,12 @@ export const STUDENT_ROUTES = [
 				path: "attendanceHistory",
 				title: "Lịch sử điểm danh",
 				element: <Attendance />,
+			},
+			{
+				inMenu: true,
+				path: "scoreHistory",
+				title: "Lịch sử điểm",
+				element: <ScoreHistory />,
 			},
 		],
 	},

@@ -5,5 +5,6 @@ namespace repository.contract.IAppRepositories
 {
     public interface IStudentSemesterRepository : IAppGenericDefaultKeyRepository<StudentSemester>
     {
+        Task<StudentSemester> Find(Guid semesterId, Guid studentId);
     }
 }

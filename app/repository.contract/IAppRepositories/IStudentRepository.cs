@@ -5,6 +5,5 @@ namespace repository.contract.IAppRepositories
 {
     public interface IStudentRepository : IAppGenericDefaultKeyRepository<Student>
     {
-
     }
 }

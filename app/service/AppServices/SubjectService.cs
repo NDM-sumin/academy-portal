@@ -9,21 +9,15 @@ namespace service.AppServices
 {
     public class SubjectService : AppCRUDDefaultKeyService<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>, ISubjectService
     {
-        readonly ISemesterService _semesterService;
-        readonly IFeeDetailService _feeDetailService;
-        readonly IStudentRepository _studentRepository;
+        readonly IStudentService studentService;
         readonly IMajorSubjectService majorSubjectService;
         public SubjectService(ISubjectRepository genericRepository,
-            ISemesterService semesterService,
             IMapper mapper,
-            IFeeDetailService feeDetailService,
-            IStudentRepository studentRepository,
+            IStudentService studentService,
             IMajorSubjectService majorSubjectService) : base(genericRepository, mapper)
 
         {
-            _semesterService = semesterService;
-            _feeDetailService = feeDetailService;
-            _studentRepository = studentRepository;
+            this.studentService = studentService;
             this.majorSubjectService = majorSubjectService;
         }
 
@@ -31,14 +25,14 @@ namespace service.AppServices
         public async Task<List<SubjectDTO>> GetRegisterableSubjects(Guid studentId)
         {
             var listSubject = new List<SubjectDTO>();
-            listSubject.AddRange(_feeDetailService.GetFailedSubjects(studentId));
+            listSubject.AddRange(studentService.GetFailedSubjects(studentId));
 
-            var student = await _studentRepository.Find(studentId);
+            var student = await studentService.Get(studentId);
 
-            var semester = _semesterService.GetCurrentSemester(studentId);
-            if (semester != null)
+            var studentSemester = studentService.GetCurrentSemester(studentId);
+            if (studentSemester != null)
             {
-                var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(semester.NextSemester.Id, student.Major.Id);
+                var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(studentSemester.Semester.NextSemester.Id, student.Major.Id);
                 var subjects = majorSubjects.Select(ms => ms.Subject);
                 listSubject.AddRange(subjects);
             }

@@ -7,6 +7,7 @@ namespace service.contract.IAppServices
 {
     public interface IFeeDetailService : IAppCRUDDefaultKeyService<FeeDetailDTO, CreateFeeDetailDTO, CreateFeeDetailDTO, FeeDetail>
     {
-        List<SubjectDTO> GetFailedSubjects(Guid studentId);
+        Task<List<FeeDetailDTO>> GetByStudent(Guid studentId, Guid semesterId);
+        Task<FeeDetailDTO> GetByStudentAndSubject(Guid semesterId, Guid studentId, Guid subjectId);
     }
 }

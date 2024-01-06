@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using domain;
 using domain.shared.AppSettings;
+using service.contract.DTOs;
 using service.contract.DTOs.Account;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.Class;
 using service.contract.DTOs.Email;
 using service.contract.DTOs.FeeDetail;
@@ -9,11 +11,14 @@ using service.contract.DTOs.Major;
 using service.contract.DTOs.MajorSubject;
 using service.contract.DTOs.Score;
 using service.contract.DTOs.Semester;
+using service.contract.DTOs.Slot;
+using service.contract.DTOs.SlotTimeTableAtWeek;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;
 using service.contract.DTOs.Subject;
 using service.contract.DTOs.Teacher;
 using service.contract.DTOs.VNPay;
+using service.contract.DTOs.Week;
 
 namespace service
 {
@@ -59,9 +64,15 @@ namespace service
 
             this.CreateMap<MailConfiguration, SmtpConfigModel>().ReverseMap();
 
-            this.CreateMap<PaymentTransaction, PaymentTransactionDto>().ReverseMap();   
-            this.CreateMap<MajorSubject, MajorSubjectDto>().ReverseMap();   
-            this.CreateMap<StudentSemester, StudentSemesterDto>().ReverseMap();   
+            this.CreateMap<PaymentTransaction, PaymentTransactionDto>().ReverseMap();
+            this.CreateMap<MajorSubject, MajorSubjectDto>().ReverseMap();
+            this.CreateMap<StudentSemester, StudentSemesterDto>().ReverseMap();
+
+            this.CreateMap<Slot, SlotDTO>().ReverseMap();
+            this.CreateMap<Attendance, AttendanceDTO>().ReverseMap();
+            this.CreateMap<SlotTimeTableAtWeek, SlotTimeTableAtWeekDTO>().ReverseMap();
+            this.CreateMap<Timetable, TimeTableDTO>().ReverseMap();
+            this.CreateMap<Week, WeekDTO>().ReverseMap();
 
         }
     }

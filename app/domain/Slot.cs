@@ -8,7 +8,7 @@
         }
         public string StartTime {  get; set; }
         public string EndTime { get; set; }
-        public string SlotName { get; set; } = null!;
+        public int SlotName { get; set; }
         public virtual ICollection<SlotTimeTableAtWeek> SlotTimeTableAtWeeks { get; set; }
     }
 }
