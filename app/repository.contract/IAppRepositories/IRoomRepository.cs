@@ -3,7 +3,7 @@ using repository.contract.IAppRepositories.Base;
 
 namespace repository.contract.IAppRepositories
 {
-    public interface ITeacherRepository : IAppGenericDefaultKeyRepository<Teacher>
+    public interface IRoomRepository : IAppGenericDefaultKeyRepository<Room>
     {
     }
 }

@@ -21,5 +21,11 @@ namespace api.Controllers
         {
             return (appCRUDService as ISubjectService).GetRegisterSubjects(studentId);
         }
+
+        [HttpGet("GetSubjects")]
+        public async Task<List<SubjectDTO>> GetSubjects(Guid semesterId, Guid studentId)
+        {
+            return (appCRUDService as ISubjectService).GetSubjects(semesterId, studentId);
+        }
     }
 }
