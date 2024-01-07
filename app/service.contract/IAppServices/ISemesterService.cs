@@ -6,6 +6,6 @@ namespace service.contract.IAppServices
 {
     public interface ISemesterService : IAppCRUDDefaultKeyService<SemesterDTO, CreateSemesterDTO, UpdateSemesterDTO, Semester>
     {
-        List<Semester> GetSemesterByStudent(Guid studentId);
+        //List<Semester> GetSemesterByStudent(Guid studentId);
     }
 }

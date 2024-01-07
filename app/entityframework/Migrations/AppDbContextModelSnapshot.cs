@@ -247,7 +247,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.HasIndex("MajorId", "SubjectId")
+                    b.HasIndex("MajorId", "SubjectId", "SemesterId")
                         .IsUnique();
 
                     b.ToTable("MajorSubjects");
@@ -522,6 +522,9 @@ namespace entityframework.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("money");
 
                     b.Property<string>("SubjectCode")
                         .IsRequired()

@@ -23,7 +23,12 @@ namespace api.Extensions
             builder.EntitySet<Student>(nameof(Student));
             builder.EntitySet<Subject>(nameof(Subject));
             builder.EntitySet<Score>(nameof(Score));
+            builder.EntitySet<Slot>(nameof(Slot));
+            builder.EntitySet<Semester>(nameof(Semester));
+            builder.EntitySet<Teacher>(nameof(Teacher));
+            builder.EntitySet<Class>(nameof(Class));
             builder.EntitySet<Major>(nameof(Major));
+            builder.EntitySet<Timetable>(nameof(Timetable));
             builder.EnableLowerCamelCase();
             return builder.GetEdmModel();
         }

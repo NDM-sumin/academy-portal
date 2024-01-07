@@ -1,7 +1,6 @@
 ﻿using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
-using service.AppServices;
 using service.contract.DTOs.Subject;
 using service.contract.IAppServices;
 
@@ -9,23 +8,32 @@ namespace api.Controllers
 {
     public class SubjectController : AppCRUDDefaultKeyWithOdataController<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>
     {
+        IStudentSemesterService studentSemesterService;
 
 
-        public SubjectController(ISubjectService appCRUDService) : base(appCRUDService)
+        public SubjectController(ISubjectService appCRUDService,
+        IStudentSemesterService studentSemesterService) : base(appCRUDService)
         {
+            this.studentSemesterService = studentSemesterService;
 
         }
 
-        [HttpGet("GetRegisterSubject")]
-        public async Task<List<SubjectDTO>> GetRegisterSubject(Guid studentId)
+        [HttpGet("GetRegisterableSubjects")]
+        public async Task<List<SubjectDTO>> GetRegisterableSubjects()
         {
-            return (appCRUDService as ISubjectService).GetRegisterSubjects(studentId);
+            return await (appCRUDService as ISubjectService).GetRegisterableSubjects(this.GetUserId());
         }
 
         [HttpGet("GetSubjects")]
         public async Task<List<SubjectDTO>> GetSubjects(Guid semesterId, Guid studentId)
         {
-            return (appCRUDService as ISubjectService).GetSubjects(semesterId, studentId);
+            return await studentSemesterService.GetSubjects(semesterId, studentId);
         }
+
+        //[HttpGet("GetSubjects")]
+        //public async Task<List<SubjectDTO>> GetSubjects(Guid semesterId, Guid studentId)
+        //{
+        //    return (appCRUDService as ISubjectService).GetSubjects(semesterId, studentId);
+        //}
     }
 }

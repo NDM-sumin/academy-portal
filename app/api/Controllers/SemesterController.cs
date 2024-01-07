@@ -16,10 +16,10 @@ namespace api.Controllers
 
         }
 
-        [HttpGet("GetSemesterByStudent")]
-        public async Task<List<Semester>> GetSemesterByStudent(Guid studentId)
-        {
-            return (appCRUDService as ISemesterService).GetSemesterByStudent(studentId);
-        }
+        //[HttpGet("GetSemesterByStudent")]
+        //public async Task<List<Semester>> GetSemesterByStudent(Guid studentId)
+        //{
+        //    return (appCRUDService as ISemesterService).GetSemesterByStudent(studentId);
+        //}
     }
 }

@@ -11,6 +11,31 @@ namespace api.Extensions
 {
     public static class DependencyInjectionExtensions
     {
+        public static IServiceCollection RegisterAppRepositories(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<IAccountRepository, AccountRepository>()
+                .AddScoped<IMajorRepository, MajorRepository>()
+                .AddScoped<IClassRepository, ClassRepository>()
+                .AddScoped<ISubjectRepository, SubjectRepository>()
+                .AddScoped<ITeacherRepository, TeacherRepository>()
+                .AddScoped<IStudentRepository, StudentRepository>()
+                .AddScoped<IScoreRepository, ScoreRepository>()
+                 .AddScoped<ISemesterRepository, SemesterRepository>()
+                .AddScoped<IRoomRepository, RoomRepository>()
+                .AddScoped<IStudentSemesterRepository, StudentSemesterRepository>()
+                .AddScoped<IMajorSubjectRepository, MajorSubjectRepository>()
+                .AddScoped<IFeeDetailRepository, FeeDetailRepository>()
+                .AddScoped<ISlotRepository, SlotRepository>()
+                .AddScoped<ITimeTableRepository, TimeTableRepository>()
+                .AddScoped<ISlotTimeTableAtWeekRepository, SlotTimeTableAtWeekRepository>()
+                .AddScoped<IAttedanceRepository, AttendanceRepository>()
+
+
+                ;
+
+        }
+
         public static IServiceCollection RegisterAppServices(this IServiceCollection services)
         {
 
@@ -23,23 +48,23 @@ namespace api.Extensions
                 .AddScoped<IStudentService, StudentService>()
                 .AddScoped<IScoreService, ScoreService>()
                 .AddScoped<ISemesterService, SemesterService>()
+                .AddScoped<IFeeDetailService, FeeDetailService>()
+                .AddScoped<IMajorSubjectService, MajorSubjectService>()
+                .AddScoped<IStudentSemesterService, StudentSemesterService>()
+                .AddScoped<ISlotService, SlotService>()
+                .AddScoped<ITimeTableService, TimeTableService>()
+                .AddScoped<ISlotTimeTableAtWeekService, SlotTimeTableAtWeekService>()
+                .AddScoped<IAttendanceService, AttendanceService>()
 
-                .AddScoped<IAccountRepository, AccountRepository>()
-                .AddScoped<IMajorRepository, MajorRepository>()
-                .AddScoped<IClassRepository, ClassRepository>()
-                .AddScoped<ISubjectRepository, SubjectRepository>()
-                .AddScoped<ITeacherRepository, TeacherRepository>()
-                .AddScoped<IStudentRepository, StudentRepository>()
-                .AddScoped<IScoreRepository, ScoreRepository>()
-                 .AddScoped<ISemesterRepository, SemesterRepository>()
-                .AddScoped<IRoomRepository, RoomRepository>()
                 .AddScoped<IEmailService>(impl =>
                 {
-                    var mapper = impl.GetService<IMapper>();
-                    var mailCOnfig = impl.GetService<IOptions<MailConfiguration>>();
+                    var mapper = impl.GetService<IMapper>()!;
+                    var mailCOnfig = impl.GetService<IOptions<MailConfiguration>>()!;
                     var smtpConfig = mapper.Map<SmtpConfigModel>(mailCOnfig.Value);
                     return new EmailService(smtpConfig);
                 })
+
+
 
                ;
         }

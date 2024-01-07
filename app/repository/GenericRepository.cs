@@ -54,5 +54,9 @@ namespace repository
             return Task.FromResult(Entities.AsQueryable());
         }
 
+        public async Task AddRange(List<TEntity> entities)
+        {
+            await Entities.AddRangeAsync(entities);
+        }
     }
 }

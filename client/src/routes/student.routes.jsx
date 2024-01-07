@@ -13,7 +13,7 @@ export const STUDENT_ROUTES = [
 		children: [
 			{
 				inMenu: true,
-				path: "registerSubject",
+				path: "register-subject",
 				title: "Đăng kí học phần",
 				element: <RegisterSubject />,
 			},

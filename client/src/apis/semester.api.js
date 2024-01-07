@@ -18,7 +18,7 @@ const useSemesterApi = () => {
 	};
 
 	const getSemesters = (studentId) => {
-		return axios.get(`${baseUrl}/GetSemesterByStudent?studentId=` + studentId);
+		return axios.get(`api/Student/${studentId}/Semesters`);
 	};
 	return {
 		create,

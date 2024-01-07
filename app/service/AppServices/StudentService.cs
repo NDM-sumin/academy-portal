@@ -8,46 +8,47 @@ using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
+using service.contract.DTOs.Major;
+using service.contract.DTOs.SlotTimeTableAtWeek;
 using service.contract.DTOs.Student;
+using service.contract.DTOs.StudentSemester;
+using service.contract.DTOs.Subject;
 using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
-using System.Dynamic;
 
 namespace service.AppServices
 {
     public class StudentService : AppCRUDDefaultKeyService<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>, IStudentService
     {
         readonly JwtConfiguration _jwtConfiguration;
-        private readonly IStudentRepository _studentRepository;
-        private readonly IMajorRepository _majorRepository;
-        private readonly ISemesterRepository _semesterRepository;
-        private readonly ISubjectRepository _subjectRepository;
-        private readonly IRoomRepository _roomRepository;
-        private readonly ITeacherRepository _teacherRepository;
-        public StudentService(IStudentRepository genericRepository,ITeacherRepository teacherRepository, IRoomRepository roomRepository, ISubjectRepository subjectRepository, ISemesterRepository semesterRepository, IMajorRepository majorRepository, IMapper mapper, IOptions<JwtConfiguration> jwtConfiguration) : base(genericRepository, mapper)
+        readonly IMajorService _majorService;
+        readonly ISlotTimeTableAtWeekService slotTimeTableAtWeekService;
+        readonly IFeeDetailService feeDetailService;
+        public StudentService(IStudentRepository genericRepository,
+            IMajorService majorService,
+            IMapper mapper,
+            IOptions<JwtConfiguration> jwtConfiguration,
+            ISlotTimeTableAtWeekService slotTimeTableAtWeekService,
+            IFeeDetailService feeDetailService) : base(genericRepository, mapper)
         {
-            _studentRepository = genericRepository;
-            _majorRepository = majorRepository;
-            _semesterRepository = semesterRepository;
-            _subjectRepository = subjectRepository;
-            _roomRepository = roomRepository;
-            _teacherRepository = teacherRepository;
+            _majorService = majorService;
             _jwtConfiguration = jwtConfiguration.Value;
+            this.slotTimeTableAtWeekService = slotTimeTableAtWeekService;
+            this.feeDetailService = feeDetailService;
         }
 
         public async Task ImportStudentsFromExcel(IFormFile file)
         {
-            var students = new List<Student>();
+            var studentDtos = new List<StudentDTO>();
 
             using (var stream = file.OpenReadStream())
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets[0];
-
                 for (int row = 2; row <= worksheet.Dimension.Rows; row++)
                 {
-
-                    var student = new Student
+                    MajorDTO major = await _majorService.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString());
+                    var student = new StudentDTO
                     {
                         Username = worksheet.Cells[row, 1].Value.ToString(),
                         FullName = worksheet.Cells[row, 2].Value.ToString(),
@@ -55,20 +56,27 @@ namespace service.AppServices
                         Dob = DateTime.Parse(worksheet.Cells[row, 4].Value.ToString()),
                         Gender = Convert.ToBoolean(worksheet.Cells[row, 5].Value),
                         Phone = worksheet.Cells[row, 6].Value.ToString(),
-                        MajorId = _majorRepository.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString()).Result.Id,
-                        Major = _majorRepository.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString()).Result
+                        MajorId = major.Id,
+                        Major = major
                     };
                     student.Id = Guid.NewGuid();
                     student.Password = Guid.NewGuid().ToString();
                     HashService hashService = new(student.Password, _jwtConfiguration.HashSalt);
                     student.Password = hashService.EncryptedPassword;
-                    students.Add(student);
+                    studentDtos.Add(student);
                 }
             }
-
-            await _studentRepository.AddRange(students);
+            var students = Mapper.Map<List<Student>>(studentDtos);
+            await base.Repository.AddRange(students);
         }
-
+        public StudentSemesterDto GetCurrentSemester(Guid studentId)
+        {
+            StudentSemester? data = base.Repository.Entities
+                .Find(studentId)
+                .StudentSemesters
+                .FirstOrDefault(s => s.IsNow == true);
+            return Mapper.Map<StudentSemesterDto>(data!);
+        }
         public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
         {
             entityDto.Id = Guid.NewGuid();
@@ -83,24 +91,13 @@ namespace service.AppServices
 
         }
 
-        public async Task<AttendanceHistory> GetAttendances(Guid studentId, Guid semesterId, Guid subjectId)
-        {
-            AttendanceHistory attendanceHistory = new();
-            var studentSemester = _semesterRepository.GetStudentSemester(studentId,semesterId);
-            FeeDetail fee = await _studentRepository.GetFeeDetailBySubject(studentSemester.Id,subjectId);
-            attendanceHistory.Class = fee.Class;
-            attendanceHistory.Teacher = await _teacherRepository.GetTeacherByClass(fee.ClassId);
-            List<Attendance> list = fee.Attendances.ToList();
-            attendanceHistory.Attendances.AddRange(list);
-            return attendanceHistory;
-        }
 
-        public async Task<List<TimeTableDTO>> GetTimeTable(Guid studentId)
+        public async Task<List<StudentTimetableDto>> GetTimeTable(Guid studentId)
         {
-            List<TimeTableDTO> result = new();
+            List<StudentTimetableDto> result = new();
 
-            var currentSemester = _semesterRepository.GetCurrentSemester(studentId).Semester;
-            var fees = await _studentRepository.GetFeeDetails(currentSemester.Id, studentId);
+            var currentSemester = GetCurrentSemester(studentId).Semester;
+            var fees = await feeDetailService.GetByStudent(studentId, currentSemester.Id);
 
             var year = currentSemester.CreatedAt.Year;
             DateTime startOfTerm = new DateTime(year, currentSemester.StartMonth, currentSemester.StartDay);
@@ -109,25 +106,27 @@ namespace service.AppServices
 
             foreach (var item in fees)
             {
-                TimeTableDTO timeTable = new();
-                timeTable.Subject = item.Subject;
-                timeTable.StartDate = startOfTerm;
-                timeTable.EndDate = endOfTerm;
-                timeTable.Room = await _roomRepository.Find(item.Attendances.FirstOrDefault().RoomId);
-                List<SlotTimeTableAtWeek> list = await _studentRepository.GetSlotTimeTableAtWeeks(item.Id,studentId);
+                StudentTimetableDto timeTable = new()
+                {
+                    Subject = item.Subject,
+                    StartDate = startOfTerm,
+                    EndDate = endOfTerm,
+                    Room = item.Attendances.FirstOrDefault().Room
+                };
+                List<SlotTimeTableAtWeekDTO> list = await slotTimeTableAtWeekService.GetSlotTimeTableAtWeeks(currentSemester);
                 timeTable.AtWeek.AddRange(list);
                 result.Add(timeTable);
             }
             return result;
         }
 
-        public async Task<List<Slot>> GetSlots()
+        public List<SubjectDTO> GetFailedSubjects(Guid studentId)
         {
-           return await _studentRepository.GetSlots();
-        }
-        public async Task<List<Timetable>> GetTimetables()
-        {
-            return await _studentRepository.GetTimetables();
+            var data = base.Repository.Entities.Find(studentId)
+                        .Scores.GroupBy(s => s.SubjectComponent.Subject)
+                        .Where(sj => sj.Sum(sc => sc.Value * sc.SubjectComponent.Weight) < 5)
+                        .Select(s => s.Key);
+            return Mapper.Map<IQueryable<SubjectDTO>>(data).ToList();
         }
     }
 }

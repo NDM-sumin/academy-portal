@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using service.contract.DTOs.Class;
+using service.contract.DTOs.Teacher;
 
 namespace service.contract.DTOs.Attendance
 {
     public class AttendanceHistory
     {
-        public List<domain.Attendance> Attendances { get; set; } = new List<domain.Attendance>();
-        public domain.Teacher? Teacher { get; set; }
-        public domain.Class? Class { get; set; }
+        public AttendanceHistory()
+        {
+            Attendances = new HashSet<AttendanceDTO>();
+        }
+        public ICollection<AttendanceDTO> Attendances { get; set; }
+        public TeacherDTO? Teacher { get; set; }
+        public ClassDTO? Class { get; set; }
 
     }
 }
