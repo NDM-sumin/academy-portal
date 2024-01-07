@@ -28,6 +28,7 @@ namespace repository
             {
                 foreach (var navigation in Context.Entry(data).Navigations)
                 {
+                    
                     await navigation.LoadAsync();
                 }
 

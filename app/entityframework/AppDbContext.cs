@@ -1,4 +1,6 @@
 ﻿using domain;
+using domain.shared.Extensions;
+using entityframework.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace entityframework
@@ -9,12 +11,11 @@ namespace entityframework
 
         public AppDbContext()
         {
-
         }
         public AppDbContext(DbContextOptions<AppDbContext> optionsBuilder) : base(optionsBuilder)
         {
-
         }
+
 
         public DbSet<Account> Accounts { get; set; } = null!;
         public DbSet<Student> Students { get; set; } = null!;
@@ -36,6 +37,7 @@ namespace entityframework
         public DbSet<Week> Weeks { get; set; } = null!;
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>().HasIndex(ra => ra.Username).IsUnique();
@@ -50,8 +52,9 @@ namespace entityframework
             modelBuilder.Entity<Semester>().HasOne<Semester>(s => s.PrevSemester).WithOne(s => s.NextSemester);
 
             modelBuilder.Entity<PaymentTransaction>().HasIndex(c => c.TxnRef).IsUnique();
-
+            
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

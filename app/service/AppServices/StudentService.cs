@@ -2,6 +2,7 @@
 using domain;
 using domain.shared.AppSettings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using repository.contract.IAppRepositories;
@@ -69,10 +70,13 @@ namespace service.AppServices
             var students = Mapper.Map<List<Student>>(studentDtos);
             await base.Repository.AddRange(students);
         }
-        public StudentSemesterDto GetCurrentSemester(Guid studentId)
+        public async Task<StudentSemesterDto> GetCurrentSemester(Guid studentId)
         {
-            StudentSemester? data = base.Repository.Entities
-                .Find(studentId)
+            StudentSemester? data = (await this.Repository.Entities
+                .Include(s => s.StudentSemesters)
+                .ThenInclude(s => s.Semester)
+                .ThenInclude(s => s.NextSemester)
+                .FirstOrDefaultAsync(s => s.Id == studentId))?
                 .StudentSemesters
                 .FirstOrDefault(s => s.IsNow == true);
             return Mapper.Map<StudentSemesterDto>(data!);
@@ -96,7 +100,7 @@ namespace service.AppServices
         {
             List<StudentTimetableDto> result = new();
 
-            var currentSemester = GetCurrentSemester(studentId).Semester;
+            var currentSemester = (await GetCurrentSemester(studentId)).Semester;
             var fees = await feeDetailService.GetByStudent(studentId, currentSemester.Id);
 
             var year = currentSemester.CreatedAt.Year;

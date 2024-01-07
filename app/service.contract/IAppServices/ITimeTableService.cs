@@ -1,7 +1,7 @@
 
 
 using domain;
-using service.contract.DTOs;
+using service.contract.DTOs.Timetable;
 using service.contract.IAppServices.Base;
 
 namespace service.contract.IAppServices

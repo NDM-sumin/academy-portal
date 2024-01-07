@@ -20,7 +20,7 @@ namespace service.contract.DTOs.SlotTimeTableAtWeek
         public Guid? WeekId { get; set; }
         public virtual SlotDTO Slot { get; set; } = null!;
         public virtual WeekDTO Week { get; set; } = null!;
-        public virtual StudentTimetableDto Timetable { get; set; } = null!;
+        public virtual TimeTableDTO Timetable { get; set; } = null!;
 
         public virtual ICollection<AttendanceDTO> Attendances { get; set; }
     }
