@@ -5,6 +5,8 @@ import { Form, Input, Radio, Select, message, DatePicker } from "antd";
 import useMajorApi from "../../apis/major.api";
 import useStudentApi from "../../apis/student.api";
 import dayjs from "dayjs";
+import ExportButton from "../../components/base/crud/search-bar/ExportButton";
+import ImportButton from "../../components/base/crud/search-bar/ImportButton";
 
 const Student = () => {
 	const [data, setData] = useState({ totalItems: 0, items: [] });
@@ -147,7 +149,10 @@ const Student = () => {
 			</Select>
 		</Form.Item>,
 	];
-
+	const additionButtons = [
+		<ExportButton />,
+		<ImportButton />
+	]
 	const form = {
 		instance: useForm()[0],
 		items: formItems,
@@ -164,7 +169,7 @@ const Student = () => {
 		form: form,
 	};
 
-	return <CRUDPage contextValue={contextValue} />;
+	return <CRUDPage contextValue={contextValue} additionButtons={additionButtons} />;
 };
 
 export default Student;

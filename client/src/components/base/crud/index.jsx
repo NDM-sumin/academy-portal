@@ -16,6 +16,7 @@ const CRUDPage = ({
 		reloadState,
 		form,
 	},
+	additionButtons
 }) => {
 	useEffect(() => {
 		reloadState[1](false);
@@ -41,7 +42,7 @@ const CRUDPage = ({
 			}}
 		>
 			<Space direction="vertical" style={{ width: "100%", height: "100%" }}>
-				<CRUDSearchBar />
+				<CRUDSearchBar additionButton={additionButtons} />
 				<CRUDModal />
 				<CRUDTable />
 			</Space>
