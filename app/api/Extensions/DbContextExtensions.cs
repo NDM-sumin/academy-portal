@@ -11,6 +11,7 @@ namespace api.Extensions
             return services.AddDbContext<T>((option) =>
             {
                 option.UseSqlServer(connectionString);
+                option.UseLazyLoadingProxies(true);
             });
         }
         public static IServiceCollection AddAppDefaultDbContext(this IServiceCollection services, IConfiguration configuration)

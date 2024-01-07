@@ -16,9 +16,9 @@
         public int EndDay { get; set; }
 
         public Guid? PrevSemesterId { get; set; }
-        public Semester? NextSemester { get; set; }
+        public virtual Semester? NextSemester { get; set; }
 
-        public Semester? PrevSemester { get; set; }
+        public virtual Semester? PrevSemester { get; set; }
 
 
         public virtual ICollection<StudentSemester> StudentSemesters { get; set; }

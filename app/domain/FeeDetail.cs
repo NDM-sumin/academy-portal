@@ -25,7 +25,7 @@ namespace domain
 
         public Guid StudentSemesterId { get; set; }
         [ForeignKey(nameof(StudentSemesterId))]
-        public StudentSemester StudentSemester { get; set; } = null!;
+        public virtual StudentSemester StudentSemester { get; set; } = null!;
 
         public virtual PaymentTransaction PaymentTransaction { get; set; } = null!;
     }

@@ -30,9 +30,6 @@ namespace service.AppServices
                 int currentWeek = totalDays / 7 + 1;
 
                 var result = await Repository.Entities
-                    .Include(staw => staw.Week)
-                    .Include(staw => staw.Timetable)
-                    .Include(staw => staw.Slot)
                     .Where(staw => staw.Week.WeekName.Equals(currentWeek)).ToListAsync();
                 return Mapper.Map<List<SlotTimeTableAtWeekDTO>>(result);
             }

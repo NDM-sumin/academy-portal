@@ -8,7 +8,7 @@ using service.contract.DTOs.Week;
 
 namespace service.contract.DTOs.SlotTimeTableAtWeek
 {
-    public class SlotTimeTableAtWeekDTO
+    public class SlotTimeTableAtWeekDTO : AppEntityDefaultKeyDTO
     {
         public SlotTimeTableAtWeekDTO()
         {
