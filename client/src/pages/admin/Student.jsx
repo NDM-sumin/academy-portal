@@ -55,7 +55,6 @@ const Student = () => {
 	const studentApi = useStudentApi();
 	const majorApi = useMajorApi();
 	const get = (query) => {
-		console.log(data.items);
 		return studentApi.get(query).then((response) => {
 			return Promise.resolve({
 				totalItems: response.totalItems,
