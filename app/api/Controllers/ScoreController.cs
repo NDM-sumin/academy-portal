@@ -5,7 +5,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class ScoreController : AppCRUDDefaultKeyWithOdataController<ScoreDTO, CreateScoreDTO, UpdateScoreDTO, Score>
+    public class ScoreController : AppCRUDDefaultKeyController<ScoreDTO, CreateScoreDTO, UpdateScoreDTO, Score>
     {
 
 

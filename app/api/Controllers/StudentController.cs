@@ -13,7 +13,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class StudentController : AppCRUDDefaultKeyWithOdataController<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>
+    public class StudentController : AppCRUDDefaultKeyController<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>
     {
         readonly IAttendanceService attendanceService;
         readonly IFeeDetailService feeDetailService;

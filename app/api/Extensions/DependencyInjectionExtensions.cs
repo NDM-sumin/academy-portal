@@ -57,6 +57,7 @@ namespace api.Extensions
                 .AddScoped<ITimeTableService, TimeTableService>()
                 .AddScoped<ISlotTimeTableAtWeekService, SlotTimeTableAtWeekService>()
                 .AddScoped<IAttendanceService, AttendanceService>()
+                .AddScoped<IRoomService, RoomService>()
 
                 .AddScoped<IEmailService>(impl =>
                 {

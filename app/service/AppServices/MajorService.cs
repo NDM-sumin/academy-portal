@@ -15,6 +15,7 @@ namespace service.AppServices
         {
         }
 
+
         public Task<MajorDTO> GetMajorByCode(string code)
         {
             return Task.FromResult(Mapper.Map<MajorDTO>(Repository.Entities.FirstOrDefault(m => m.MajorCode.Equals(code))));

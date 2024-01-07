@@ -12,7 +12,7 @@ const useStudentApi = () => {
 	};
 	const get = (query) => {
 		return axios.get(baseUrl, {
-			params: { $count: true, ...query, $expand: "Major" },
+			params: { ...query },
 		});
 	};
 	const del = (id) => {
@@ -20,10 +20,12 @@ const useStudentApi = () => {
 	};
 
 	const importData = (file) => {
-		return axios.post(`${baseUrl}/Import`, file, {
+		const formData = new FormData()
+		formData.append('formFile', file)
+		return axios.post(`${baseUrl}/Import`, formData, {
 			headers: {
 				"Content-Type":
-					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"multipart/form-data",
 			},
 		});
 	};

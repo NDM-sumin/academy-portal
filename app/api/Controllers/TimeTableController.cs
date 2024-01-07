@@ -8,7 +8,7 @@ using service.contract.IAppServices.Base;
 
 namespace api.Controllers
 {
-    public class TimeTableController : AppCRUDDefaultKeyWithOdataController<TimeTableDTO, TimeTableDTO, TimeTableDTO, Timetable>
+    public class TimeTableController : AppCRUDDefaultKeyController<TimeTableDTO, TimeTableDTO, TimeTableDTO, Timetable>
     {
         public TimeTableController(ITimeTableService appCRUDService) : base(appCRUDService)
         {

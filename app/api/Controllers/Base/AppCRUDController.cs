@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using service.contract.DTOs;
 using service.contract.IAppServices.Base;
+using System.Linq;
 
 namespace api.Controllers.Base
 {
@@ -18,9 +21,21 @@ namespace api.Controllers.Base
         }
 
         [HttpGet]
-        public virtual async Task<IActionResult> Get()
+        public virtual async Task<IActionResult> Get(int skip, int? top)
         {
-            return Ok(await appCRUDService.GetAll());
+            IMapper mapper = this.Request.HttpContext.RequestServices.GetService<IMapper>()!;
+            var queryable = await appCRUDService.GetQueryable();
+            var data = queryable.Skip(skip);
+            if (top.HasValue)
+            {
+                data = data.Take(top.Value);
+            }
+            PageResponse<TEntityDto> response = new PageResponse<TEntityDto>()
+            {
+                TotalItems = queryable.Count(),
+                Items = mapper.Map<IEnumerable<TEntityDto>>(data.AsEnumerable())
+            };
+            return Ok(response);
         }
 
         [HttpPost]

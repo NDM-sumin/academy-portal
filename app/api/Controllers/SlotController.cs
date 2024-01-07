@@ -7,7 +7,7 @@ using service.contract.IAppServices.Base;
 
 namespace api.Controllers
 {
-    public class SlotController : AppCRUDDefaultKeyWithOdataController<SlotDTO, SlotDTO, SlotDTO, Slot>
+    public class SlotController : AppCRUDDefaultKeyController<SlotDTO, SlotDTO, SlotDTO, Slot>
     {
         public SlotController(ISlotService appCRUDService) : base(appCRUDService)
         {

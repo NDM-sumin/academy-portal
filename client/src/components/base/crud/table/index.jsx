@@ -18,13 +18,13 @@ const CRUDTable = () => {
         dataSource={context.dataState[0].items}
         key={"id"}
         pagination={{
-            current: (context.queryState[0].$skip ?? 0 / context.queryState[0].$top ?? 50) + 1,
-            pageSize: context.queryState[0].$top ?? 50,
+            current: (context.queryState[0].skip ?? 0 / context.queryState[0].top ?? 50) + 1,
+            pageSize: context.queryState[0].top ?? 50,
             onChange: (page, pageSize) => {
                 context.queryState[1]({
                     ...context.queryState[0],
-                    $skip: (page - 1) * pageSize,
-                    $top: pageSize
+                    skip: (page - 1) * pageSize,
+                    top: pageSize
                 })
                 context.reloadState[1](true);
             }

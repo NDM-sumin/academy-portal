@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { Form, Input, message, Button, Select } from "antd";
 import useStudentApi from "../../apis/student.api";
+import useSubjectApi from "../../apis/subject.api";
 
 const RegisterSubject = () => {
 	const [form] = useForm();
-	const [loading, setLoading] = useState(false);
-	const studentApi = useStudentApi();
 
+	const subjectApi = useSubjectApi();
+	const [loading, setLoading] = useState(false);
+	const [subjects, setSubjects] = useState([]);
+
+
+	useEffect(() => {
+		subjectApi.getRegisterableSubjects().then(response => {
+			console.log(response);
+			setSubjects(response)
+		});
+	},[])
 	const handleSubmit = async (values) => {
 		try {
 			setLoading(true);

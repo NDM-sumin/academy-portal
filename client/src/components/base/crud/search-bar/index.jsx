@@ -5,13 +5,15 @@ import CreateButton from "./CreateButton";
 import ExportButton from "./ExportButton";
 import ImportButton from "./ImportButton";
 
-const CRUDSearchBar = () => {
+const CRUDSearchBar = ({ additionButton }) => {
 	return (
 		<Space>
 			<ReloadButton />
 			<CreateButton />
-			<ExportButton />
-			<ImportButton />
+			
+			{
+				...additionButton ?? []
+			}
 		</Space>
 	);
 };

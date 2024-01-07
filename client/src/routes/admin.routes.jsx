@@ -5,6 +5,7 @@ import Teacher from "../pages/admin/Teacher";
 import Student from "../pages/admin/Student";
 import LayoutPage from "../pages/index";
 import Semester from "../pages/admin/Semester";
+import Class from "../pages/admin/Class";
 
 export const ADMIN_ROUTES = [
 	{
@@ -28,7 +29,7 @@ export const ADMIN_ROUTES = [
 				inMenu: true,
 				path: "room",
 				title: "Quản lý phòng",
-				element: <Room />,
+				element: <Room />
 			},
 			{
 				inMenu: true,
@@ -47,6 +48,19 @@ export const ADMIN_ROUTES = [
 				path: "teachers",
 				title: "Quản lý giảng viên",
 				element: <Teacher />,
+				// children: [
+				// 	{
+				// 		inMenu: true,
+				// 		path: "add",
+				// 		title: "Thêm giảng viên",
+				// 	},
+				// ],
+			},
+			{
+				inMenu: true,
+				path: "classes",
+				title: "Quản lý lớp học",
+				element: <Class />,
 				// children: [
 				// 	{
 				// 		inMenu: true,

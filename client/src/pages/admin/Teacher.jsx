@@ -8,8 +8,8 @@ import dayjs from "dayjs";
 const Teacher = () => {
 	const [data, setData] = useState({ totalItems: 0, items: [] });
 	const [query, setQuery] = useState({
-		$skip: 0,
-		$top: 50,
+		skip: 0,
+		top: 50,
 	});
 	const [modalProps, setModalProps] = useState({
 		open: false,

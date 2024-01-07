@@ -7,7 +7,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class MajorController : AppCRUDDefaultKeyWithOdataController<MajorDTO, CreateMajorDTO, UpdateMajorDTO, Major>
+    public class MajorController : AppCRUDDefaultKeyController<MajorDTO, CreateMajorDTO, UpdateMajorDTO, Major>
     {
 
 

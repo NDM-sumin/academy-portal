@@ -60,6 +60,7 @@ const Timetable = () => {
 
 	const fetchData = async (currentWeek) => {
 		try {
+			console.log(authApi.getCurrentUser());
 			const user = await authApi.getCurrentUser();
 			const response = await studentApi.getTimeTable(user.id);
 			const slots = await studentApi.getSlots();
@@ -75,6 +76,7 @@ const Timetable = () => {
 					SlotName:
 						slot.SlotName + " (" + `${slot.StartTime} - ${slot.EndTime}` + ")",
 				};
+
 				response.forEach((item) => {
 					const slotTimeTableAtWeeks = item.atWeek;
 

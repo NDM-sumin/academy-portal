@@ -130,8 +130,8 @@ namespace service.AppServices
             var data = base.Repository.Entities.Find(studentId)
                         .Scores.GroupBy(s => s.SubjectComponent.Subject)
                         .Where(sj => sj.Sum(sc => sc.Value * sc.SubjectComponent.Weight) < 5)
-                        .Select(s => s.Key);
-            return Mapper.Map<IQueryable<SubjectDTO>>(data).ToList();
+                        .Select(s => s.Key).ToList();
+            return Mapper.Map<List<SubjectDTO>>(data);
         }
 
         public async Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId)

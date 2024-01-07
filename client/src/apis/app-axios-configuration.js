@@ -32,9 +32,11 @@ const useAxios = (setLoading) => {
         withCredentials: true,
     });
     _axios.interceptors.request.use((config) => {
+        console.log(config);
         const token = JSON.parse(localStorage.getItem(USER_TOKEN_KEY) ?? JSON.stringify({}))?.token;
         config.headers.Authorization = `${AUTH_SCHEME} ${token}`;
-        config.headers['Content-Type'] = 'application/json'
+        if (!config.headers[`Content-Type`])
+            config.headers['Content-Type'] = 'application/json'
         setLoading(true);
         return config;
     });

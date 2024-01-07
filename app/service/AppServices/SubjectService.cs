@@ -20,6 +20,7 @@ namespace service.AppServices
             this.majorSubjectService = majorSubjectService;
         }
 
+      
 
         public async Task<List<SubjectDTO>> GetRegisterableSubjects(Guid studentId)
         {
@@ -31,7 +32,7 @@ namespace service.AppServices
             var studentSemester = await studentService.GetCurrentSemester(studentId);
             if (studentSemester != null)
             {
-                var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(studentSemester.Semester.NextSemester.Id, student.Major.Id);
+                var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(student.Major.Id, studentSemester.Semester.NextSemester.Id);
                 var subjects = majorSubjects.Select(ms => ms.Subject);
                 listSubject.AddRange(subjects);
             }
