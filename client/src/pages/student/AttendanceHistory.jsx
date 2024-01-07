@@ -16,7 +16,6 @@ const AttendanceHistory = () => {
 			groupName: "PC1806.P1",
 			attendanceStatus: "Present",
 		},
-		// Add more fake data as needed
 	];
 	const studentApi = useStudentApi();
 	const semesterApi = useSemesterApi();
@@ -42,7 +41,8 @@ const AttendanceHistory = () => {
 	const generateSemesterList = async () => {
 		try {
 			const userId = await getUser();
-			const semesters = await semesterApi.getSemesters(userId);
+			const semesters = await studentApi.getSemesters(userId);
+			console.log(semesters);
 			return semesters;
 		} catch (error) {
 			console.error("Error fetching semesters", error);
@@ -52,7 +52,6 @@ const AttendanceHistory = () => {
 
 	const fetchData = async (currentWeek) => {
 		try {
-			// Implement fetching data as needed
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
 		}
@@ -61,7 +60,6 @@ const AttendanceHistory = () => {
 	useEffect(() => {
 		const fetchAndSetSemesters = async () => {
 			const semesters = await generateSemesterList();
-			console.log(semesters);
 			setSemesterData(semesters);
 		};
 
@@ -70,12 +68,10 @@ const AttendanceHistory = () => {
 
 	const handleSemesterChange = (value) => {
 		setSelectedSemester(value);
-		// Implement logic for handling semester change
 	};
 
 	const handleSubjectChange = (value) => {
 		setSelectedSubject(value);
-		// Implement logic for handling subject change
 	};
 
 	const columns = [
@@ -109,9 +105,7 @@ const AttendanceHistory = () => {
 				))}
 			</Select>
 
-			<Select value={selectedSubject} onChange={handleSubjectChange}>
-				{/* Implement rendering of subject options */}
-			</Select>
+			<Select value={selectedSubject} onChange={handleSubjectChange}></Select>
 
 			<Table dataSource={fakeAttendanceData} columns={columns} />
 		</div>

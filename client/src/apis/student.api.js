@@ -36,6 +36,9 @@ const useStudentApi = () => {
 	const getSlots = () => {
 		return axios.get("api/Slot/GetAll");
 	};
+	const getSemesters = (studentId) => {
+		return axios.get(`${baseUrl}/${studentId}/Semesters`);
+	};
 	return {
 		create,
 		update,
@@ -44,6 +47,7 @@ const useStudentApi = () => {
 		importData,
 		getTimeTable,
 		getSlots,
+		getSemesters,
 	};
 };
 export default useStudentApi;

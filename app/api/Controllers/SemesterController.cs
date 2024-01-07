@@ -2,6 +2,7 @@
 using domain;
 using Microsoft.AspNetCore.Mvc;
 using service.contract.DTOs.Semester;
+using service.contract.DTOs.StudentSemester;
 using service.contract.DTOs.Subject;
 using service.contract.IAppServices;
 
@@ -16,10 +17,5 @@ namespace api.Controllers
 
         }
 
-        //[HttpGet("GetSemesterByStudent")]
-        //public async Task<List<Semester>> GetSemesterByStudent(Guid studentId)
-        //{
-        //    return (appCRUDService as ISemesterService).GetSemesterByStudent(studentId);
-        //}
     }
 }
