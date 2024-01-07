@@ -16,7 +16,7 @@ namespace service.AppServices
 
         public List<Semester> GetSemesterByStudent(Guid studentId)
         {
-            return _semesterRepository.GetSemesterByStudent(studentId);
+            return _semesterRepository.GetSemesterByStudent(studentId).Select(ss => ss.Semester).ToList();
         }
     }
 }

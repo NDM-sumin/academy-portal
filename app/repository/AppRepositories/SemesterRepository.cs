@@ -20,9 +20,9 @@ namespace repository.AppRepositories
         {
             return Context.StudentSemesters.FirstOrDefault(ss => ss.SemesterId.Equals(semesterId) && ss.StudentId.Equals(studentId));
         }
-        public List<Semester> GetSemesterByStudent(Guid studentId)
+        public List<StudentSemester> GetSemesterByStudent(Guid studentId)
         {
-            return Context.StudentSemesters.Where(ss => ss.StudentId.Equals(studentId)).Select(ss => ss.Semester).ToList();
+            return Context.StudentSemesters.Include(ss => ss.Semester).Where(ss => ss.StudentId.Equals(studentId)).ToList();
         }
     }
 }

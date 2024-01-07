@@ -4,77 +4,114 @@ import useStudentApi from "../../apis/student.api";
 import useSemesterApi from "../../apis/semester.api";
 import useSubjectApi from "../../apis/subject.api";
 import useAuthApi from "../../apis/auth.api";
+
 const AttendanceHistory = () => {
-const fakeAttendanceData = [
-	{
-		id: 1,
-		date: "2023-09-05",
-		slot: "4_(12:50-14:20)",
-		room: "R01",
-		lecturer: "HuongKT",
-		groupName: "PC1806.P1",
-		attendanceStatus: "Present",
-	},
-	// Add more fake data as needed
-];
+	const fakeAttendanceData = [
+		{
+			id: 1,
+			date: "2023-09-05",
+			slot: "4_(12:50-14:20)",
+			room: "R01",
+			lecturer: "HuongKT",
+			groupName: "PC1806.P1",
+			attendanceStatus: "Present",
+		},
+		// Add more fake data as needed
+	];
 	const studentApi = useStudentApi();
 	const semesterApi = useSemesterApi();
 	const subjectApi = useSubjectApi();
 	const authApi = useAuthApi();
 
-	const currentYear = new Date().getFullYear();
-	const [selectedSemester, setselectedSemester] = useState("");
+	const [selectedSemester, setSelectedSemester] = useState("");
 	const [selectedSubject, setSelectedSubject] = useState("");
-	const [timetableData, setTimetableData] = useState([]);
-	const user = authApi.getCurrentUser();
-	const generateSemesterList = () => {
-		semesterApi.getSemesters(user.id);
+	const [semesterData, setSemesterData] = useState([]);
+	const [userId, setUserId] = useState(null);
+
+	const getUser = async () => {
+		try {
+			const user = await authApi.getCurrentUser();
+			setUserId(user.id);
+			return user.id;
+		} catch (error) {
+			console.error("Error getting user", error);
+			return null;
+		}
 	};
 
-	const generateSubjectList = () => {};
+	const generateSemesterList = async () => {
+		try {
+			const userId = await getUser();
+			const semesters = await semesterApi.getSemesters(userId);
+			return semesters;
+		} catch (error) {
+			console.error("Error fetching semesters", error);
+			return [];
+		}
+	};
 
 	const fetchData = async (currentWeek) => {
 		try {
+			// Implement fetching data as needed
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
 		}
 	};
 
 	useEffect(() => {
-		generateSemesterList();
-		fetchData();
-	}, [selectedSemester]);
+		const fetchAndSetSemesters = async () => {
+			const semesters = await generateSemesterList();
+			console.log(semesters);
+			setSemesterData(semesters);
+		};
 
-	const handleSemesterChange = (value) => {};
+		fetchAndSetSemesters();
+	}, [userId]);
 
-	const handleSubjectChange = (value) => {
-		fetchData(value);
+	const handleSemesterChange = (value) => {
+		setSelectedSemester(value);
+		// Implement logic for handling semester change
 	};
 
-const columns = [
-	{ title: "NO.", dataIndex: "id", key: "id" },
-	{ title: "DATE", dataIndex: "date", key: "date" },
-	{ title: "SLOT", dataIndex: "slot", key: "slot" },
-	{ title: "ROOM", dataIndex: "room", key: "room" },
-	{ title: "LECTURER", dataIndex: "lecturer", key: "lecturer" },
-		{ title: "CLASS", dataIndex: "class", key: "class" },
-	{
-		title: "ATTENDANCE STATUS",
-		dataIndex: "attendanceStatus",
-		key: "attendanceStatus",
-	},
-];
+	const handleSubjectChange = (value) => {
+		setSelectedSubject(value);
+		// Implement logic for handling subject change
+	};
 
-const AttendanceHistory = () => {
+	const columns = [
+		{ title: "NO.", dataIndex: "id", key: "id" },
+		{ title: "DATE", dataIndex: "date", key: "date" },
+		{ title: "SLOT", dataIndex: "slot", key: "slot" },
+		{ title: "ROOM", dataIndex: "room", key: "room" },
+		{ title: "LECTURER", dataIndex: "lecturer", key: "lecturer" },
+		{ title: "CLASS", dataIndex: "class", key: "class" },
+		{
+			title: "ATTENDANCE STATUS",
+			dataIndex: "attendanceStatus",
+			key: "attendanceStatus",
+		},
+	];
+
 	return (
 		<div>
 			<Select
 				value={selectedSemester}
 				onChange={handleSemesterChange}
 				style={{ marginRight: 10, marginBottom: 10 }}
-			></Select>
+			>
+				{semesterData.map((semester) => (
+					<Select.Option
+						key={semester.semesterId}
+						value={semester.semesterName}
+					>
+						{semester.semesterName}
+					</Select.Option>
+				))}
+			</Select>
 
-			<Select value={selectedSubject} onChange={handleSubjectChange}></Select>
+			<Select value={selectedSubject} onChange={handleSubjectChange}>
+				{/* Implement rendering of subject options */}
+			</Select>
 
 			<Table dataSource={fakeAttendanceData} columns={columns} />
 		</div>
