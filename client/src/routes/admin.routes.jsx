@@ -28,6 +28,7 @@ export const ADMIN_ROUTES = [
 				inMenu: true,
 				path: "room",
 				title: "Quản lý phòng",
+				element: <Room />
 			},
 			{
 				inMenu: true,
