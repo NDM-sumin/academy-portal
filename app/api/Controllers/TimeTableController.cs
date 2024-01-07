@@ -1,8 +1,8 @@
 using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
-using service.contract.DTOs;
 using service.contract.DTOs.Slot;
+using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
 using service.contract.IAppServices.Base;
 

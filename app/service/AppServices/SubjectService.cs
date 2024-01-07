@@ -28,7 +28,7 @@ namespace service.AppServices
 
             var student = await studentService.Get(studentId);
 
-            var studentSemester = studentService.GetCurrentSemester(studentId);
+            var studentSemester = await studentService.GetCurrentSemester(studentId);
             if (studentSemester != null)
             {
                 var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(studentSemester.Semester.NextSemester.Id, student.Major.Id);

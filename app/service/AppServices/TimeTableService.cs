@@ -4,7 +4,7 @@ using AutoMapper;
 using domain;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
-using service.contract.DTOs;
+using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
 
 namespace service.AppServices

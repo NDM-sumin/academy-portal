@@ -18,7 +18,11 @@ namespace service.AppServices
 
         public async Task<List<FeeDetailDTO>> GetByStudent(Guid studentId, Guid semesterId)
         {
-            var result = await base.Repository.Entities.Where(fd => fd.StudentSemester.SemesterId == semesterId && fd.StudentSemester.StudentId == studentId).ToListAsync();
+            var result = await base.Repository.Entities
+                .Include(c => c.Attendances)
+                .ThenInclude(c => c.Room)
+                .Include(c => c.Subject)
+                .Where(fd => fd.StudentSemester.SemesterId == semesterId && fd.StudentSemester.StudentId == studentId).ToListAsync();
             return Mapper.Map<List<FeeDetailDTO>>(result);
 
         }

@@ -2,7 +2,6 @@
 using domain;
 using Microsoft.AspNetCore.Mvc;
 using service.contract.DTOs.Semester;
-using service.contract.DTOs.StudentSemester;
 using service.contract.DTOs.Subject;
 using service.contract.IAppServices;
 

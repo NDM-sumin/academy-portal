@@ -52,6 +52,7 @@ const AttendanceHistory = () => {
 
 	const fetchData = async (currentWeek) => {
 		try {
+			// Implement fetching data as needed
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
 		}
@@ -105,7 +106,9 @@ const AttendanceHistory = () => {
 				))}
 			</Select>
 
-			<Select value={selectedSubject} onChange={handleSubjectChange}></Select>
+			<Select value={selectedSubject} onChange={handleSubjectChange}>
+				{/* Implement rendering of subject options */}
+			</Select>
 
 			<Table dataSource={fakeAttendanceData} columns={columns} />
 		</div>
