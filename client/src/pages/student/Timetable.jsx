@@ -38,7 +38,6 @@ const Timetable = () => {
 
 		const weeks = [];
 		for (let i = 0; i < 52; i++) {
-			console.log(selectedYear);
 			const startOfWeek = startOfWeek2(
 				addWeeks(new Date(selectedYear, 0, 1), i)
 			);
@@ -61,6 +60,7 @@ const Timetable = () => {
 
 	const fetchData = async (currentWeek) => {
 		try {
+			console.log(authApi.getCurrentUser());
 			const user = await authApi.getCurrentUser();
 			const response = await studentApi.getTimeTable(user.id);
 			const slots = await studentApi.getSlots();
@@ -76,6 +76,7 @@ const Timetable = () => {
 					SlotName:
 						slot.SlotName + " (" + `${slot.StartTime} - ${slot.EndTime}` + ")",
 				};
+
 				response.forEach((item) => {
 					const slotTimeTableAtWeeks = item.atWeek;
 
@@ -98,7 +99,7 @@ const Timetable = () => {
 						});
 					}
 				});
-
+				console.log(slotData);
 				return slotData;
 			});
 			setTimetableData(formattedData);
@@ -118,7 +119,7 @@ const Timetable = () => {
 			_startDate = new Date(selectedYear, startMonth - 1, startDay);
 		}
 		const _endDate = new Date(selectedYear, endMonth - 1, endDay);
-		console.log(endDate);
+
 		if (_startDate >= new Date(startDate) && _endDate <= new Date(endDate)) {
 			return true;
 		} else {

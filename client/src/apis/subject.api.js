@@ -17,14 +17,19 @@ const useSubjectApi = () => {
 		return axios.delete(`api/Subject/${id}`);
 	};
 	const getRegisterableSubjects = () => {
-		return axios.get('api/Subject/GetRegisterableSubjects');
-	}
+		return axios.get("api/Subject/GetRegisterableSubjects");
+	};
+	const GetSubjects = (semesterId, studentId) => {
+		return axios.get(`api/Subject/GetSubjects/${semesterId}/${studentId}`);
+	};
+
 	return {
 		create,
 		update,
 		get,
 		del,
-		getRegisterableSubjects
+		getRegisterableSubjects,
+		GetSubjects,
 	};
 };
 export default useSubjectApi;

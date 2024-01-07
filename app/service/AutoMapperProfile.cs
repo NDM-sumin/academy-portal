@@ -16,6 +16,7 @@ using service.contract.DTOs.SlotTimeTableAtWeek;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;
 using service.contract.DTOs.Subject;
+using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Teacher;
 using service.contract.DTOs.Timetable;
 using service.contract.DTOs.VNPay;
@@ -75,7 +76,7 @@ namespace service
             this.CreateMap<Timetable, TimeTableDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<Week, WeekDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<Room, RoomDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
-
+            this.CreateMap<SubjectComponent,SubjectComponentDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion());
         }
     }
 }

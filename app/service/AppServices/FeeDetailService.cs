@@ -24,7 +24,7 @@ namespace service.AppServices
 
         }
 
-        public async Task<FeeDetailDTO> GetByStudentAndSubject(Guid semesterId, Guid studentId, Guid subjectId)
+        public async Task<FeeDetailDTO> GetByStudentAndSubject(Guid studentId, Guid semesterId, Guid subjectId)
         {
             var result = await base.Repository.Entities
             .FirstOrDefaultAsync(fd => fd.StudentSemester.SemesterId == semesterId

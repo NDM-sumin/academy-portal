@@ -17,15 +17,11 @@ const useSemesterApi = () => {
 		return axios.delete(`${baseUrl}/${id}`);
 	};
 
-	const getSemesters = (studentId) => {
-		return axios.get(`api/Student/${studentId}/Semesters`);
-	};
 	return {
 		create,
 		update,
 		get,
 		del,
-		getSemesters,
 	};
 };
 export default useSemesterApi;

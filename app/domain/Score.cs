@@ -4,7 +4,7 @@ namespace domain
 {
     public class Score : AppEntityDefaultKey
     {
-        public double Value { get; set; }
+        public double? Value { get; set; }
         public Guid SubjectComponentID { get; set; }
         public Guid StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]

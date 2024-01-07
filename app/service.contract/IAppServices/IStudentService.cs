@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
+using service.contract.DTOs.Semester;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;
 using service.contract.DTOs.Subject;
@@ -17,5 +18,6 @@ namespace service.contract.IAppServices
         Task<List<StudentTimetableDto>> GetTimeTable(Guid studentId);
         Task ImportStudentsFromExcel(IFormFile file);
         Task RegisterSubject(CreateFeeDetailDTO createFeeDetailDTO);
+        Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId);
     }
 }

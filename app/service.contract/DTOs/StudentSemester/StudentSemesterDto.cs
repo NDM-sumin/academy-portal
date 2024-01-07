@@ -17,7 +17,7 @@ namespace service.contract.DTOs.StudentSemester
 
         public Guid SemesterId { get; set; }
         public virtual SemesterDTO Semester { get; set; } = null!;
-
-        public ICollection<FeeDetailDTO> FeeDetails { get; set; }
+        public bool IsNow { get; set; }
+        public virtual ICollection<FeeDetailDTO> FeeDetails { get; set; }
     }
 }

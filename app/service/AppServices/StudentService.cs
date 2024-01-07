@@ -10,6 +10,7 @@ using service.AppServices.Base;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Major;
+using service.contract.DTOs.Semester;
 using service.contract.DTOs.SlotTimeTableAtWeek;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;
@@ -25,8 +26,10 @@ namespace service.AppServices
         readonly IMajorService _majorService;
         readonly ISlotTimeTableAtWeekService slotTimeTableAtWeekService;
         readonly IFeeDetailService feeDetailService;
+        readonly ISemesterService semesterService;
         public StudentService(IStudentRepository genericRepository,
             IMajorService majorService,
+            ISemesterService semesterService,
             IMapper mapper,
             IOptions<JwtConfiguration> jwtConfiguration,
             ISlotTimeTableAtWeekService slotTimeTableAtWeekService,
@@ -36,6 +39,7 @@ namespace service.AppServices
             _jwtConfiguration = jwtConfiguration.Value;
             this.slotTimeTableAtWeekService = slotTimeTableAtWeekService;
             this.feeDetailService = feeDetailService;
+            this.semesterService = semesterService;
         }
 
         public async Task ImportStudentsFromExcel(IFormFile file)
@@ -128,6 +132,14 @@ namespace service.AppServices
                         .Where(sj => sj.Sum(sc => sc.Value * sc.SubjectComponent.Weight) < 5)
                         .Select(s => s.Key).ToList();
             return Mapper.Map<List<SubjectDTO>>(data);
+        }
+
+        public async Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId)
+        {
+            var data = base.Repository.Entities
+                .Find(studentId).StudentSemesters.Select(ss =>
+                ss.Semester).ToList();
+            return Mapper.Map<List<SemesterDTO>>(data!);
         }
     }
 }

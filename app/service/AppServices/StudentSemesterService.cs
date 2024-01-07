@@ -24,5 +24,6 @@ namespace service.AppServices
                 ?? Enumerable.Empty<Subject>();
             return Mapper.Map<List<SubjectDTO>>(data);
         }
+
     }
 }

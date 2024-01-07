@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using entityframework;
 
@@ -11,9 +12,10 @@ using entityframework;
 namespace entityframework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240107150031_update table subjectcomponent")]
+    partial class updatetablesubjectcomponent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,7 +365,7 @@ namespace entityframework.Migrations
                     b.Property<Guid>("SubjectComponentID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double?>("Value")
+                    b.Property<double>("Value")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
