@@ -7,7 +7,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class AccountController : AppCRUDDefaultKeyWithOdataController<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
+    public class AccountController : AppCRUDDefaultKeyController<AccountDTO, CreateAccountDTO, UpdateAccountDTO, Account>
     {
 
 

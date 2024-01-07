@@ -11,7 +11,7 @@ const useSemesterApi = () => {
 		return axios.put(baseUrl, semester);
 	};
 	const get = (query) => {
-		return axios.get(baseUrl, { params: { $count: true, ...query } });
+		return axios.get(baseUrl, { params: { ...query } });
 	};
 	const del = (id) => {
 		return axios.delete(`${baseUrl}/${id}`);

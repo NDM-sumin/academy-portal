@@ -11,7 +11,7 @@ const useSubjectApi = () => {
 		return axios.put("api/Subject", subject);
 	};
 	const get = (query) => {
-		return axios.get("api/Subject", { params: { $count: true, ...query } });
+		return axios.get("api/Subject", { params: { ...query } });
 	};
 	const del = (id) => {
 		return axios.delete(`api/Subject/${id}`);

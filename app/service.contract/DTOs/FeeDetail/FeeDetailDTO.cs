@@ -22,7 +22,7 @@ namespace service.contract.DTOs.FeeDetail
         public virtual ClassDTO? Class { get; set; }
         public virtual SubjectDTO Subject { get; set; } = null!;
 
-        public virtual ICollection<AttendanceDTO> Attendances { get; set; }
+        public ICollection<AttendanceDTO> Attendances { get; set; }
 
         public virtual StudentSemesterDto StudentSemester { get; set; } = null!;
 

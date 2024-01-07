@@ -13,7 +13,7 @@ const useStudentApi = () => {
 	};
 	const get = (query) => {
 		return axios.get(baseUrl, {
-			params: { $count: true, ...query, $expand: "Major" },
+			params: {  ...query },
 		});
 	};
 	const del = (id) => {

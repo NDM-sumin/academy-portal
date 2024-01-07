@@ -11,9 +11,8 @@ import dayjs from "dayjs";
 const Semester = () => {
     const [data, setData] = useState({ totalItems: 0, items: [] })
     const [query, setQuery] = useState({
-        $skip: 0,
-        $top: 50,
-        $expand: 'NextSemester,PrevSemester'
+        skip: 0,
+        top: 50,
     });
     const [modalProps, setModalProps] = useState({
         open: false
@@ -74,7 +73,7 @@ const Semester = () => {
     const [semesters, setSemesters] = useState([]);
     const [disabledDate, setDisabledDate] = useState(null);
     useEffect(() => {
-        onGet({ $expand: 'NextSemester,PrevSemester' }).then(response => setSemesters(response.items));
+        onGet().then(response => setSemesters(response.items));
     }, [JSON.stringify(data)])
 
     const crudApi = {

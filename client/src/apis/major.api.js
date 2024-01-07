@@ -12,7 +12,7 @@ const useMajorApi = () => {
         return axios.put('api/Major', major);
     }
     const get = (query) => {
-        return axios.get('api/Major', { params: { $count: true, ...query } });
+        return axios.get('api/Major', { params: { ...query } });
     }
     const del = (id) => {
         return axios.delete(`api/Major/${id}`)

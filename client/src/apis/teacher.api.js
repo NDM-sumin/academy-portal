@@ -11,7 +11,7 @@ const useTeacherApi = () => {
 		return axios.put("api/Teacher", teacher);
 	};
 	const get = (query) => {
-		return axios.get("api/Teacher", { params: { $count: true, ...query } });
+		return axios.get("api/Teacher", { params: { ...query } });
 	};
 	const del = (id) => {
 		return axios.delete(`api/Teacher/${id}`);

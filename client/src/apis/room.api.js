@@ -11,7 +11,7 @@ const useRoomApi = () => {
 		return axios.put("api/Room", room);
 	};
 	const get = (query) => {
-		return axios.get("api/Room", { params: { $count: true, ...query } });
+		return axios.get("api/Room", { params: { ...query } });
 	};
 	const del = (id) => {
 		return axios.delete(`api/Room/${id}`);

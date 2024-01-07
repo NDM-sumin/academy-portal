@@ -14,6 +14,6 @@ namespace service.contract.DTOs.Class
         public DateTime EndDate { get; set; }
         public Guid TeacherId { get; set; }
         public virtual TeacherDTO Teacher { get; set; } = null!;
-        public virtual ICollection<FeeDetailDTO> FeeDetails { get; set; }
+        public ICollection<FeeDetailDTO> FeeDetails { get; set; }
     }
 }

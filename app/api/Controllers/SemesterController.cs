@@ -7,7 +7,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class SemesterController : AppCRUDDefaultKeyWithOdataController<SemesterDTO, CreateSemesterDTO, UpdateSemesterDTO, Semester>
+    public class SemesterController : AppCRUDDefaultKeyController<SemesterDTO, CreateSemesterDTO, UpdateSemesterDTO, Semester>
     {
 
 

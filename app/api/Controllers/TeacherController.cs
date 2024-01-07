@@ -5,7 +5,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class TeacherController : AppCRUDDefaultKeyWithOdataController<TeacherDTO, CreateTeacherDTO, UpdateTeacherDTO, Teacher>
+    public class TeacherController : AppCRUDDefaultKeyController<TeacherDTO, CreateTeacherDTO, UpdateTeacherDTO, Teacher>
     {
 
 

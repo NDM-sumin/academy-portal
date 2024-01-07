@@ -4,9 +4,9 @@
     {
         public PageResponse()
         {
-            Items = Enumerable.Empty<T>().AsQueryable<T>();
+            Items = Enumerable.Empty<T>();
         }
         public long TotalItems { get; set; }
-        public IQueryable<T> Items { get; set; }
+        public IEnumerable<T> Items { get; set; }
     }
 }

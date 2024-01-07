@@ -11,7 +11,7 @@ namespace api.Extensions
         {
             return mvcBuilder.AddOData(option =>
             {
-                option.Select().Filter().Count().OrderBy().Expand().SetMaxTop(50)
+                option.Count().OrderBy().SetMaxTop(50)
                 .AddRouteComponents("odata", GetEdmModel());
             });
         }

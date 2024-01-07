@@ -5,7 +5,7 @@ using service.contract.IAppServices;
 
 namespace api.Controllers
 {
-    public class ClassController : AppCRUDDefaultKeyWithOdataController<ClassDTO, CreateClassDTO, UpdateClassDTO, Class>
+    public class ClassController : AppCRUDDefaultKeyController<ClassDTO, CreateClassDTO, UpdateClassDTO, Class>
     {
 
 
