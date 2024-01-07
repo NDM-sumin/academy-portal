@@ -77,9 +77,6 @@ namespace service.AppServices
         public async Task<StudentSemesterDto> GetCurrentSemester(Guid studentId)
         {
             StudentSemester? data = (await this.Repository.Entities
-                .Include(s => s.StudentSemesters)
-                .ThenInclude(s => s.Semester)
-                .ThenInclude(s => s.NextSemester)
                 .FirstOrDefaultAsync(s => s.Id == studentId))?
                 .StudentSemesters
                 .FirstOrDefault(s => s.IsNow == true);
