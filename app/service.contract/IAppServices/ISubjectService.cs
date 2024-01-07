@@ -7,6 +7,5 @@ namespace service.contract.IAppServices
     public interface ISubjectService : IAppCRUDDefaultKeyService<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>
     {
         Task<List<SubjectDTO>> GetRegisterableSubjects(Guid studentId);
-        
     }
 }

@@ -15,7 +15,6 @@ namespace service.AppServices
             IMapper mapper,
             IStudentService studentService,
             IMajorSubjectService majorSubjectService) : base(genericRepository, mapper)
-
         {
             this.studentService = studentService;
             this.majorSubjectService = majorSubjectService;
@@ -39,5 +38,6 @@ namespace service.AppServices
 
             return listSubject;
         }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using domain;
 using Microsoft.AspNetCore.Http;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;

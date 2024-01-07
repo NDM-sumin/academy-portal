@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Major;
 using service.contract.DTOs.SlotTimeTableAtWeek;

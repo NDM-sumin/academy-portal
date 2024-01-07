@@ -71,12 +71,11 @@ const Timetable = () => {
 				SlotName: "Slot_" + item.slotName,
 			}));
 
-				const formattedData = result.map((slot) => {
-					const timetableEntry = [];
+			const formattedData = result.map((slot) => {
 				const slotData = {
 					SlotName:
 						slot.SlotName + " (" + `${slot.StartTime} - ${slot.EndTime}` + ")",
-							};
+				};
 				response.forEach((item) => {
 					const slotTimeTableAtWeeks = item.atWeek;
 
@@ -96,16 +95,13 @@ const Timetable = () => {
 									roomCode: item.room.roomCode,
 								};
 							}
-							});
-						}
-					});
+						});
+					}
+				});
 
 				return slotData;
-				});
-				setTimetableData(formattedData);
-			} else {
-				console.error("Invalid response format. Expected an array.");
-			}
+			});
+			setTimetableData(formattedData);
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
 		}

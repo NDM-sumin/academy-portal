@@ -12,6 +12,9 @@ namespace service.AppServices
         {
         }
 
-
+        //public List<Semester> GetSemesterByStudent(Guid studentId)
+        //{
+        //    base.Repository.
+        //}
     }
 }
