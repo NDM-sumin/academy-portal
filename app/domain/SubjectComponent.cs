@@ -10,6 +10,7 @@ namespace domain
         }
         public string Name { get; set; } = null!;
         public double Weight { get; set; }
+        public string? Comment {  get; set; }
         public Guid SubjectID { get; set; }
         [ForeignKey(nameof(SubjectID))]
         public virtual Subject Subject { get; set; } = null!;

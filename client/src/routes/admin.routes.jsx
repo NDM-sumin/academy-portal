@@ -22,12 +22,13 @@ export const ADMIN_ROUTES = [
 				inMenu: true,
 				path: "semester",
 				title: "Quản lý học kì",
-                element: <Semester />
+				element: <Semester />,
 			},
 			{
 				inMenu: true,
 				path: "room",
 				title: "Quản lý phòng",
+				element: <Room />,
 			},
 			{
 				inMenu: true,

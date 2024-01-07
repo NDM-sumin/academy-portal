@@ -24,7 +24,7 @@ namespace api.Controllers
             return await (appCRUDService as ISubjectService).GetRegisterableSubjects(this.GetUserId());
         }
 
-        [HttpGet("GetSubjects")]
+        [HttpGet("GetSubjects/{semesterId}/{studentId}")]
         public async Task<List<SubjectDTO>> GetSubjects(Guid semesterId, Guid studentId)
         {
             return await studentSemesterService.GetSubjects(semesterId, studentId);

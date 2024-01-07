@@ -16,12 +16,12 @@ const Room = () => {
 	const [reload, setReload] = useState(true);
 	const columns = [
 		{
-			title: "Mã chuyên ngành",
-			dataIndex: "majorCode",
+			title: "Mã phòng",
+			dataIndex: "roomCode",
 		},
 		{
-			title: "Tên chuyên ngành",
-			dataIndex: "majorName",
+			title: "Số lượng người khả thi",
+			dataIndex: "capacity",
 		},
 	];
 	const roomApi = useRoomApi();

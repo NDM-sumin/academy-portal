@@ -3,9 +3,11 @@ using domain;
 using Microsoft.AspNetCore.Mvc;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
+using service.contract.DTOs.Score;
 using service.contract.DTOs.Semester;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;
+using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
 
@@ -15,13 +17,16 @@ namespace api.Controllers
     {
         readonly IAttendanceService attendanceService;
         readonly IFeeDetailService feeDetailService;
-
+        readonly ISubjectComponentService subjectComponentService;
         public StudentController(IStudentService appCRUDService,
         IAttendanceService attendanceService,
+        ISubjectComponentService subjectComponentService,
         IFeeDetailService feeDetailService) : base(appCRUDService)
         {
             this.attendanceService = attendanceService;
             this.feeDetailService = feeDetailService;
+            this.subjectComponentService = subjectComponentService;
+
         }
 
         [HttpPost("Import")]
@@ -45,7 +50,7 @@ namespace api.Controllers
             return await (appCRUDService as IStudentService).GetTimeTable(studentId);
         }
 
-        [HttpGet("GetAttendances")]
+        [HttpGet("GetAttendances/{studentId}/{semesterId}/{subjectId}")]
         public async Task<AttendanceHistory> GetAttendances(Guid studentId, Guid semesterId, Guid subjectId)
         {
 
@@ -58,12 +63,22 @@ namespace api.Controllers
             };
         }
 
-        
+        [HttpGet("GetScores/{studentId}/{subjectId}")]
+        public async Task<List<SubjectComponentDTO>> GetScores(Guid studentId, Guid subjectId)
+        {
+
+            return await subjectComponentService.GetByStudentAndSubject(studentId, subjectId);
+        }
+
         [HttpGet("{studentId}/Semesters")]
-        public async Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId)
+        public async Task<IActionResult> GetSemesterByStudent(Guid studentId)
         {
             var data = await (appCRUDService as IStudentService).GetSemesterByStudent(studentId);
-            return data.ToList();
+            return Ok(new
+            {
+                semesters = data.ToList(),
+                current = (await (appCRUDService as IStudentService).GetCurrentSemester(studentId)).Semester  
+            }) ;
 
         }
     }

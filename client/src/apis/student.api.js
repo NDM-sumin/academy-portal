@@ -1,5 +1,4 @@
 import { useAppContext } from "../hooks/context/app-bounding-context";
-import { USER_TOKEN_KEY } from "../utils/constants";
 
 const useStudentApi = () => {
 	const globalContext = useAppContext();
@@ -39,6 +38,14 @@ const useStudentApi = () => {
 	const getSemesters = (studentId) => {
 		return axios.get(`${baseUrl}/${studentId}/Semesters`);
 	};
+	const getAttendances = (studentId, semesterId, subjectId) => {
+		return axios.get(
+			`${baseUrl}/GetAttendances/${studentId}/${semesterId}/${subjectId}`
+		);
+	};
+	const getScores = (studentId, subjectId) => {
+		return axios.get(`${baseUrl}/GetScores/${studentId}/${subjectId}`);
+	};
 	return {
 		create,
 		update,
@@ -48,6 +55,8 @@ const useStudentApi = () => {
 		getTimeTable,
 		getSlots,
 		getSemesters,
+		getAttendances,
+		getScores,
 	};
 };
 export default useStudentApi;
