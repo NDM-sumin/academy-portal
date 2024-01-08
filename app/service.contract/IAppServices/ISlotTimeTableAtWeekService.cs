@@ -10,6 +10,6 @@ namespace service.contract.IAppServices
 
     public interface ISlotTimeTableAtWeekService : IAppCRUDDefaultKeyService<SlotTimeTableAtWeekDTO, SlotTimeTableAtWeekDTO, SlotTimeTableAtWeekDTO, SlotTimeTableAtWeek>
     {
-        Task<List<SlotTimeTableAtWeekDTO>> GetSlotTimeTableAtWeeks(SemesterDTO currentSemester);
+        Task<List<SlotTimeTableAtWeekDTO>> GetSlotTimeTableAtWeeks(SemesterDTO currentSemester, Guid feeDetailId);
     }
 }

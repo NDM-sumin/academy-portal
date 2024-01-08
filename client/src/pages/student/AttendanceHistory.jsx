@@ -35,7 +35,7 @@ const AttendanceHistory = () => {
 			const userId = await getUser();
 			const semesters = await studentApi.getSemesters(userId);
 			setSelectedSemester(semesters.current.id);
-
+			console.log(semesters);
 			return {
 				semesters: semesters.semesters,
 				currentSemester: semesters.current.id,
@@ -51,7 +51,6 @@ const AttendanceHistory = () => {
 			var subjects = [];
 			const userId = await getUser();
 			subjects = await subjectApi.GetSubjects(currentSemester, userId);
-
 			setSelectedSubject((await subjects)[0].id);
 			return { subjects: subjects, currentSubject: (await subjects)[0].id };
 		} catch (error) {

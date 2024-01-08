@@ -8,20 +8,20 @@ const RegisterSubject = () => {
 	const [form] = useForm();
 
 	const subjectApi = useSubjectApi();
+	const studentApi = useStudentApi();
 	const [loading, setLoading] = useState(false);
 	const [subjects, setSubjects] = useState([]);
 
-
 	useEffect(() => {
-		subjectApi.getRegisterableSubjects().then(response => {
+		subjectApi.getRegisterableSubjects().then((response) => {
 			console.log(response);
-			setSubjects(response)
+			setSubjects(response);
 		});
-	},[])
+	}, []);
 	const handleSubmit = async (values) => {
 		try {
 			setLoading(true);
-
+			console.log(values);
 			await studentApi.registerSubject(values);
 			message.success("Đăng kí học phần thành công");
 			form.resetFields();
@@ -48,7 +48,7 @@ const RegisterSubject = () => {
 				<Select placeholder="Chọn môn học">
 					{subjects.map((subject) => (
 						<Option key={subject.id} value={subject.id}>
-							{subject.name}
+							{subject.subjectName} ({subject.subjectCode})
 						</Option>
 					))}
 				</Select>

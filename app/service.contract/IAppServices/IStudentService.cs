@@ -14,10 +14,9 @@ namespace service.contract.IAppServices
     public interface IStudentService : IAppCRUDDefaultKeyService<StudentDTO, CreateStudentDTO, UpdateStudentDTO, Student>
     {
         List<SubjectDTO> GetFailedSubjects(Guid studentId);
-        Task<StudentSemesterDto> GetCurrentSemester(Guid studentId);
         Task<List<StudentTimetableDto>> GetTimeTable(Guid studentId);
         Task ImportStudentsFromExcel(IFormFile file);
-        Task RegisterSubject(CreateFeeDetailDTO createFeeDetailDTO);
+        Task RegisterSubject(Guid studentId, Guid subjectId);
         Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId);
     }
 }

@@ -60,30 +60,24 @@ const Timetable = () => {
 
 	const fetchData = async (currentWeek) => {
 		try {
-			console.log(authApi.getCurrentUser());
 			const user = await authApi.getCurrentUser();
-			const response = await studentApi.getTimeTable(user.id);
-			const slots = await studentApi.getSlots();
 
-			const result = slots.map((item) => ({
-				StartTime: item.startTime,
-				EndTime: item.endTime,
-				SlotName: "Slot_" + item.slotName,
-			}));
+			const [slots, timetableData] = await Promise.all([
+				studentApi.getSlots(),
+				studentApi.getTimeTable(user.id),
+			]);
 
-			const formattedData = result.map((slot) => {
+			const formattedData = slots.map((slot) => {
 				const slotData = {
-					SlotName:
-						slot.SlotName + " (" + `${slot.StartTime} - ${slot.EndTime}` + ")",
+					SlotName: `Slot_${slot.slotName} (${slot.startTime} - ${slot.endTime})`,
 				};
-
-				response.forEach((item) => {
-					const slotTimeTableAtWeeks = item.atWeek;
-
-					if (slotTimeTableAtWeeks && Array.isArray(slotTimeTableAtWeeks)) {
-						slotTimeTableAtWeeks.forEach((slotTimeTable) => {
+				timetableData.forEach((item) => {
+					if (item.atWeek && Array.isArray(item.atWeek)) {
+						item.atWeek.forEach((slotTimeTable) => {
+							console.log(item);
 							if (
-								"Slot_" + slotTimeTable.slot.slotName === slot.SlotName &&
+								`Slot_${slotTimeTable.slot.slotName} (${slotTimeTable.slot.startTime} - ${slotTimeTable.slot.endTime})` ===
+									slotData.SlotName &&
 								isWithinCurrentSemester(
 									item.startDate,
 									item.endDate,
@@ -99,9 +93,10 @@ const Timetable = () => {
 						});
 					}
 				});
-				console.log(slotData);
+
 				return slotData;
 			});
+			console.log(formattedData);
 			setTimetableData(formattedData);
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
@@ -170,13 +165,7 @@ const Timetable = () => {
 			dataIndex: "SlotName",
 			key: "SlotName",
 			align: "center",
-			render: (text) => (
-				<div>
-					{text.SlotName}
-					<br />
-					{text.StartTime}-{text.EndTime}
-				</div>
-			),
+			render: (text) => <div>{text}</div>,
 		},
 		{
 			title: "MON",

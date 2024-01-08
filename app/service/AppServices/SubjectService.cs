@@ -10,17 +10,20 @@ namespace service.AppServices
     public class SubjectService : AppCRUDDefaultKeyService<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>, ISubjectService
     {
         readonly IStudentService studentService;
+        readonly IStudentSemesterService studentSemesterService;
+
         readonly IMajorSubjectService majorSubjectService;
         public SubjectService(ISubjectRepository genericRepository,
             IMapper mapper,
-            IStudentService studentService,
+            IStudentService studentService, IStudentSemesterService studentSemesterService,
             IMajorSubjectService majorSubjectService) : base(genericRepository, mapper)
         {
             this.studentService = studentService;
             this.majorSubjectService = majorSubjectService;
+            this.studentSemesterService = studentSemesterService;
         }
 
-      
+
 
         public async Task<List<SubjectDTO>> GetRegisterableSubjects(Guid studentId)
         {
@@ -29,7 +32,7 @@ namespace service.AppServices
 
             var student = await studentService.Get(studentId);
 
-            var studentSemester = await studentService.GetCurrentSemester(studentId);
+            var studentSemester = await studentSemesterService.GetCurrentSemester(studentId);
             if (studentSemester != null)
             {
                 var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(student.Major.Id, studentSemester.Semester.NextSemester.Id);

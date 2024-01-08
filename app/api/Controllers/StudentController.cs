@@ -1,12 +1,14 @@
 ﻿using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
+using service.AppServices;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Score;
 using service.contract.DTOs.Semester;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.StudentSemester;
+using service.contract.DTOs.Subject;
 using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
@@ -18,14 +20,17 @@ namespace api.Controllers
         readonly IAttendanceService attendanceService;
         readonly IFeeDetailService feeDetailService;
         readonly ISubjectComponentService subjectComponentService;
+        readonly IStudentSemesterService studentSemesterService;
         public StudentController(IStudentService appCRUDService,
         IAttendanceService attendanceService,
+        IStudentSemesterService studentSemesterService,
         ISubjectComponentService subjectComponentService,
         IFeeDetailService feeDetailService) : base(appCRUDService)
         {
             this.attendanceService = attendanceService;
             this.feeDetailService = feeDetailService;
             this.subjectComponentService = subjectComponentService;
+            this.studentSemesterService = studentSemesterService;
 
         }
 
@@ -37,12 +42,6 @@ namespace api.Controllers
             return Ok();
         }
 
-        [HttpPost("RegisterSubject")]
-        public async Task<IActionResult> RegisterSubject([FromBody] CreateFeeDetailDTO createFeeDetailDTO)
-        {
-            await (appCRUDService as IStudentService).RegisterSubject(createFeeDetailDTO);
-            return Ok();
-        }
 
         [HttpGet("GetTimeTable")]
         public async Task<List<StudentTimetableDto>> GetTimeTable(Guid studentId)
@@ -54,10 +53,10 @@ namespace api.Controllers
         public async Task<AttendanceHistory> GetAttendances(Guid studentId, Guid semesterId, Guid subjectId)
         {
 
-            var fee = await feeDetailService.GetByStudentAndSubject(studentId, semesterId, subjectId);
+            var (fee,attendance) = await feeDetailService.GetByStudentAndSubject(studentId, semesterId, subjectId);
             return new AttendanceHistory()
             {
-                Attendances = fee.Attendances,
+                Attendances = attendance,
                 Class = fee.Class,
                 Teacher = fee.Class.Teacher
             };
@@ -77,9 +76,17 @@ namespace api.Controllers
             return Ok(new
             {
                 semesters = data.ToList(),
-                current = (await (appCRUDService as IStudentService).GetCurrentSemester(studentId)).Semester  
+                current = (await studentSemesterService.GetCurrentSemester(studentId)).Semester  
             }) ;
 
         }
+
+        [HttpPost("RegisterSubject/{studentId}/{subjectId}")]
+        public async Task<IActionResult> RegisterSubject(Guid studentId, Guid subjectId)
+        {
+            await (appCRUDService as IStudentService).RegisterSubject(studentId, subjectId);
+            return Ok();
+        }
+
     }
 }
