@@ -35,7 +35,7 @@ const AttendanceHistory = () => {
 			const userId = await getUser();
 			const semesters = await studentApi.getSemesters(userId);
 			setSelectedSemester(semesters.current.id);
-			console.log(semesters);
+
 			return {
 				semesters: semesters.semesters,
 				currentSemester: semesters.current.id,

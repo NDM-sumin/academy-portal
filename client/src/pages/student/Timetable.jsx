@@ -60,6 +60,7 @@ const Timetable = () => {
 
 	const fetchData = async (currentWeek) => {
 		try {
+			console.log(authApi.getCurrentUser());
 			const user = await authApi.getCurrentUser();
 
 			const [slots, timetableData] = await Promise.all([
@@ -74,7 +75,7 @@ const Timetable = () => {
 				timetableData.forEach((item) => {
 					if (item.atWeek && Array.isArray(item.atWeek)) {
 						item.atWeek.forEach((slotTimeTable) => {
-							console.log(item);
+
 							if (
 								`Slot_${slotTimeTable.slot.slotName} (${slotTimeTable.slot.startTime} - ${slotTimeTable.slot.endTime})` ===
 									slotData.SlotName &&
@@ -93,7 +94,7 @@ const Timetable = () => {
 						});
 					}
 				});
-
+				console.log(slotData);
 				return slotData;
 			});
 			console.log(formattedData);
