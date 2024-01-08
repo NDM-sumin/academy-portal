@@ -27,9 +27,17 @@ namespace service.AppServices
         readonly ISlotTimeTableAtWeekService slotTimeTableAtWeekService;
         readonly IFeeDetailService feeDetailService;
         readonly ISemesterService semesterService;
-        public StudentService(IStudentRepository genericRepository,
+        readonly IStudentSemesterService studentSemesterService;
+        readonly IAttendanceService attendanceService;
+        readonly IStudentSemesterRepository studentSemesterRepository;
+        readonly ISubjectRepository subjectService;
+
+        public StudentService(IStudentRepository genericRepository, IStudentSemesterRepository studentSemesterRepository,
             IMajorService majorService,
             ISemesterService semesterService,
+            ISubjectRepository subjectRepository,
+            IStudentSemesterService studentSemesterService,
+            IAttendanceService attendanceService,
             IMapper mapper,
             IOptions<JwtConfiguration> jwtConfiguration,
             ISlotTimeTableAtWeekService slotTimeTableAtWeekService,
@@ -40,6 +48,10 @@ namespace service.AppServices
             this.slotTimeTableAtWeekService = slotTimeTableAtWeekService;
             this.feeDetailService = feeDetailService;
             this.semesterService = semesterService;
+            this.studentSemesterService = studentSemesterService;
+            this.attendanceService = attendanceService;
+            this.studentSemesterRepository = studentSemesterRepository;
+            this.subjectService = subjectRepository;
         }
 
         public async Task ImportStudentsFromExcel(IFormFile file)
@@ -74,14 +86,7 @@ namespace service.AppServices
             var students = Mapper.Map<List<Student>>(studentDtos);
             await base.Repository.AddRange(students);
         }
-        public async Task<StudentSemesterDto> GetCurrentSemester(Guid studentId)
-        {
-            StudentSemester? data = (await this.Repository.Entities
-                .FirstOrDefaultAsync(s => s.Id == studentId))?
-                .StudentSemesters
-                .FirstOrDefault(s => s.IsNow == true);
-            return Mapper.Map<StudentSemesterDto>(data!);
-        }
+
         public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
         {
             entityDto.Id = Guid.NewGuid();
@@ -91,9 +96,15 @@ namespace service.AppServices
             return base.Create(entityDto);
         }
 
-        public async Task RegisterSubject(CreateFeeDetailDTO createFeeDetailDTO)
+        public async Task RegisterSubject(Guid studentId, Guid subjectId)
         {
-
+            CreateFeeDetailDTO feeDetailDTO = new();
+            feeDetailDTO.Id = Guid.NewGuid();
+            feeDetailDTO.SubjectId = subjectId;
+            feeDetailDTO.StudentSemesterId = studentSemesterService.GetCurrentSemester(studentId).Result.Id;
+            feeDetailDTO.Amount = (float) (await  subjectService.Find(subjectId)).Price;
+            feeDetailDTO.DueDate = DateTime.Now.AddDays(20);
+            feeDetailService.Create(feeDetailDTO);
         }
 
 
@@ -101,7 +112,7 @@ namespace service.AppServices
         {
             List<StudentTimetableDto> result = new();
 
-            var currentSemester = (await GetCurrentSemester(studentId)).Semester;
+            var currentSemester = (await studentSemesterService.GetCurrentSemester(studentId)).Semester;
             var fees = await feeDetailService.GetByStudent(studentId, currentSemester.Id);
 
             var year = currentSemester.CreatedAt.Year;
@@ -111,14 +122,15 @@ namespace service.AppServices
 
             foreach (var item in fees)
             {
+                var room = await attendanceService.GetRoomByFee(item.Id);
                 StudentTimetableDto timeTable = new()
                 {
                     Subject = item.Subject,
                     StartDate = startOfTerm,
                     EndDate = endOfTerm,
-                    Room = item.Attendances.FirstOrDefault().Room
+                    Room = room
                 };
-                List<SlotTimeTableAtWeekDTO> list = await slotTimeTableAtWeekService.GetSlotTimeTableAtWeeks(currentSemester);
+                List<SlotTimeTableAtWeekDTO> list = await slotTimeTableAtWeekService.GetSlotTimeTableAtWeeks(currentSemester, item.Id);
                 timeTable.AtWeek.AddRange(list);
                 result.Add(timeTable);
             }
@@ -136,8 +148,8 @@ namespace service.AppServices
 
         public async Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId)
         {
-            var data = base.Repository.Entities
-                .Find(studentId).StudentSemesters.Select(ss =>
+            var data = studentSemesterRepository.Entities.Include(ss => ss.Semester)
+                .Where(ss => ss.StudentId == studentId).Select(ss =>
                 ss.Semester).ToList();
             return Mapper.Map<List<SemesterDTO>>(data!);
         }

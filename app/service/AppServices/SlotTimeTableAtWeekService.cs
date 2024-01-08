@@ -16,7 +16,7 @@ namespace service.AppServices
              IMapper mapper) : base(genericRepository, mapper)
         {
         }
-        public async Task<List<SlotTimeTableAtWeekDTO>> GetSlotTimeTableAtWeeks(SemesterDTO currentSemester)
+        public async Task<List<SlotTimeTableAtWeekDTO>> GetSlotTimeTableAtWeeks(SemesterDTO currentSemester, Guid feeDetailId)
         {
             var year = currentSemester.CreatedAt.Year;
             DateTime startOfTerm = new DateTime(year, currentSemester.StartMonth, currentSemester.StartDay);
@@ -29,8 +29,8 @@ namespace service.AppServices
                 int totalDays = (int)(currentDate - startOfTerm).TotalDays;
                 int currentWeek = totalDays / 7 + 1;
 
-                var result = await Repository.Entities
-                    .Where(staw => staw.Week.WeekName.Equals(currentWeek)).ToListAsync();
+                var result = await Repository.Entities.Include(staw => staw.Attendances).Include(staw => staw.Week).Include(staw => staw.Timetable).Include(staw => staw.Slot)
+                    .Where(staw => staw.Attendances.Any(a => a.FeeDetailId == feeDetailId)).ToListAsync();
                 return Mapper.Map<List<SlotTimeTableAtWeekDTO>>(result);
             }
             return Enumerable.Empty<SlotTimeTableAtWeekDTO>().ToList();

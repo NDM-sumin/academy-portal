@@ -9,7 +9,7 @@ namespace api.Controllers
 {
     public class SubjectController : AppCRUDDefaultKeyController<SubjectDTO, CreateSubjectDTO, UpdateSubjectDTO, Subject>
     {
-        IStudentSemesterService studentSemesterService;
+        readonly IStudentSemesterService studentSemesterService;
         readonly IMajorSubjectService majorSubjectService;
         public SubjectController(ISubjectService appCRUDService,
         IStudentSemesterService studentSemesterService,

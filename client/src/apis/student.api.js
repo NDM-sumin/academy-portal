@@ -20,18 +20,17 @@ const useStudentApi = () => {
 	};
 
 	const importData = (file) => {
-		const formData = new FormData()
-		formData.append('formFile', file)
+		const formData = new FormData();
+		formData.append("formFile", file);
 		return axios.post(`${baseUrl}/Import`, formData, {
 			headers: {
-				"Content-Type":
-					"multipart/form-data",
+				"Content-Type": "multipart/form-data",
 			},
 		});
 	};
 
 	const getTimeTable = (studentId) => {
-		return axios.get("api/Student/GetTimeTable?studentId=" + studentId);
+		return axios.get(`api/Student/GetTimeTable?studentId=${studentId}`);
 	};
 
 	const getSlots = () => {
@@ -47,6 +46,9 @@ const useStudentApi = () => {
 	};
 	const getScores = (studentId, subjectId) => {
 		return axios.get(`${baseUrl}/GetScores/${studentId}/${subjectId}`);
+	};
+	const registerSubject = (subjectId) => {
+		return axios.get(`${baseUrl}/RegisterSubject/${subjectId}`);
 	};
 	return {
 		create,
