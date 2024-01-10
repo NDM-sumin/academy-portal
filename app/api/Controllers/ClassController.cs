@@ -2,11 +2,13 @@
 using domain;
 using Microsoft.AspNetCore.JsonPatch.Internal;
 using Microsoft.AspNetCore.Mvc;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.Class;
 using service.contract.DTOs.Score;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.SubjectComponent;
 using service.contract.IAppServices;
+using System.Net;
 
 namespace api.Controllers
 {
@@ -37,5 +39,16 @@ namespace api.Controllers
             return await (appCRUDService as IClassService).GetSubjectComponentsByClass(classId);
         }
 
+        [HttpGet("GetAttendances/{classId}")]
+        public async Task<List<StudentAttendance>> GetAttendances(Guid classId,string dateTime)
+        {
+            return await (appCRUDService as IClassService).GetAttendancesByClass(classId, DateTime.Parse(dateTime));
+        }
+
+        [HttpGet("GetDates/{classId}")]
+        public async Task<List<DateTime?>> GetDates(Guid classId)
+        {
+            return await (appCRUDService as IClassService).GetDates(classId);
+        }
     }
 }
