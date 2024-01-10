@@ -38,9 +38,14 @@ namespace service.AppServices
                              .Include(a => a.SlotTimeTableAtWeek).ThenInclude(st => st.Slot)
                              .Include(a => a.FeeDetail).Where(a => a.FeeDetailId == result.Id).ToList();
             return (Mapper.Map<FeeDetailDTO>(result), (Mapper.Map<List<AttendanceDTO>>(attendance)));
-
-
         }
+
+        public async Task<FeeDetailDTO> GetByClass(Guid classId)
+        {
+            var result = await base.Repository.GetAll().Result.Include(fd => fd.Subject).Include(fd => fd.Attendances).FirstOrDefaultAsync(fd => fd.ClassId == classId);
+            return Mapper.Map<FeeDetailDTO>(result);
+        }
+
 
 
     }

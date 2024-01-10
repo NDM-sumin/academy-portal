@@ -12,13 +12,14 @@ import {
 } from "date-fns";
 import "./Timetable.css";
 
+import useTeacherApi from "../../apis/teacher.api";
 import useStudentApi from "../../apis/student.api";
 import useAuthApi from "../../apis/auth.api";
 
 const Timetable = () => {
-	const studentApi = useStudentApi();
+	const teacherApi = useTeacherApi();
 	const authApi = useAuthApi();
-
+	const studentApi = useStudentApi();
 	const currentYear = new Date().getFullYear();
 	const [selectedYear, setSelectedYear] = useState(currentYear.toString());
 	const [selectedWeek, setSelectedWeek] = useState("");
@@ -33,7 +34,6 @@ const Timetable = () => {
 	};
 
 	const generateWeekList = () => {
-		const currentDate = new Date();
 		let currentWeek = null;
 
 		const weeks = [];
@@ -50,22 +50,18 @@ const Timetable = () => {
 
 			weeks.push(weekLabel);
 
-			if (isThisWeek(startOfWeek, { weekStartsOn: 1 })) {
-				currentWeek = weekLabel;
-			}
+			currentWeek = weekLabel;
 		}
-
-		return currentWeek ? weeks : weeks.slice(0, 1);
+		return weeks;
 	};
 
 	const fetchData = async (currentWeek) => {
 		try {
-			console.log(authApi.getCurrentUser());
 			const user = await authApi.getCurrentUser();
 
 			const [slots, timetableData] = await Promise.all([
 				studentApi.getSlots(),
-				studentApi.getTimeTable(user.id),
+				teacherApi.getTimeTable(user.id),
 			]);
 
 			const formattedData = slots.map((slot) => {
@@ -74,6 +70,8 @@ const Timetable = () => {
 				};
 				timetableData.forEach((item) => {
 					if (item.atWeek && Array.isArray(item.atWeek)) {
+						console.log(item);
+
 						item.atWeek.forEach((slotTimeTable) => {
 							if (
 								`Slot_${slotTimeTable.slot.slotName} (${slotTimeTable.slot.startTime} - ${slotTimeTable.slot.endTime})` ===
@@ -86,6 +84,7 @@ const Timetable = () => {
 							) {
 								const dayOfWeek = slotTimeTable.timetable.weekDay.toLowerCase();
 								slotData[dayOfWeek] = {
+									class: item.class.classCode,
 									subjectName: item.subject.subjectName,
 									roomCode: item.room.roomCode,
 								};
@@ -93,10 +92,8 @@ const Timetable = () => {
 						});
 					}
 				});
-				console.log(slotData);
 				return slotData;
 			});
-			console.log(formattedData);
 			setTimetableData(formattedData);
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
@@ -104,6 +101,7 @@ const Timetable = () => {
 	};
 
 	const isWithinCurrentSemester = (startDate, endDate, currentWeek) => {
+		console.log(startDate, endDate, currentWeek);
 		const [start, end] = currentWeek.split(" To ");
 		const [startDay, startMonth] = start.split("/");
 		const [endDay, endMonth] = end.split("/");
@@ -123,7 +121,7 @@ const Timetable = () => {
 	};
 
 	useEffect(() => {
-		const weeks = generateWeekList();
+		const weeks = generateWeekList(selectedYear);
 
 		const currentDate = new Date();
 		var currentWeek;
@@ -154,9 +152,8 @@ const Timetable = () => {
 		fetchData(currentWeek);
 	}, [selectedYear]);
 
-	const handleYearChange = (value) => {
+	const handleYearChange = async (value) => {
 		setSelectedYear(value);
-		setSelectedWeek(generateWeekList()[0]);
 	};
 
 	const handleWeekChange = (value) => {
@@ -181,7 +178,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -199,7 +198,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -217,7 +218,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -235,7 +238,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -253,7 +258,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -271,7 +278,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -289,7 +298,9 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.subjectName}</a>
+							<a>{text.class}</a>
+							<br />
+							dạy môn {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>

@@ -16,11 +16,15 @@ const useTeacherApi = () => {
 	const del = (id) => {
 		return axios.delete(`api/Teacher/${id}`);
 	};
+	const getTimeTable = (teacherId) => {
+		return axios.get(`api/Teacher/GetTimeTable?teacherId=${teacherId}`);
+	};
 	return {
 		create,
 		update,
 		get,
 		del,
+		getTimeTable,
 	};
 };
 export default useTeacherApi;

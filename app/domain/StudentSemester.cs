@@ -23,7 +23,7 @@ namespace domain
         [ForeignKey(nameof(SemesterId))]
         public virtual Semester Semester { get; set; } = null!;
 
-        public bool IsNow { get; set; }
+        public bool IsNow { get; set; } 
         public virtual ICollection<FeeDetail> FeeDetails { get; set; }
     }
 }
