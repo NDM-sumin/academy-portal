@@ -75,6 +75,8 @@ const Timetable = () => {
 				timetableData.forEach((item) => {
 					if (item.atWeek && Array.isArray(item.atWeek)) {
 						item.atWeek.forEach((slotTimeTable) => {
+					if (slotTimeTableAtWeeks && Array.isArray(slotTimeTableAtWeeks)) {
+						slotTimeTableAtWeeks.forEach((slotTimeTable) => {
 							if (
 								`Slot_${slotTimeTable.slot.slotName} (${slotTimeTable.slot.startTime} - ${slotTimeTable.slot.endTime})` ===
 									slotData.SlotName &&
