@@ -6,7 +6,7 @@ import useSubjectApi from "../../apis/subject.api";
 import useAuthApi from "../../apis/auth.api";
 import dayjs from "dayjs";
 
-const ScoreHistory = () => {
+const ScoreManagement = () => {
 	const studentApi = useStudentApi();
 	const semesterApi = useSemesterApi();
 	const subjectApi = useSubjectApi();
@@ -204,4 +204,4 @@ const ScoreHistory = () => {
 	);
 };
 
-export default ScoreHistory;
+export default ScoreManagement;

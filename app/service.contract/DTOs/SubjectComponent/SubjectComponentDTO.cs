@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace service.contract.DTOs.SubjectComponent
 {
-    public class SubjectComponentDTO
+    public class SubjectComponentDTO : AppEntityDefaultKeyDTO
     {
         public SubjectComponentDTO()
         {
