@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Select, Input, Button } from "antd";
+import { Table, Select, Input, Button, Space } from "antd";
 import useStudentApi from "../../apis/student.api";
 import useClassApi from "../../apis/class.api";
 import useAuthApi from "../../apis/auth.api";
@@ -16,6 +16,8 @@ const ScoreHistory = () => {
 	const [subjectComponentsData, setSubjectComponentsData] = useState([]);
 	const [editing, setEditing] = useState(false);
 	const [columns, setColumns] = useState([]);
+	const [editedData, setEditedData] = useState({});
+	const [inputValue, setInputValue] = useState("");
 	const getUser = async () => {
 		try {
 			const user = await authApi.getCurrentUser();
@@ -110,19 +112,13 @@ const ScoreHistory = () => {
 					align: "center",
 					editable: editing,
 					render: (text, record) => {
-						const handleInputChange = (value) => {
-							setEditedData({
-								...editedData,
-								[record.key]: {
-									...editedData[record.key],
-									[item.name]: value,
-								},
-							});
+						const handleInputChange = (e) => {
+							setInputValue(e.target.value);
 						};
 
 						const renderInput = () => (
 							<Input
-								value={text}
+								value={inputValue}
 								onChange={(e) => handleInputChange(e.target.value)}
 							/>
 						);
@@ -141,7 +137,7 @@ const ScoreHistory = () => {
 	const handleClassChange = async (value) => {
 		setSelectedClass(value);
 		const components = await ClassApi.GetSubjectComponents(value);
-
+		console.log(components);
 		setSubjectComponentsData(components);
 		const dynamicColumns = [
 			{ title: "STT", dataIndex: "id", key: "id", align: "center" },
@@ -151,26 +147,21 @@ const ScoreHistory = () => {
 				key: "studentName",
 				align: "center",
 			},
-			components.map((item) => ({
+			...components.map((item) => ({
 				title: `${item.name}`,
 				dataIndex: `${item.name}`,
 				key: `${item.name}`,
 				align: "center",
 				editable: editing,
-				render: (text, record) => {
+				render: (text, record, index) => {
 					const handleInputChange = (value) => {
-						setEditedData({
-							...editedData,
-							[record.key]: {
-								...editedData[record.key],
-								[item.name]: value,
-							},
-						});
+						setInputValue(value);
+						console.log(inputValue);
 					};
 
 					const renderInput = () => (
 						<Input
-							value={text}
+							value={inputValue}
 							onChange={(e) => handleInputChange(e.target.value)}
 						/>
 					);
@@ -179,7 +170,6 @@ const ScoreHistory = () => {
 				},
 			})),
 		];
-		console.log(dynamicColumns);
 		setColumns(dynamicColumns);
 		fetchData(value);
 	};
@@ -188,8 +178,37 @@ const ScoreHistory = () => {
 		setEditing(true);
 	};
 
-	const handleSave = () => {
+	const handleSave = async () => {
 		setEditing(false);
+		const dataToSave = [];
+		for (const key in editedData) {
+			const [studentName, classIdStr] = key.split("_");
+			const studentId = parseInt(studentName);
+			const classId = parseInt(classIdStr);
+
+			const studentData = {
+				id: studentId,
+				classId: classId,
+				scores: [],
+			};
+
+			for (const subjectName in editedData[key]) {
+				const subjectId = subjectComponentsData.find(
+					(item) => item.name === subjectName
+				)?.id;
+				const value = editedData[key][subjectName];
+
+				if (subjectId !== undefined) {
+					studentData.scores.push({
+						subjectComponentId: subjectId,
+						value: value,
+					});
+				}
+			}
+
+			dataToSave.push(studentData);
+		}
+		await ClassApi.SaveScores(dataToSave);
 	};
 
 	const handleCancel = () => {
@@ -199,35 +218,50 @@ const ScoreHistory = () => {
 
 	return (
 		<div>
-			<Select value={selectedClass} onChange={handleClassChange}>
-				{classData.map((item) => (
-					<Select.Option key={item.id} value={item.id}>
-						{item.classCode}
-					</Select.Option>
-				))}
-			</Select>
-
-			{!editing && (
-				<Button
-					type="primary"
-					onClick={handleEditClick}
-					style={{ marginLeft: 8 }}
+			{" "}
+			<Space>
+				<Select
+					value={selectedClass}
+					style={{ marginLeft: 8, marginBottom: 10 }}
+					onChange={handleClassChange}
 				>
-					Edit
-				</Button>
-			)}
+					{classData.map((item) => (
+						<Select.Option key={item.id} value={item.id}>
+							{item.classCode}
+						</Select.Option>
+					))}
+				</Select>
 
-			{editing && (
-				<>
-					<Button type="primary" size="small" onClick={handleSave}>
-						Save
+				{!editing && (
+					<Button
+						type="primary"
+						onClick={handleEditClick}
+						style={{ marginLeft: 8, marginBottom: 10 }}
+					>
+						Edit
 					</Button>
-					<Button size="small" onClick={handleCancel}>
-						Cancel
-					</Button>
-				</>
-			)}
+				)}
 
+				{editing && (
+					<>
+						<Button
+							type="primary"
+							size="small"
+							onClick={handleSave}
+							style={{ marginLeft: 8, marginBottom: 10 }}
+						>
+							Save
+						</Button>
+						<Button
+							style={{ marginLeft: 8, marginBottom: 10 }}
+							size="small"
+							onClick={handleCancel}
+						>
+							Cancel
+						</Button>
+					</>
+				)}
+			</Space>
 			<Table
 				dataSource={scoreData}
 				columns={columns}

@@ -4,11 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using repository.AppRepositories;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
+using service.contract.DTOs.Attendance;
 using service.contract.DTOs.Class;
 using service.contract.DTOs.Score;
+using service.contract.DTOs.Student;
 using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Teacher;
 using service.contract.IAppServices;
+using System;
 
 namespace service.AppServices
 {
@@ -17,15 +20,40 @@ namespace service.AppServices
         readonly IFeeDetailRepository feeDetailRepository;
         readonly IScoreRepository scoreRepository;
         readonly ISubjectRepository subjectRepository;
+        readonly IAttedanceRepository attedanceRepository;
 
-
-        public ClassService(IScoreRepository scoreRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        public ClassService(IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
             this.feeDetailRepository = feeDetailRepository;
             this.scoreRepository = scoreRepository;
             this.subjectRepository = subjectRepository;
-
+            this.attedanceRepository = attedanceRepository;
         }
+        public async Task<List<StudentAttendance>> GetAttendancesByClass(Guid classId, DateTime dateTime)
+        {
+            var result = await attedanceRepository.GetAll().Result
+               .Include(a => a.FeeDetail)
+                   .ThenInclude(fd => fd.StudentSemester)
+                       .ThenInclude(ss => ss.Student)
+               .Where(a => a.FeeDetail.ClassId == classId && a.Date == dateTime)
+               .Select(a => new StudentAttendance
+               {
+                   student = new StudentDTO
+                   {
+                       Id = a.FeeDetail.StudentSemester.Student.Id,
+                       FullName = a.FeeDetail.StudentSemester.Student.FullName,
+                   },
+                   attendance = new AttendanceDTO
+                   {
+                       Id = a.Id,
+                       IsAttendance = a.IsAttendance,
+                   }
+               })
+               .ToListAsync();
+
+            return Mapper.Map<List<StudentAttendance>>(result);
+        }
+
 
         public async Task<TeacherDTO> GetTeacher(Guid classId)
         {
@@ -37,6 +65,14 @@ namespace service.AppServices
             var result = base.Repository.GetAll().Result.Include(c => c.FeeDetails).ThenInclude(fd => fd.StudentSemester).Where(c => c.TeacherId == teacherId).ToList();
             return Mapper.Map<List<ClassDTO>>(result);
         }
+
+        public async Task<List<DateTime?>> GetDates(Guid classId)
+        {
+            return await attedanceRepository.GetAll().Result
+               .Include(a => a.FeeDetail)
+               .Where(a => a.FeeDetail.ClassId == classId).Select(a => a.Date).ToListAsync();
+        }
+
         public async Task<List<StudentScoreDTO>> GetStudentsByClass(Guid classId)
         {
             var result = await feeDetailRepository.GetAll().Result

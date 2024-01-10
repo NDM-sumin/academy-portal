@@ -2,7 +2,7 @@
 
 namespace domain
 {
-    public class Attendance : AppEntity
+    public class Attendance : AppEntityDefaultKey
     {
         public Guid RoomId { get; set; }
         public Guid SlotTimeTableAtWeekId { get; set; }

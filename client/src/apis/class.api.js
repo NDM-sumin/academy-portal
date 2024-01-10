@@ -25,6 +25,16 @@ const useClassApi = () => {
 	const GetSubjectComponents = (classId) => {
 		return axios.get(`api/Class/GetSubjectComponents/${classId}`);
 	};
+	const GetAttendances = (classId, dateTime) => {
+		return axios.get(`api/Class/GetAttendances/${classId}`, {
+			params: {
+				dateTime: dateTime,
+			},
+		});
+	};
+	const GetDates = (classId) => {
+		return axios.get(`api/Class/GetDates/${classId}`);
+	};
 	return {
 		create,
 		update,
@@ -33,6 +43,8 @@ const useClassApi = () => {
 		GetClasses,
 		GetStudents,
 		GetSubjectComponents,
+		GetAttendances,
+		GetDates,
 	};
 };
 export default useClassApi;
