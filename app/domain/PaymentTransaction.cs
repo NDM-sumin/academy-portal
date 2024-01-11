@@ -4,7 +4,9 @@ namespace domain
 {
     public class PaymentTransaction : AppEntityDefaultKey
     {
-        public Guid FeeDetailId { get; set; }
+        public PaymentTransaction(){
+            FeeDetail = new   HashSet<FeeDetail>();
+        }
         public int? TransactionNo { get; set; }
         [Column(TypeName = "money")]
         public decimal Amount { get; set; }
@@ -20,9 +22,7 @@ namespace domain
         public string SecureHash { get; set; } = null!;
         public string? ConnectionId { get; set; }
 
-
-        [ForeignKey(nameof(FeeDetailId))]
-        public virtual FeeDetail FeeDetail { get; set; } = null!;
+        public virtual ICollection<FeeDetail> FeeDetail { get; set; }
 
     }
 }

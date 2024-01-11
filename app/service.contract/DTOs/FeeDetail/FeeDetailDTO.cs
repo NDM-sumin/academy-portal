@@ -19,6 +19,7 @@ namespace service.contract.DTOs.FeeDetail
         public Guid? ClassId { get; set; }
         public Guid StudentSemesterId { get; set; }
         public Guid SubjectId { get; set; }
+        public Guid PaymentTransactionId{get;set;}
         public virtual ClassDTO? Class { get; set; }
         public virtual SubjectDTO Subject { get; set; } = null!;
 

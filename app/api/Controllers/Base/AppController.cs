@@ -22,5 +22,22 @@ namespace api.Controllers.Base
             var user = this.User;
             return Guid.Parse(user.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Name)?.Value ?? throw new UnauthorizeException());
         }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public string GetIpAddress()
+        {
+            string ipAddress = string.Empty;
+            try
+            {
+                ipAddress = HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
+
+                if (string.IsNullOrEmpty(ipAddress) || (ipAddress.ToLower() == "unknown") || ipAddress.Length > 45)
+                    ipAddress = HttpContext.GetServerVariable("REMOTE_ADDR");
+            }
+            catch
+            {
+            }
+
+            return ipAddress ?? "::1";
+        }
     }
 }

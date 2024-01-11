@@ -1,6 +1,9 @@
-﻿using domain.shared.AppSettings;
+﻿using domain;
+using domain.shared.AppSettings;
 using domain.shared.Constants;
 using service.contract.DTOs.VNPay;
+using service.contract.IAppServices;
+using service.contract.IAppServices.Base;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -8,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace service.AppServices
 {
-    public class VNPayService
+    public class VNPayService : IVnPayService
     {
         SortedList<string, string> sortedRequestParams = new SortedList<string, string>(new VnPayCompare());
         readonly VNPayConfiguration vnPayConfig;
@@ -19,7 +22,7 @@ namespace service.AppServices
             sortedRequestParams.Add(VNPayConstants.Key.Command, VNPayConstants.Value.Command);
 
         }
-        public VNPayService InitRequestParams(string customerIpAddress, out string transactionId)
+        public IVnPayService InitRequestParams(string customerIpAddress, out string transactionId)
         {
             //sortedRequestParams.Add(VNPayConstants.Key.BankCode, bankCode.ToString());
             sortedRequestParams.Add(VNPayConstants.Key.IpAddress, customerIpAddress);
