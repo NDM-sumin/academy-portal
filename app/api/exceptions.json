@@ -27,5 +27,9 @@
   {
     "code": 4040,
     "message": "Không tìm thấy thông tin liên quan, vui lòng kiểm tra lại"
+  },
+  {
+    "code": 5006,
+    "message": "KVui lòng chọn môn học "
   }
 ]

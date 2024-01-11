@@ -18,6 +18,7 @@ namespace service.contract.DTOs.VNPay
         public string? SecureHashType { get; set; }
         public string SecureHash { get; set; } = null!;
         public string? ConnectionId { get; set; }
+        public string? PayUrl{get;set;}
 
 
         public virtual FeeDetailDTO FeeDetail { get; set; } = null!;
