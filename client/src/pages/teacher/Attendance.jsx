@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Select, DatePicker, Button, message } from "antd";
+import { Table, Select, DatePicker, Button, message, Space } from "antd";
 import useClassApi from "../../apis/class.api";
 import useAuthApi from "../../apis/auth.api";
 import dayjs from "dayjs";
@@ -35,7 +35,7 @@ const Attendance = () => {
 				</Select>
 			),
 		},
-	]
+	];
 	const [userId, setUserId] = useState(null);
 	const getUser = async () => {
 		try {
@@ -119,7 +119,7 @@ const Attendance = () => {
 			);
 
 			const attendanceRecords = attendance.map((item, index) => ({
-				key: item.student.id,
+				key: item.attendance.id,
 				id: index + 1,
 				studentName: item.student.fullName,
 				attendance:
@@ -128,65 +128,61 @@ const Attendance = () => {
 						: "absent",
 			}));
 			setAttendanceData(attendanceRecords);
-			generateColumns();
 		} catch (error) {
 			console.error("Error fetching attendance data", error);
 		}
 	};
 
-
-
-	const handleAttendanceChange = (studentId, value) => {
+	const handleAttendanceChange = (AttendanceId, value) => {
 		const changeData = attendanceData.map((item) => {
-			if (item.key === studentId) {
+			if (item.key === AttendanceId) {
 				item.attendance = value;
 			}
 			return item;
-			
 		});
-		
+
 		setAttendanceData(changeData);
-		
 	};
 
 	const handleSaveAttendance = async () => {
 		try {
-			if (selectedClass && selectedDate) {
-				await ClassApi.SaveAttendance(
-					selectedClass,
-					selectedDate,
-					attendanceData
-				);
+			await ClassApi.SaveAttendance(attendanceData);
 
-				message.success("Đã lưu thông tin điểm danh thành công.");
-			} else {
-				message.warning("Please select class and date");
-			}
+			message.success("Đã lưu thông tin điểm danh thành công.");
 		} catch (error) {
 			console.error("Error saving attendance data", error);
 			message.error("Đã xảy ra lỗi khi lưu thông tin điểm danh.");
 		}
 	};
-	
-console.log(attendanceData);
+
+	console.log(attendanceData);
 	return (
 		<div>
-			<Select value={selectedClass} onChange={handleClassChange}>
-				{classData.map((item, index) => (
-					<Select.Option key={index} value={item.id}>
-						{item.classCode}
-					</Select.Option>
-				))}
-			</Select>
+			<Space>
+				<Select
+					style={{ marginBottom: 10 }}
+					value={selectedClass}
+					onChange={handleClassChange}
+				>
+					{classData.map((item, index) => (
+						<Select.Option key={index} value={item.id}>
+							{item.classCode}
+						</Select.Option>
+					))}
+				</Select>
 
-			<Select value={selectedDate} onChange={handleDateChange}>
-				{dateData.map((item, index) => (
-					<Select.Option key={index} value={item}>
-						{item}
-					</Select.Option>
-				))}
-			</Select>
-
+				<Select
+					style={{ marginBottom: 10 }}
+					value={selectedDate}
+					onChange={handleDateChange}
+				>
+					{dateData.map((item, index) => (
+						<Select.Option key={index} value={item}>
+							{item}
+						</Select.Option>
+					))}
+				</Select>
+			</Space>
 			<Table
 				dataSource={attendanceData}
 				columns={columns}

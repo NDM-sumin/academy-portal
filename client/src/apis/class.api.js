@@ -35,6 +35,41 @@ const useClassApi = () => {
 	const GetDates = (classId) => {
 		return axios.get(`api/Class/GetDates/${classId}`);
 	};
+
+	const SaveAttendance = (attendanceData) => {
+		const attendanceDatas = attendanceData.map((item) => ({
+			attendanceId: item.key,
+			isAttendance: item.attendance === "present" ? true : false,
+		}));
+		const attendanceDatasJSON = JSON.stringify(attendanceDatas);
+
+		return axios.post(
+			`api/Class/SaveAttendance?attendances=${attendanceDatasJSON}`
+		);
+	};
+	const SaveScores = (scoreData) => {
+		const scoreDatas = scoreData.map((item) => {
+			const additionalFields = [];
+			Object.keys(item).forEach((prop) => {
+				if (
+					prop !== "id" &&
+					prop !== "key" &&
+					prop !== "index" &&
+					prop !== "studentName"
+				) {
+					additionalFields.push({ name: prop, value: item[prop] });
+				}
+			});
+			return {
+				classId: item.id,
+				studentId: item.key,
+				scores: additionalFields,
+			};
+		});
+		const scoreDatasJSON = JSON.stringify(scoreDatas);
+
+		return axios.post(`api/Class/SaveScores?scores=${scoreDatasJSON}`);
+	};
 	return {
 		create,
 		update,
@@ -45,6 +80,8 @@ const useClassApi = () => {
 		GetSubjectComponents,
 		GetAttendances,
 		GetDates,
+		SaveAttendance,
+		SaveScores,
 	};
 };
 export default useClassApi;

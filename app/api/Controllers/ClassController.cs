@@ -2,6 +2,7 @@
 using domain;
 using Microsoft.AspNetCore.JsonPatch.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.Class;
 using service.contract.DTOs.Score;
@@ -40,7 +41,7 @@ namespace api.Controllers
         }
 
         [HttpGet("GetAttendances/{classId}")]
-        public async Task<List<StudentAttendance>> GetAttendances(Guid classId,string dateTime)
+        public async Task<List<StudentAttendance>> GetAttendances(Guid classId, string dateTime)
         {
             return await (appCRUDService as IClassService).GetAttendancesByClass(classId, DateTime.Parse(dateTime));
         }
@@ -49,6 +50,22 @@ namespace api.Controllers
         public async Task<List<DateTime?>> GetDates(Guid classId)
         {
             return await (appCRUDService as IClassService).GetDates(classId);
+        }
+
+        [HttpPost("SaveAttendance")]
+        public async Task<IActionResult> SaveAttendance(string attendances)
+        {
+            var result = JsonConvert.DeserializeObject<List<TakeAttendance>>(attendances);
+            await (appCRUDService as IClassService).SaveAttendance(result);
+            return Ok();
+        }
+
+        [HttpPost("SaveScores")]
+        public async Task<IActionResult> SaveScores(string scores)
+        {
+            var result = JsonConvert.DeserializeObject<List<TakeScore>>(scores);
+            await (appCRUDService as IClassService).SaveScores(result);
+            return Ok();
         }
     }
 }

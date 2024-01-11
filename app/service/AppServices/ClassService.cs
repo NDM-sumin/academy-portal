@@ -84,6 +84,7 @@ namespace service.AppServices
                .GroupBy(fd => new { fd.StudentSemester.StudentId, fd.SubjectId })
                     .Select(group => new StudentScoreDTO
                     {
+                        StudentId = group.First().StudentSemester.Student.Id,
                         StudentName = group.First().StudentSemester.Student.FullName,
                         SubjectComponents = group.First().Subject.SubjectComponents
                             .Select(sc => new SubjectComponentDTO
@@ -116,8 +117,34 @@ namespace service.AppServices
                 Where(s => s.FeeDetails.Any(fd => fd.ClassId == classId))
                    .SelectMany(s => s.SubjectComponents)
                     .ToList();
-            
+
             return Mapper.Map<List<SubjectComponentDTO>>(result);
+        }
+
+        public async Task SaveAttendance(List<TakeAttendance> result)
+        {
+            foreach (var item in result)
+            {
+                var attendance = attedanceRepository.GetAll().Result.FirstOrDefault(a => a.Id == item.AttendanceId);
+                attendance.IsAttendance = item.IsAttendance;
+                attedanceRepository.Update(attendance);
+            }
+        }
+        public async Task SaveScores(List<TakeScore> result)
+        {
+            foreach(var item in result)
+            {
+                //var subjectComponents = subjectRepository.GetAll().Result.Include(s => s.FeeDetails).Include(s => s.SubjectComponents)
+                //    .FirstOrDefault(s => s.FeeDetails.Any(fd => fd.ClassId == item.ClassId)).SubjectComponents.ToList();
+                foreach(var subjectComponent in item.Scores)
+                {
+                    var score = scoreRepository.GetAll().Result.Include(s => s.SubjectComponent).
+                        Where(s => s.SubjectComponent.Name.Equals(subjectComponent.Name))
+                        .OrderByDescending(x => x.CreatedAt)
+
+                        .ToList();
+                }
+            }
         }
     }
 }
