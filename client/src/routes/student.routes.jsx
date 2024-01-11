@@ -1,4 +1,4 @@
-import RegisterSubject from "../pages/student/registerSubject";
+import RegisterSubject from "../pages/student/RegisterSubject";
 import TimeTable from "../pages/student/Timetable";
 import Attendance from "../pages/student/AttendanceHistory";
 import ScoreHistory from "../pages/student/ScoreHistory";

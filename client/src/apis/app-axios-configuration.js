@@ -32,7 +32,6 @@ const useAxios = (setLoading) => {
         withCredentials: true,
     });
     _axios.interceptors.request.use((config) => {
-        console.log(config);
         const token = JSON.parse(localStorage.getItem(USER_TOKEN_KEY) ?? JSON.stringify({}))?.token;
         config.headers.Authorization = `${AUTH_SCHEME} ${token}`;
         if (!config.headers[`Content-Type`])
