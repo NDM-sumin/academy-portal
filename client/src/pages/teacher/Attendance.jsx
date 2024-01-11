@@ -11,7 +11,31 @@ const Attendance = () => {
 	const [selectedDate, setSelectedDate] = useState(null);
 	const [dateData, setDateData] = useState([]);
 	const [attendanceData, setAttendanceData] = useState([]);
-	const [columns, setColumns] = useState([]);
+	const columns = [
+		{ title: "STT", dataIndex: "id", key: "id", align: "center" },
+		{
+			title: "Tên sinh viên",
+			dataIndex: "studentName",
+			key: "studentName",
+			align: "center",
+		},
+		{
+			title: "Điểm danh",
+			dataIndex: "attendance",
+			key: "attendance",
+			align: "center",
+			render: (text, record, index) => (
+				<Select
+					key={index}
+					value={text}
+					onChange={(value) => handleAttendanceChange(record.key, value)}
+				>
+					<Select.Option value="present">Có mặt</Select.Option>
+					<Select.Option value="absent">Vắng mặt</Select.Option>
+				</Select>
+			),
+		},
+	]
 	const [userId, setUserId] = useState(null);
 	const getUser = async () => {
 		try {
@@ -110,34 +134,7 @@ const Attendance = () => {
 		}
 	};
 
-	const generateColumns = () => {
-		const dynamicColumns = [
-			{ title: "STT", dataIndex: "id", key: "id", align: "center" },
-			{
-				title: "Tên sinh viên",
-				dataIndex: "studentName",
-				key: "studentName",
-				align: "center",
-			},
-			{
-				title: "Điểm danh",
-				dataIndex: "attendance",
-				key: "attendance",
-				align: "center",
-				render: (text, record) => (
-					<Select
-						value={text}
-						onChange={(value) => handleAttendanceChange(record.key, value)}
-					>
-						<Select.Option value="present">Có mặt</Select.Option>
-						<Select.Option value="absent">Vắng mặt</Select.Option>
-					</Select>
-				),
-			},
-		];
 
-		setColumns(dynamicColumns);
-	};
 
 	const handleAttendanceChange = (studentId, value) => {
 		const changeData = attendanceData.map((item) => {
@@ -145,13 +142,11 @@ const Attendance = () => {
 				item.attendance = value;
 			}
 			return item;
+			
 		});
+		
 		setAttendanceData(changeData);
-		setAttendanceData((prevData) =>
-			prevData.map((record) =>
-				record.id === studentId ? { ...record, attendance: value } : record
-			)
-		);
+		
 	};
 
 	const handleSaveAttendance = async () => {
@@ -172,20 +167,21 @@ const Attendance = () => {
 			message.error("Đã xảy ra lỗi khi lưu thông tin điểm danh.");
 		}
 	};
-
+	
+console.log(attendanceData);
 	return (
 		<div>
 			<Select value={selectedClass} onChange={handleClassChange}>
-				{classData.map((item) => (
-					<Select.Option key={item.id} value={item.id}>
+				{classData.map((item, index) => (
+					<Select.Option key={index} value={item.id}>
 						{item.classCode}
 					</Select.Option>
 				))}
 			</Select>
 
 			<Select value={selectedDate} onChange={handleDateChange}>
-				{dateData.map((item) => (
-					<Select.Option key={item} value={item}>
+				{dateData.map((item, index) => (
+					<Select.Option key={index} value={item}>
 						{item}
 					</Select.Option>
 				))}
