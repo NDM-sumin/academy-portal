@@ -66,8 +66,8 @@ const useClassApi = () => {
 				scores: additionalFields,
 			};
 		});
-		const scoreDatasJSON = JSON.stringify(scoreDatas);
 
+		const scoreDatasJSON = JSON.stringify(scoreDatas);
 		return axios.post(`api/Class/SaveScores?scores=${scoreDatasJSON}`);
 	};
 	return {

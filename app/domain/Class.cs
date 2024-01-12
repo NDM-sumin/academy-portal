@@ -14,9 +14,6 @@ namespace domain
         public Guid TeacherId { get; set; }
         [ForeignKey(nameof(TeacherId))]
         public virtual Teacher Teacher { get; set; } = null!;
-        public Guid SemesterId { get; set; }
-        [ForeignKey(nameof(SemesterId))]
-        public virtual Semester Semester { get; set; } = null!;
         public virtual ICollection<FeeDetail> FeeDetails { get; set; }
     }
 }

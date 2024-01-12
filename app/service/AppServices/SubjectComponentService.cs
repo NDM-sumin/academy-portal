@@ -22,13 +22,11 @@ namespace service.AppServices
         }
         public async Task<List<SubjectComponentDTO>> GetByStudentAndSubject(Guid studentId, Guid subjectId)
         {
-            var feeDetail = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester)
-                .Where(fd => fd.StudentSemester.IsNow == true && fd.StudentSemester.StudentId == studentId && fd.SubjectId == subjectId)
-                .FirstOrDefault();
+
             var result = await base.Repository.Entities
-            .Where(sc => sc.SubjectID == subjectId
-            && sc.Scores.Any(s => s.FeeDetailId == feeDetail.Id)
-            ).ToListAsync();
+                      .Where(sc => sc.SubjectID == subjectId
+                      && sc.Scores.Any(s => s.StudentId == studentId)
+                      ).ToListAsync();
             return Mapper.Map<List<SubjectComponentDTO>>(result);
         }
     }

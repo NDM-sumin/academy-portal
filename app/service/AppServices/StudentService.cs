@@ -141,13 +141,11 @@ namespace service.AppServices
 
         public List<SubjectDTO> GetFailedSubjects(Guid studentId)
         {
-            var data = feeDetailRepository.Entities.Include(fd => fd.StudentSemester).Where(fd => fd.StudentSemester.StudentId == studentId)
-                .Select(fd => fd.Scores.GroupBy(s => s.SubjectComponent.Subject)
-                        .Where(sj => sj.Sum(sc => sc.Value * sc.SubjectComponent.Weight) < 5)
-                        .Select(s => s.Key)).ToList();
+            var data = base.Repository.Entities.Find(studentId)
+                        .Scores.GroupBy(s => s.SubjectComponent.Subject).Where(sj => sj.Sum(sc => sc.Value * sc.SubjectComponent.Weight) < 5)
+                        .Select(s => s.Key).ToList();
             return Mapper.Map<List<SubjectDTO>>(data);
         }
-
         public async Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId)
         {
             var data = studentSemesterRepository.Entities.Include(ss => ss.Semester)

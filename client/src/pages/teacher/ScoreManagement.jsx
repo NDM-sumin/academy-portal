@@ -80,10 +80,9 @@ const ScoreHistory = () => {
 		try {
 			const studentScore = await ClassApi.GetStudents(currentClass);
 			const components = await ClassApi.GetSubjectComponents(currentClass);
-
+			console.log(studentScore);
 			const scoreHistoryList = [];
 			studentScore.forEach((student, index) => {
-				console.log(currentClass);
 				const scoreHistory = {
 					index: index + 1,
 					key: student.studentId,

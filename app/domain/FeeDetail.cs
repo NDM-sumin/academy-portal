@@ -7,7 +7,6 @@ namespace domain
         public FeeDetail()
         {
             Attendances = new HashSet<Attendance>(); 
-            Scores = new HashSet<Score>();
         }
         public float Amount { get; set; }
         public string? Content { get; set; }
@@ -30,6 +29,6 @@ namespace domain
         public virtual StudentSemester StudentSemester { get; set; } = null!;
         [ForeignKey(nameof(PaymentTransactionId))]
         public virtual PaymentTransaction PaymentTransaction { get; set; } = null!;
-        public virtual ICollection<Score> Scores { get; set; }
+
     }
 }

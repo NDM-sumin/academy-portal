@@ -47,7 +47,6 @@ namespace entityframework
             modelBuilder.Entity<MajorSubject>().HasIndex(ra => new { ra.MajorId, ra.SubjectId, ra.SemesterId }).IsUnique();
             modelBuilder.Entity<StudentSemester>().HasIndex(ra => new { ra.SemesterId, ra.StudentId }).IsUnique();
             modelBuilder.Entity<FeeDetail>().HasIndex(ra => new { ra.SubjectId, ra.StudentSemesterId, ra.ClassId }).IsUnique();
-            modelBuilder.Entity<Class>().HasIndex(ra => new { ra.SemesterId, ra.TeacherId }).IsUnique();
 
 
             modelBuilder.Entity<Semester>().HasOne<Semester>(s => s.PrevSemester).WithOne(s => s.NextSemester);
