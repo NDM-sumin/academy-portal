@@ -9,12 +9,12 @@ namespace repository
            where TEntity : class
     {
         public DbSet<TEntity> Entities { get; }
-    public TDbContext Context { get; }
-
+protected readonly TDbContext dbContext;
+        public TDbContext Context => dbContext;
 
         public GenericRepository(TDbContext context)
         {
-            this.Context = context;
+            this.dbContext = context;
             Entities = this.Context.Set<TEntity>();
         }
         public virtual async Task<TEntity> Create(TEntity entity)

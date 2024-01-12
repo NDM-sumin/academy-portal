@@ -1,4 +1,6 @@
 ﻿using entityframework;
+using Microsoft.EntityFrameworkCore;
+using repository.contract;
 using repository.contract.IAppRepositories.Base;
 
 namespace repository.AppRepositories.Base
@@ -10,5 +12,7 @@ namespace repository.AppRepositories.Base
         protected AppGenericAbstractKeyRepository(AppDbContext context) : base(context)
         {
         }
+
+        DbContext IGenericRepository<DbContext, TEntity>.Context => base.Context;
     }
 }
