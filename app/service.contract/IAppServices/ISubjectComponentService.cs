@@ -9,7 +9,7 @@ namespace service.contract.IAppServices
 {
     public interface ISubjectComponentService : IAppCRUDDefaultKeyService<SubjectComponentDTO, SubjectComponent, SubjectComponent, SubjectComponent>
     {
-        Task<List<SubjectComponentDTO>> GetByStudentAndSubject(Guid studentId, Guid subjectId);
+        Task<List<SubjectComponentDTO>> GetByStudentAndSubject(Guid feeDetailId, Guid subjectId);
     }
 
 }

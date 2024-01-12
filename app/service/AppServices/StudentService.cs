@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
+using repository.AppRepositories;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.Attendance;
@@ -31,11 +32,11 @@ namespace service.AppServices
         readonly IAttendanceService attendanceService;
         readonly IStudentSemesterRepository studentSemesterRepository;
         readonly ISubjectRepository subjectService;
-
+        readonly IFeeDetailRepository feeDetailRepository;
         public StudentService(IStudentRepository genericRepository, IStudentSemesterRepository studentSemesterRepository,
             IMajorService majorService,
             ISemesterService semesterService,
-            ISubjectRepository subjectRepository,
+            ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository,
             IStudentSemesterService studentSemesterService,
             IAttendanceService attendanceService,
             IMapper mapper,
@@ -47,6 +48,7 @@ namespace service.AppServices
             _jwtConfiguration = jwtConfiguration.Value;
             this.slotTimeTableAtWeekService = slotTimeTableAtWeekService;
             this.feeDetailService = feeDetailService;
+            this.feeDetailRepository = feeDetailRepository;
             this.semesterService = semesterService;
             this.studentSemesterService = studentSemesterService;
             this.attendanceService = attendanceService;
@@ -102,7 +104,7 @@ namespace service.AppServices
             feeDetailDTO.Id = Guid.NewGuid();
             feeDetailDTO.SubjectId = subjectId;
             feeDetailDTO.StudentSemesterId = studentSemesterService.GetCurrentSemester(studentId).Result.Id;
-            feeDetailDTO.Amount = (float) (await  subjectService.Find(subjectId)).Price;
+            feeDetailDTO.Amount = (float)(await subjectService.Find(subjectId)).Price;
             feeDetailDTO.DueDate = DateTime.Now.AddDays(20);
             feeDetailService.Create(feeDetailDTO);
         }
@@ -139,10 +141,10 @@ namespace service.AppServices
 
         public List<SubjectDTO> GetFailedSubjects(Guid studentId)
         {
-            var data = base.Repository.Entities.Find(studentId)
-                        .Scores.GroupBy(s => s.SubjectComponent.Subject)
+            var data = feeDetailRepository.Entities.Include(fd => fd.StudentSemester).Where(fd => fd.StudentSemester.StudentId == studentId)
+                .Select(fd => fd.Scores.GroupBy(s => s.SubjectComponent.Subject)
                         .Where(sj => sj.Sum(sc => sc.Value * sc.SubjectComponent.Weight) < 5)
-                        .Select(s => s.Key).ToList();
+                        .Select(s => s.Key)).ToList();
             return Mapper.Map<List<SubjectDTO>>(data);
         }
 

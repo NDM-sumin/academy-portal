@@ -6,6 +6,7 @@
         {
             StudentSemesters = new HashSet<StudentSemester>();
             MajorSubjects = new HashSet<MajorSubject>();
+            Classes = new HashSet<Class>();
         }
         public string SemesterCode { get; set; } = null!;
         public string SemesterName { get; set; } = null!;
@@ -23,5 +24,6 @@
 
         public virtual ICollection<StudentSemester> StudentSemesters { get; set; }
         public virtual ICollection<MajorSubject> MajorSubjects { get; set; }
+        public virtual ICollection<Class> Classes { get; set; }
     }
 }
