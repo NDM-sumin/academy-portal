@@ -22,6 +22,7 @@ readonly IFeeDetailService feeDetailService;
             this.studentService = studentService;
             this.majorSubjectService = majorSubjectService;
             this.studentSemesterService = studentSemesterService;
+            this.feeDetailService = feeDetailService;
         }
 
 
@@ -41,7 +42,10 @@ readonly IFeeDetailService feeDetailService;
             {
                 var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(student.Major.Id, studentSemester.Semester.Id);
                 var subjects = majorSubjects.Select(ms => ms.Subject);
-                listSubject.AddRange(subjects);
+                var feeDetailRegistered= await feeDetailService.GetByStudent(studentId, studentSemester.SemesterId);
+
+
+                listSubject.AddRange(subjects.Where(s =>!feeDetailRegistered.Select(f => f.SubjectId).Contains(s.Id)));
             }
 
             return listSubject;
