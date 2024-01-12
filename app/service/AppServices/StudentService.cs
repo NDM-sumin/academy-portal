@@ -8,6 +8,7 @@ using OfficeOpenXml;
 using repository.AppRepositories;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
+using service.contract.DTOs.Account;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Major;
@@ -153,5 +154,6 @@ namespace service.AppServices
                 ss.Semester).ToList();
             return Mapper.Map<List<SemesterDTO>>(data!);
         }
+
     }
 }

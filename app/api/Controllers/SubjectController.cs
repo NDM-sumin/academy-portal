@@ -29,9 +29,8 @@ namespace api.Controllers
             this.accountService =  accountService;
             this.paymentTransactionService = paymentTransactionService;
         }
-
-        [HttpGet("GetPayUrl")]
-        public async Task<PaymentTransactionDto> GetPayUrl([FromQuery] List<Guid> subjectIds){
+        [HttpPost("GetPayUrl")]
+        public async Task<PaymentTransactionDto> GetPayUrl([FromBody] List<Guid> subjectIds){
             if(subjectIds .Count == 0){
                 throw new ClientException(5006);
             }
@@ -41,9 +40,10 @@ namespace api.Controllers
                 subjects.Add(( await (appCRUDService as ISubjectService).Get(id)));
             }
             var user = await accountService.GetAccountById(GetUserId());
+            var semester = await studentSemesterService.GetCurrentSemester(GetUserId());
             CreatePayUrlDto createPayUrlDto = new CreatePayUrlDto(){
                 Amount = subjects.Sum(s => s.Price),
-                OrderInfo="Thanh toan hoc phi sinh vien " + user.FullName ,
+                OrderInfo="Thanh toan hoc phi sinh vien " + user.FullName + " hoc ki " + semester.Semester.SemesterName ,
                 Expires=20
             };
          var url= vnPayService

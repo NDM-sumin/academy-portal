@@ -31,6 +31,7 @@ namespace api.Extensions
                 .AddScoped<ITimeTableRepository, TimeTableRepository>()
                 .AddScoped<ISlotTimeTableAtWeekRepository, SlotTimeTableAtWeekRepository>()
                 .AddScoped<IAttedanceRepository, AttendanceRepository>()
+                .AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>()
 
 
                 ;
@@ -58,6 +59,7 @@ namespace api.Extensions
                 .AddScoped<ISlotTimeTableAtWeekService, SlotTimeTableAtWeekService>()
                 .AddScoped<IAttendanceService, AttendanceService>()
                 .AddScoped<IRoomService, RoomService>()
+                .AddScoped<IPaymentTransactionService, PaymentTransactionService>()
 
                 .AddScoped<IEmailService>(impl =>
                 {
@@ -65,7 +67,13 @@ namespace api.Extensions
                     var mailCOnfig = impl.GetService<IOptions<MailConfiguration>>()!;
                     var smtpConfig = mapper.Map<SmtpConfigModel>(mailCOnfig.Value);
                     return new EmailService(smtpConfig);
+                }).AddScoped<IVnPayService>(c =>
+                {
+                    var vnpayConfig = c.GetService<IOptions<VNPayConfiguration>>();
+
+                    return new VNPayService(vnpayConfig.Value);
                 })
+
 
 
 

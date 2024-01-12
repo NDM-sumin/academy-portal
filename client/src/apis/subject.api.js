@@ -22,7 +22,12 @@ const useSubjectApi = () => {
 	const GetSubjects = (semesterId, studentId) => {
 		return axios.get(`api/Subject/GetSubjects/${semesterId}/${studentId}`);
 	};
+	const GetPayUrl = (subjectIds) => {
+	
+		return axios.post(`api/Subject/GetPayUrl`, JSON.stringify(subjectIds))
 
+
+	}
 	return {
 		create,
 		update,
@@ -30,6 +35,7 @@ const useSubjectApi = () => {
 		del,
 		getRegisterableSubjects,
 		GetSubjects,
+		GetPayUrl
 	};
 };
 export default useSubjectApi;

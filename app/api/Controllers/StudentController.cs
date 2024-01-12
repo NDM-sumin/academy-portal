@@ -21,19 +21,22 @@ namespace api.Controllers
         readonly IFeeDetailService feeDetailService;
         readonly ISubjectComponentService subjectComponentService;
         readonly IStudentSemesterService studentSemesterService;
+        readonly IAccountService accountService;
         readonly ISubjectService subjectService;
         public StudentController(IStudentService appCRUDService,
         IAttendanceService attendanceService,
         IStudentSemesterService studentSemesterService,
         ISubjectComponentService subjectComponentService,
         IFeeDetailService feeDetailService,
-        ISubjectService subjectService) : base(appCRUDService)
+        ISubjectService subjectService,
+        IAccountService accountService) : base(appCRUDService)
         {
             this.attendanceService = attendanceService;
             this.feeDetailService = feeDetailService;
             this.subjectComponentService = subjectComponentService;
             this.studentSemesterService = studentSemesterService;
             this.subjectService = subjectService;
+            this.accountService = accountService;
 
         }
 
@@ -85,14 +88,17 @@ namespace api.Controllers
         }
     [HttpPost("RegisterSubject")]
     public async Task<IActionResult> RegisterSubject(List<CreateFeeDetailDTO> feeDetailDTOs){
-            var currentSemester = await studentSemesterService.GetCurrentSemester(GetUserId());
-            foreach(var feedetail in feeDetailDTOs){
-                feedetail.StudentSemesterId = currentSemester.Semester.NextSemester.Id;
-                feedetail.DueDate = DateTime.Now.AddDays(20);
-                feedetail.Amount =(float) (await subjectService.Get(feedetail.SubjectId)).Price;
-              await  feeDetailService.Create(feedetail);
-            }
-    return Ok(feeDetailDTOs);
+    
+    var userId = GetUserId();
+        var currentSemester = await studentSemesterService.GetCurrentSemester(userId);
+        foreach(CreateFeeDetailDTO feedetail in feeDetailDTOs){
+            feedetail.StudentSemesterId = currentSemester.Id;
+            feedetail.DueDate = DateTime.Now.AddDays(20);
+            feedetail.Amount =(float) (await subjectService.Get(feedetail.SubjectId)).Price;
+            await  feeDetailService.Create(feedetail);
+        }
+
+        return Ok(feeDetailDTOs);
 
     }
         [HttpPost("RegisterSubject/{studentId}/{subjectId}")]
