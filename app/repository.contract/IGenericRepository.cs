@@ -8,10 +8,12 @@ namespace repository.contract
         where TEntity : class
     {
         Task AddRange(List<TEntity> entities);
+        TDbContext Context { get; }
         DbSet<TEntity> Entities { get; }
         Task<IQueryable<TEntity>> GetAll();
         Task<TEntity> Create(TEntity entity);
         Task<TEntity> Update(TEntity entity);
+        void DetachLocalAll();
         Task<int> SaveChange();
         Task<int> SaveChange(IDbContextTransaction dbContextTransaction);
     }

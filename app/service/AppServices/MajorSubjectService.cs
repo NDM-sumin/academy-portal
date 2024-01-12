@@ -21,7 +21,10 @@ namespace service.AppServices
         }
         public List<MajorSubjectDto> GetSubjectsOfMajorInSemester(Guid majorId, Guid semesterId)
         {
-            var data = Repository.Entities.Include(ms => ms.Subject).Where(ms => ms.MajorId == majorId && ms.SemesterId == semesterId).ToList();
+            var data = Repository.Entities
+            .Include(ms => ms.Subject)
+            .Where(ms => ms.MajorId == majorId && ms.SemesterId == semesterId)
+            .ToList();
             return Mapper.Map<List<MajorSubjectDto>>(data);
         }
     }

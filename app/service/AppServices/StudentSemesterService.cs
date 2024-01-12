@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using domain;
+using domain.shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
@@ -9,7 +10,7 @@ using service.contract.IAppServices;
 
 namespace service.AppServices
 {
-    public class StudentSemesterService : AppCRUDDefaultKeyService<StudentSemesterDto, StudentSemesterDto, StudentSemesterDto, StudentSemester>, IStudentSemesterService
+    public class StudentSemesterService : AppCRUDDefaultKeyService<StudentSemesterDto, UpdateStudentSemesterDto, UpdateStudentSemesterDto, StudentSemester>, IStudentSemesterService
     {
         readonly IFeeDetailRepository feeDetailRepository;
         public StudentSemesterService(IFeeDetailRepository feeDetailRepository,IStudentSemesterRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
@@ -27,10 +28,54 @@ namespace service.AppServices
         }
         public async Task<StudentSemesterDto> GetCurrentSemester(Guid studentId)
         {
-            List<StudentSemester>? studentSemester = await this.Repository.Entities.Include(s => s.Semester).ThenInclude(s => s.NextSemester).Include(s => s.Student)
-                .Where(s => s.StudentId == studentId).ToListAsync();
+            List<StudentSemester>? studentSemester = await this.Repository.Entities
+            .Include(s => s.Semester)
+            .ThenInclude(s => s.NextSemester)
+            .ThenInclude(s => s.StudentSemesters)
+            .Include(s => s.Student)
+                .Where(s => s.StudentId == studentId).AsNoTracking().ToListAsync();
             var data = studentSemester.FirstOrDefault(s => s.IsNow == true);
             return Mapper.Map<StudentSemesterDto>(data!);
+        }
+
+        public async Task<StudentSemesterDto> SetNextSemester(Guid studentId){
+            var currentSemester = await GetCurrentSemester(studentId);
+            if(currentSemester.Semester.NextSemester == null){
+                throw new ClientException(5007);
+            }
+            currentSemester.IsNow = false;
+            UpdateStudentSemesterDto updating = Mapper.Map<UpdateStudentSemesterDto>(currentSemester);
+            UpdateStudentSemesterDto creating =new UpdateStudentSemesterDto(){
+                StudentId = studentId,
+                IsNow = true,
+                SemesterId =  currentSemester.Semester.NextSemester.Id
+            };
+             this.Repository .DetachLocalAll();
+            await this.Update(updating);
+            await this.Create(creating);
+            return await GetCurrentSemester(studentId);
+
+        }
+
+        public async Task<List<StudentSemesterDto>> SetNextSemester()
+        {
+            this.Repository.Context.Database.SetCommandTimeout(1000);
+            List<StudentSemesterDto> studentSemesterDtos =new List<StudentSemesterDto>();
+           foreach(var student in this.Repository.Context.Students){
+            try
+            {
+                    StudentSemesterDto dto = await SetNextSemester(student.Id);
+                    studentSemesterDtos.Add(dto);
+                }
+            catch (ClientException ClientException)
+            {
+                if(ClientException.Code != 5007) throw;
+            }
+        
+        
+           } 
+           this.Repository.Context.SaveChanges();
+            return studentSemesterDtos;
         }
     }
 }

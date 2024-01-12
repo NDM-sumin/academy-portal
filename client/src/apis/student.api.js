@@ -50,6 +50,10 @@ const useStudentApi = () => {
 	const registerSubject = (subjectId) => {
 		return axios.get(`${baseUrl}/RegisterSubject/${subjectId}`);
 	};
+
+	const registerMultiSubject = (feeDetails) => {
+		return axios.post(`${baseUrl}/RegisterSubject`, feeDetails)
+	}
 	return {
 		create,
 		update,
@@ -61,6 +65,7 @@ const useStudentApi = () => {
 		getSemesters,
 		getAttendances,
 		getScores,
+		registerMultiSubject
 	};
 };
 export default useStudentApi;

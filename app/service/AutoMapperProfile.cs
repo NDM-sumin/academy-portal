@@ -68,7 +68,9 @@ namespace service
 
             this.CreateMap<PaymentTransaction, PaymentTransactionDto>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<MajorSubject, MajorSubjectDto>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
-            this.CreateMap<StudentSemester, StudentSemesterDto>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
+            this.CreateMap<StudentSemester, StudentSemesterDto>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion());
+            this.CreateMap<StudentSemester, UpdateStudentSemesterDto>().ReverseMap();
+            this.CreateMap<StudentSemesterDto, UpdateStudentSemesterDto>().ReverseMap();
 
             this.CreateMap<Slot, SlotDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<Attendance, AttendanceDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 

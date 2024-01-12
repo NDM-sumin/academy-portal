@@ -42,7 +42,7 @@ namespace service.AppServices
             var queryString = GetQueryStringFromRequestParams();
             secureHash = HashQueryString(queryString.ToString());
 
-            return $"{vnPayConfig.Url}?{queryString}{secureHash}";
+            return $"{vnPayConfig.Url}?{queryString}{VNPayConstants.Key.SecureHash}={secureHash}";
         }
 
         void AddDefaultRequestParams()
