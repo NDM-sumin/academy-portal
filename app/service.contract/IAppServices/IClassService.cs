@@ -16,5 +16,7 @@ namespace service.contract.IAppServices
         Task<List<StudentScoreDTO>> GetStudentsByClass(Guid classId);
         Task<List<SubjectComponentDTO>> GetSubjectComponentsByClass(Guid classId);
         Task<TeacherDTO> GetTeacher(Guid classId);
+        Task SaveAttendance(List<TakeAttendance> result);
+        Task SaveScores(List<TakeScore> result);
     }
 }

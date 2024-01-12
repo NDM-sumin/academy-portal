@@ -9,6 +9,8 @@ namespace service.contract.DTOs.Score
 {
     public class StudentScoreDTO
     {
+        public Guid StudentId { get; set; }
+
         public string StudentName { get; set; }
         public List<SubjectComponentDTO> SubjectComponents { get; set; }
     }

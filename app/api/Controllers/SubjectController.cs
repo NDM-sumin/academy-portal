@@ -29,8 +29,8 @@ namespace api.Controllers
             this.accountService =  accountService;
             this.paymentTransactionService = paymentTransactionService;
         }
-        [HttpGet]
 
+        [HttpGet("GetPayUrl")]
         public async Task<PaymentTransactionDto> GetPayUrl([FromQuery] List<Guid> subjectIds){
             if(subjectIds .Count == 0){
                 throw new ClientException(5006);
@@ -46,7 +46,7 @@ namespace api.Controllers
                 OrderInfo="Thanh toan hoc phi sinh vien " + user.FullName ,
                 Expires=20
             };
-         var url=   vnPayService
+         var url= vnPayService
             .InitRequestParams(GetIpAddress(), out string transactionId)
             .CreateRequestUrl(createPayUrlDto, out string secureHash);
             PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto(){
@@ -57,12 +57,10 @@ namespace api.Controllers
                 SecureHash = secureHash,
                 PayUrl = url
             };
-await paymentTransactionService.Create(paymentTransactionDto);
+            await paymentTransactionService.Create(paymentTransactionDto);
 
 
-return paymentTransactionDto;
-
-
+            return paymentTransactionDto;
         }
         
         public override async Task<SubjectDTO> Create(CreateSubjectDTO entityDto)

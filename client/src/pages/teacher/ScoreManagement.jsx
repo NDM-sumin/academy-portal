@@ -15,9 +15,8 @@ const ScoreHistory = () => {
 	const [userId, setUserId] = useState(null);
 	const [subjectComponentsData, setSubjectComponentsData] = useState([]);
 	const [editing, setEditing] = useState(false);
-	const [columns, setColumns] = useState([]);
 	const [editedData, setEditedData] = useState({});
-	const [inputValue, setInputValue] = useState("");
+
 	const getUser = async () => {
 		try {
 			const user = await authApi.getCurrentUser();
@@ -48,19 +47,49 @@ const ScoreHistory = () => {
 		return components;
 	};
 
+	const columns = [
+		{ title: "STT", dataIndex: "index", key: "index", align: "center" },
+		{
+			title: "Tên sinh viên",
+			dataIndex: "studentName",
+			key: "studentName",
+			align: "center",
+		},
+		...subjectComponentsData.map((item) => ({
+			title: `${item.name}`,
+			dataIndex: `${item.name}`,
+			key: `${item.name}`,
+			align: "center",
+			editable: editing,
+			render: (text, record) => {
+				const renderInput = () => (
+					<Input
+						value={text}
+						onChange={(e) =>
+							handleInputChange(record.key, item.name, e.target.value)
+						}
+					/>
+				);
+
+				return editing ? renderInput() : <span>{text}</span>;
+			},
+		})),
+	];
+
 	const fetchData = async (currentClass) => {
 		try {
 			const studentScore = await ClassApi.GetStudents(currentClass);
 			const components = await ClassApi.GetSubjectComponents(currentClass);
 
 			const scoreHistoryList = [];
-			studentScore.forEach((student) => {
+			studentScore.forEach((student, index) => {
+				console.log(currentClass);
 				const scoreHistory = {
-					key: `${student.studentName}_${currentClass}`,
-					id: student.id,
+					index: index + 1,
+					key: student.studentId,
+					id: currentClass,
 					studentName: student.studentName,
 				};
-
 				student.subjectComponents.forEach((subjectComponent) => {
 					const score =
 						subjectComponent.scores.length !== 0
@@ -97,38 +126,7 @@ const ScoreHistory = () => {
 			const components = await ClassApi.GetSubjectComponents(currentClass);
 			setSubjectComponentsData(components);
 			setClassData(classes);
-			const dynamicColumns = [
-				{ title: "STT", dataIndex: "id", key: "id", align: "center" },
-				{
-					title: "Tên sinh viên",
-					dataIndex: "studentName",
-					key: "studentName",
-					align: "center",
-				},
-				components.map((item) => ({
-					title: `${item.name}`,
-					dataIndex: `${item.name}`,
-					key: `${item.name}`,
-					align: "center",
-					editable: editing,
-					render: (text, record) => {
-						const handleInputChange = (e) => {
-							setInputValue(e.target.value);
-						};
 
-						const renderInput = () => (
-							<Input
-								value={inputValue}
-								onChange={(e) => handleInputChange(e.target.value)}
-							/>
-						);
-
-						return editing ? renderInput() : <span>{text}</span>;
-					},
-				})),
-			];
-
-			setColumns(dynamicColumns);
 			fetchData(currentClass);
 		};
 		fetchAndSetClasses();
@@ -137,41 +135,23 @@ const ScoreHistory = () => {
 	const handleClassChange = async (value) => {
 		setSelectedClass(value);
 		const components = await ClassApi.GetSubjectComponents(value);
-		console.log(components);
 		setSubjectComponentsData(components);
-		const dynamicColumns = [
-			{ title: "STT", dataIndex: "id", key: "id", align: "center" },
-			{
-				title: "Tên sinh viên",
-				dataIndex: "studentName",
-				key: "studentName",
-				align: "center",
-			},
-			...components.map((item) => ({
-				title: `${item.name}`,
-				dataIndex: `${item.name}`,
-				key: `${item.name}`,
-				align: "center",
-				editable: editing,
-				render: (text, record, index) => {
-					const handleInputChange = (value) => {
-						setInputValue(value);
-						console.log(inputValue);
-					};
 
-					const renderInput = () => (
-						<Input
-							value={inputValue}
-							onChange={(e) => handleInputChange(e.target.value)}
-						/>
-					);
-
-					return editing ? renderInput() : <span>{text}</span>;
-				},
-			})),
-		];
-		setColumns(dynamicColumns);
 		fetchData(value);
+	};
+	const handleInputChange = (studentId, columnname, value) => {
+		const changeData = scoreData.map((item) => {
+			if (item.key === studentId) {
+				Object.keys(item).map((propName) => {
+					if (propName === columnname) {
+						item[propName] = value;
+					}
+				});
+			}
+			return item;
+		});
+		console.log(changeData);
+		setScoreData(changeData);
 	};
 
 	const handleEditClick = () => {
@@ -180,35 +160,7 @@ const ScoreHistory = () => {
 
 	const handleSave = async () => {
 		setEditing(false);
-		const dataToSave = [];
-		for (const key in editedData) {
-			const [studentName, classIdStr] = key.split("_");
-			const studentId = parseInt(studentName);
-			const classId = parseInt(classIdStr);
-
-			const studentData = {
-				id: studentId,
-				classId: classId,
-				scores: [],
-			};
-
-			for (const subjectName in editedData[key]) {
-				const subjectId = subjectComponentsData.find(
-					(item) => item.name === subjectName
-				)?.id;
-				const value = editedData[key][subjectName];
-
-				if (subjectId !== undefined) {
-					studentData.scores.push({
-						subjectComponentId: subjectId,
-						value: value,
-					});
-				}
-			}
-
-			dataToSave.push(studentData);
-		}
-		await ClassApi.SaveScores(dataToSave);
+		await ClassApi.SaveScores(scoreData);
 	};
 
 	const handleCancel = () => {

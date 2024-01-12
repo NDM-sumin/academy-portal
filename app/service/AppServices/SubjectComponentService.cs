@@ -1,6 +1,7 @@
 using AutoMapper;
 using domain;
 using Microsoft.EntityFrameworkCore;
+using repository.AppRepositories;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.FeeDetail;
@@ -14,14 +15,19 @@ namespace service.AppServices
 {
     public class SubjectComponentService : AppCRUDDefaultKeyService<SubjectComponentDTO, SubjectComponent, SubjectComponent, SubjectComponent>, ISubjectComponentService
     {
-        public SubjectComponentService(ISubjectComponentRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        readonly IFeeDetailRepository feeDetailRepository;
+        public SubjectComponentService(IFeeDetailRepository feeDetailRepository, ISubjectComponentRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
+            this.feeDetailRepository = feeDetailRepository;
         }
         public async Task<List<SubjectComponentDTO>> GetByStudentAndSubject(Guid studentId, Guid subjectId)
         {
+            var feeDetail = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester)
+                .Where(fd => fd.StudentSemester.IsNow == true && fd.StudentSemester.StudentId == studentId && fd.SubjectId == subjectId)
+                .FirstOrDefault();
             var result = await base.Repository.Entities
             .Where(sc => sc.SubjectID == subjectId
-            && sc.Scores.Any(s => s.StudentId == studentId)
+            && sc.Scores.Any(s => s.FeeDetailId == feeDetail.Id)
             ).ToListAsync();
             return Mapper.Map<List<SubjectComponentDTO>>(result);
         }

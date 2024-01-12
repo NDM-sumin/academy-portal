@@ -75,38 +75,39 @@ namespace service.AppServices
 
         public async Task<List<StudentScoreDTO>> GetStudentsByClass(Guid classId)
         {
-            var result = await feeDetailRepository.GetAll().Result
-                    .Include(fd => fd.StudentSemester)
-                    .ThenInclude(ss => ss.Student)
-                    .Include(fd => fd.Subject)
-                        .ThenInclude(s => s.SubjectComponents)
-                                    .Where(fd => fd.ClassId == classId)
-               .GroupBy(fd => new { fd.StudentSemester.StudentId, fd.SubjectId })
-                    .Select(group => new StudentScoreDTO
-                    {
-                        StudentName = group.First().StudentSemester.Student.FullName,
-                        SubjectComponents = group.First().Subject.SubjectComponents
-                            .Select(sc => new SubjectComponentDTO
-                            {
-                                Id = sc.Id,
-                                Name = sc.Name,
-                                Weight = sc.Weight,
-                                Comment = sc.Comment,
-                                SubjectID = group.Key.SubjectId,
-                                Scores = scoreRepository.Entities
-                                    .Where(s => s.StudentId == group.Key.StudentId && s.SubjectComponentID == sc.Id)
-                                    .Select(s => new ScoreDTO
-                                    {
-                                        Value = s.Value,
-                                        SubjectComponentID = s.SubjectComponentID,
-                                        StudentId = s.StudentId
-                                    })
-                                    .ToList()
-                            })
-                            .ToList()
-                    })
-                    .ToListAsync();
+            var result = new List<StudentScoreDTO>();
+            var fees = await feeDetailRepository
+                                 .GetAll().Result
+                                 .Include(fd => fd.StudentSemester)
+                                     .ThenInclude(ss => ss.Student)
+                                 .Include(fd => fd.Subject)
+                                     .ThenInclude(s => s.SubjectComponents)
+                                 .Include(fd => fd.Scores)
+                                 .Where(fd => fd.ClassId == classId)
+                                 .ToListAsync();
+            foreach (var fe in fees)
+            {
+                var studentScore = new StudentScoreDTO();
+                studentScore.StudentId = fe.Id;
+                studentScore.StudentName = fe.StudentSemester.Student.FullName;
+                foreach(var subjectComponent in fe.Subject.SubjectComponents)
+                {
+                    var score = fe.Scores.Where(s => s.SubjectComponentID == subjectComponent.Id).ToList();
 
+                    var subjectComponentDTO = new SubjectComponentDTO
+                    {
+                        Id = subjectComponent.Id,
+                        Name = subjectComponent.Name,
+                        Weight = subjectComponent.Weight,
+                        Comment = subjectComponent.Comment,
+                        SubjectID = fe.SubjectId,
+                        Scores = Mapper.Map<ICollection<ScoreDTO>>(score),
+                    };
+
+                    studentScore.SubjectComponents.Add(subjectComponentDTO);
+                }
+                result.Add(studentScore);
+            }
             return result;
         }
 
@@ -116,8 +117,34 @@ namespace service.AppServices
                 Where(s => s.FeeDetails.Any(fd => fd.ClassId == classId))
                    .SelectMany(s => s.SubjectComponents)
                     .ToList();
-            
+
             return Mapper.Map<List<SubjectComponentDTO>>(result);
+        }
+
+        public async Task SaveAttendance(List<TakeAttendance> result)
+        {
+            foreach (var item in result)
+            {
+                var attendance = attedanceRepository.GetAll().Result.FirstOrDefault(a => a.Id == item.AttendanceId);
+                attendance.IsAttendance = item.IsAttendance;
+                attedanceRepository.Update(attendance);
+            }
+        }
+        public async Task SaveScores(List<TakeScore> result)
+        {
+            foreach (var item in result)
+            {
+                //var subjectComponents = subjectRepository.GetAll().Result.Include(s => s.FeeDetails).Include(s => s.SubjectComponents)
+                //    .FirstOrDefault(s => s.FeeDetails.Any(fd => fd.ClassId == item.ClassId)).SubjectComponents.ToList();
+                foreach (var subjectComponent in item.Scores)
+                {
+                    var score = scoreRepository.GetAll().Result.Include(s => s.SubjectComponent).
+                        Where(s => s.SubjectComponent.Name.Equals(subjectComponent.Name))
+                        .OrderByDescending(x => x.CreatedAt)
+
+                        .ToList();
+                }
+            }
         }
     }
 }
