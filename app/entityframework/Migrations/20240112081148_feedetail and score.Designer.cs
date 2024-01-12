@@ -12,8 +12,8 @@ using entityframework;
 namespace entityframework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240112044850_update table score")]
-    partial class updatetablescore
+    [Migration("20240112081148_feedetail and score")]
+    partial class feedetailandscore
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
