@@ -1,10 +1,11 @@
 import { ImportOutlined } from "@ant-design/icons";
 import { Button, Upload, message } from "antd";
 import { useCRUDContext } from "../../../../hooks/context/crud-context";
+import { useAppContext } from "../../../../hooks/context/app-bounding-context";
 
 const ImportButton = () => {
 	const context = useCRUDContext();
-
+	const appContext = useAppContext();
 	const beforeUpload = (file) => {
 		return true;
 	};
@@ -36,7 +37,7 @@ const ImportButton = () => {
 			beforeUpload={beforeUpload}
 			onChange={onChange}
 		>
-			<Button icon={<ImportOutlined />}>Nhập File Excel</Button>
+			<Button loading={appContext.loading} icon={<ImportOutlined />}>Nhập File Excel</Button>
 		</Upload>
 	);
 };

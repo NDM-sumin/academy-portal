@@ -149,8 +149,8 @@ const Student = () => {
 		</Form.Item>,
 	];
 	const additionButtons = [
-		<ExportButton />,
-		<ImportButton />
+		<ExportButton key={'12312312'} />,
+		<ImportButton key={'t3245534543'} />
 	]
 	const form = {
 		instance: useForm()[0],

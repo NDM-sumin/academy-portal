@@ -3,7 +3,6 @@ import { useAppContext } from "../hooks/context/app-bounding-context";
 const useClassApi = () => {
 	const globalContext = useAppContext();
 	const axios = globalContext.axios;
-	const baseUrl = "odata/Class";
 	const create = (Class) => {
 		return axios.post("api/Class", Class);
 	};

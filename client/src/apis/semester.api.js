@@ -16,12 +16,15 @@ const useSemesterApi = () => {
 	const del = (id) => {
 		return axios.delete(`${baseUrl}/${id}`);
 	};
-
+	const startNewSemester = () => {
+		return axios.post(`${baseUrl}/SetNextSemester`);
+	}
 	return {
 		create,
 		update,
 		get,
 		del,
+		startNewSemester
 	};
 };
 export default useSemesterApi;
