@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using domain;
+using Microsoft.EntityFrameworkCore;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.Major;
@@ -18,7 +19,7 @@ namespace service.AppServices
 
         public Task<MajorDTO> GetMajorByCode(string code)
         {
-            return Task.FromResult(Mapper.Map<MajorDTO>(Repository.Entities.FirstOrDefault(m => m.MajorCode.Equals(code))));
+            return Task.FromResult(Mapper.Map<MajorDTO>(Repository.Entities.AsNoTracking().FirstOrDefault(m => m.MajorCode.Equals(code))));
         }
 
         public async Task<List<SubjectDTO>> GetSubjectByMajor(Guid majorId)

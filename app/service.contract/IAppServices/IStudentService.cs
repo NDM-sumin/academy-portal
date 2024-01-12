@@ -18,5 +18,6 @@ namespace service.contract.IAppServices
         Task ImportStudentsFromExcel(IFormFile file);
         Task RegisterSubject(Guid studentId, Guid subjectId);
         Task<List<SemesterDTO>> GetSemesterByStudent(Guid studentId);
+        Task<List<FeeDetailDTO>> GetFeeHistory(Guid studentId, Guid semesterId);
     }
 }

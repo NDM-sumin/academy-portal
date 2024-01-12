@@ -2,7 +2,7 @@ import RegisterSubject from "../pages/student/RegisterSubject/index";
 import TimeTable from "../pages/student/Timetable";
 import Attendance from "../pages/student/AttendanceHistory";
 import ScoreHistory from "../pages/student/ScoreHistory";
-
+import FeeHistory from "../pages/student/FeeHistory";
 import LayoutPage from "../pages/index";
 
 export const STUDENT_ROUTES = [
@@ -34,6 +34,12 @@ export const STUDENT_ROUTES = [
 				path: "scoreHistory",
 				title: "Lịch sử điểm",
 				element: <ScoreHistory />,
+			},
+			{
+				inMenu: true,
+				path: "feeHistory",
+				title: "Lịch sử học phí",
+				element: <FeeHistory />,
 			},
 		],
 	},

@@ -2,6 +2,7 @@ using api.Extensions;
 using api.Hubs;
 using domain.shared.AppSettings;
 using domain.shared.Constants;
+using OfficeOpenXml;
 using service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,7 @@ builder.Services
     config.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 // .RegisterOdata();
-
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
