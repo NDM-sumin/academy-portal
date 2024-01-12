@@ -4,7 +4,9 @@ namespace service.contract.DTOs.VNPay
 {
     public class PaymentTransactionDto : AppEntityDefaultKeyDTO
     {
-        public Guid FeeDetailId { get; set; }
+        public PaymentTransactionDto(){
+            FeeDetail= new HashSet<FeeDetailDTO>();
+        }
         public int? TransactionNo { get; set; }
         public decimal Amount { get; set; }
         public string? BankCode { get; set; }
@@ -21,6 +23,6 @@ namespace service.contract.DTOs.VNPay
         public string? PayUrl{get;set;}
 
 
-        public virtual FeeDetailDTO FeeDetail { get; set; } = null!;
+        public virtual ICollection<FeeDetailDTO> FeeDetail { get; set; }
     }
 }

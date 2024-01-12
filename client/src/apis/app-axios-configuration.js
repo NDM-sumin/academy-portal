@@ -20,6 +20,7 @@ const useAxios = (setLoading) => {
             description: description,
             placement: 'topRight',
         });
+        console.log(error);
         if (error.request?.status === 401) {
             localStorage.removeItem(USER_TOKEN_KEY);
             navigate('/auth/login');

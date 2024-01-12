@@ -15,6 +15,7 @@ builder.Services
     config.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 }).RegisterOdata();
 
+builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
         options.SerializerSettings.ReferenceLoopHandling =
@@ -54,6 +55,8 @@ app.UseExceptionHandler("/error");
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
+
+app.MapRazorPages();
 app.UseCors(CorsConstants.PolicyName);
 app.MapHub<PaymentHub>("/payment");
 

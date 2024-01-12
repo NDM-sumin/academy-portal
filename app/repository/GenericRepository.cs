@@ -9,7 +9,8 @@ namespace repository
            where TEntity : class
     {
         public DbSet<TEntity> Entities { get; }
-        protected TDbContext Context { get; }
+    public TDbContext Context { get; }
+
 
         public GenericRepository(TDbContext context)
         {
@@ -52,6 +53,11 @@ namespace repository
         public Task<IQueryable<TEntity>> GetAll()
         {
             return Task.FromResult(Entities.AsQueryable());
+        }
+        public void DetachLocalAll()
+        {
+            this.Context.ChangeTracker.Clear();
+
         }
 
         public async Task AddRange(List<TEntity> entities)
