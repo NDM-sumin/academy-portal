@@ -13,7 +13,7 @@ namespace api.Controllers.Base
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [AppActionFilter]
     [Route("api/[controller]")]
-    public abstract class AppController : ODataController
+    public abstract class AppController : ControllerBase
     {
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]

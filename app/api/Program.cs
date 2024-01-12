@@ -13,7 +13,8 @@ builder.Services
     .AddJsonOptions(config =>
 {
     config.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-}).RegisterOdata();
+});
+// .RegisterOdata();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews()
@@ -50,6 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(CorsConstants.PolicyName);
 app.UseHttpsRedirection();
 app.UseExceptionHandler("/error");
 app.UseAuthorization();
@@ -57,7 +60,6 @@ app.UseStaticFiles();
 app.MapControllers();
 
 app.MapRazorPages();
-app.UseCors(CorsConstants.PolicyName);
 app.MapHub<PaymentHub>("/payment");
 
 app.Run();
