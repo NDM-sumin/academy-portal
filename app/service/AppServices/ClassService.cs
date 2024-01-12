@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using repository.AppRepositories;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
@@ -75,39 +76,38 @@ namespace service.AppServices
 
         public async Task<List<StudentScoreDTO>> GetStudentsByClass(Guid classId)
         {
-            var result = new List<StudentScoreDTO>();
-            var fees = await feeDetailRepository
-                                 .GetAll().Result
-                                 .Include(fd => fd.StudentSemester)
-                                     .ThenInclude(ss => ss.Student)
-                                 .Include(fd => fd.Subject)
-                                     .ThenInclude(s => s.SubjectComponents)
-                                 .Include(fd => fd.Scores)
-                                 .Where(fd => fd.ClassId == classId)
-                                 .ToListAsync();
-            foreach (var fe in fees)
-            {
-                var studentScore = new StudentScoreDTO();
-                studentScore.StudentId = fe.Id;
-                studentScore.StudentName = fe.StudentSemester.Student.FullName;
-                foreach(var subjectComponent in fe.Subject.SubjectComponents)
-                {
-                    var score = fe.Scores.Where(s => s.SubjectComponentID == subjectComponent.Id).ToList();
-
-                    var subjectComponentDTO = new SubjectComponentDTO
-                    {
-                        Id = subjectComponent.Id,
-                        Name = subjectComponent.Name,
-                        Weight = subjectComponent.Weight,
-                        Comment = subjectComponent.Comment,
-                        SubjectID = fe.SubjectId,
-                        Scores = Mapper.Map<ICollection<ScoreDTO>>(score),
-                    };
-
-                    studentScore.SubjectComponents.Add(subjectComponentDTO);
-                }
-                result.Add(studentScore);
-            }
+            var result = await feeDetailRepository.GetAll().Result
+                     .Include(fd => fd.StudentSemester)
+                     .ThenInclude(ss => ss.Student)
+                     .Include(fd => fd.Subject)
+                         .ThenInclude(s => s.SubjectComponents)
+                                     .Where(fd => fd.ClassId == classId)
+                .GroupBy(fd => new { fd.StudentSemester.StudentId, fd.SubjectId })
+                     .Select(group => new StudentScoreDTO
+                     {
+                         StudentId = group.First().StudentSemester.Student.Id,
+                         StudentName = group.First().StudentSemester.Student.FullName,
+                         SubjectComponents = group.First().Subject.SubjectComponents
+                            .Select(sc => new SubjectComponentDTO
+                            {
+                                Id = sc.Id,
+                                Name = sc.Name,
+                                Weight = sc.Weight,
+                                Comment = sc.Comment,
+                                SubjectID = group.Key.SubjectId,
+                                Scores = scoreRepository.Entities
+                                    .Where(s => s.StudentId == group.Key.StudentId && s.SubjectComponentID == sc.Id)
+                                    .Select(s => new ScoreDTO
+                                    {
+                                        Value = s.Value,
+                                        SubjectComponentID = s.SubjectComponentID,
+                                        StudentId = s.StudentId
+                                    })
+                                    .ToList()
+                            })
+                            .ToList()
+                     })
+                    .ToListAsync();
             return result;
         }
 
@@ -134,15 +134,13 @@ namespace service.AppServices
         {
             foreach (var item in result)
             {
-                //var subjectComponents = subjectRepository.GetAll().Result.Include(s => s.FeeDetails).Include(s => s.SubjectComponents)
-                //    .FirstOrDefault(s => s.FeeDetails.Any(fd => fd.ClassId == item.ClassId)).SubjectComponents.ToList();
                 foreach (var subjectComponent in item.Scores)
                 {
                     var score = scoreRepository.GetAll().Result.Include(s => s.SubjectComponent).
-                        Where(s => s.SubjectComponent.Name.Equals(subjectComponent.Name))
-                        .OrderByDescending(x => x.CreatedAt)
-
-                        .ToList();
+                        Where(s => s.SubjectComponent.Name.Equals(subjectComponent.Name) && s.StudentId == item.StudentId)
+                        .OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+                    score.Value = string.IsNullOrEmpty(subjectComponent.Value) ? (double?)null : double.Parse(subjectComponent.Value);
+                    scoreRepository.Update(score);
                 }
             }
         }

@@ -6,9 +6,9 @@ namespace domain
     {
         public double? Value { get; set; }
         public Guid SubjectComponentID { get; set; }
-        public Guid FeeDetailId { get; set; }
-        [ForeignKey(nameof(FeeDetailId))]
-        public virtual FeeDetail FeeDetail { get; set; } = null!;
+        public Guid StudentId { get; set; }
+        [ForeignKey(nameof(StudentId))]
+        public virtual Student Student { get; set; } = null!;
 
         [ForeignKey(nameof(SubjectComponentID))]
         public virtual SubjectComponent SubjectComponent { get; set; } = null!;
