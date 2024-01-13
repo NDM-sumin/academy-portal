@@ -127,6 +127,7 @@ namespace service.AppServices
                 var room = await attendanceService.GetRoomByFee(item.Id);
                 StudentTimetableDto timeTable = new()
                 {
+                    Class = item.Class,
                     Subject = item.Subject,
                     StartDate = startOfTerm,
                     EndDate = endOfTerm,

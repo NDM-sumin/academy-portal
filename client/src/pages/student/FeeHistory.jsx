@@ -84,17 +84,14 @@ const FeeHistory = () => {
 			dataIndex: "id",
 			key: "id",
 			align: "center",
-			render: (text, index) => {
-				<div>
-					<span>{index + 1}</span>
-				</div>;
-			},
+			render: (text, record, index) => <span>{index + 1}</span>,
 		},
 		{
 			title: "Tên môn",
 			dataIndex: "subject",
-			key: "gradeItem",
+			key: "subject",
 			align: "center",
+			render: (text) => text.subjectName,
 		},
 		{
 			title: "khoản tiền",
@@ -113,12 +110,14 @@ const FeeHistory = () => {
 			dataIndex: "dueDate",
 			key: "dueDate",
 			align: "center",
+			render: (text, _, __) => dayjs(text).format("DD/MM/YYYY"),
 		},
 		{
 			title: "ngày trả",
 			dataIndex: "payDate",
 			key: "payDate",
 			align: "center",
+			render: (text, _, __) => dayjs(text).format("DD/MM/YYYY"),
 		},
 	];
 

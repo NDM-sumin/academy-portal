@@ -3,7 +3,6 @@ import { useAppContext } from "../hooks/context/app-bounding-context";
 const useClassApi = () => {
 	const globalContext = useAppContext();
 	const axios = globalContext.axios;
-	const baseUrl = "odata/Class";
 	const create = (Class) => {
 		return axios.post("api/Class", Class);
 	};
@@ -70,6 +69,10 @@ const useClassApi = () => {
 		const scoreDatasJSON = JSON.stringify(scoreDatas);
 		return axios.post(`api/Class/SaveScores?scores=${scoreDatasJSON}`);
 	};
+
+	const GetClassInformation = (classId) => {
+		return axios.get(`api/Class/GetClassInformation/${classId}`);
+	};
 	return {
 		create,
 		update,
@@ -82,6 +85,7 @@ const useClassApi = () => {
 		GetDates,
 		SaveAttendance,
 		SaveScores,
+		GetClassInformation,
 	};
 };
 export default useClassApi;

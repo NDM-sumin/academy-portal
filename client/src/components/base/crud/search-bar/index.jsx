@@ -9,8 +9,10 @@ const CRUDSearchBar = ({ additionButton }) => {
 		<Space>
 			<ReloadButton />
 			<CreateButton />
-
-			{...additionButton ?? []}
+			
+			{
+				...(additionButton ?? [])
+			}
 		</Space>
 	);
 };

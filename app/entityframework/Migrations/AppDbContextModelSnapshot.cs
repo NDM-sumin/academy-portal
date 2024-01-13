@@ -77,7 +77,7 @@ namespace entityframework.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Account");
                 });
@@ -117,7 +117,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Attendances");
+                    b.ToTable("Attendances", (string)null);
                 });
 
             modelBuilder.Entity("domain.Class", b =>
@@ -139,9 +139,6 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("SemesterId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -152,10 +149,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.HasIndex("SemesterId", "TeacherId")
-                        .IsUnique();
-
-                    b.ToTable("Classes");
+                    b.ToTable("Classes", (string)null);
                 });
 
             modelBuilder.Entity("domain.FeeDetail", b =>
@@ -206,7 +200,7 @@ namespace entityframework.Migrations
                         .IsUnique()
                         .HasFilter("[ClassId] IS NOT NULL");
 
-                    b.ToTable("FeeDetails");
+                    b.ToTable("FeeDetails", (string)null);
                 });
 
             modelBuilder.Entity("domain.Major", b =>
@@ -231,7 +225,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Majors");
+                    b.ToTable("Majors", (string)null);
                 });
 
             modelBuilder.Entity("domain.MajorSubject", b =>
@@ -264,7 +258,7 @@ namespace entityframework.Migrations
                     b.HasIndex("MajorId", "SubjectId", "SemesterId")
                         .IsUnique();
 
-                    b.ToTable("MajorSubjects");
+                    b.ToTable("MajorSubjects", (string)null);
                 });
 
             modelBuilder.Entity("domain.PaymentTransaction", b =>
@@ -326,7 +320,7 @@ namespace entityframework.Migrations
                     b.HasIndex("TxnRef")
                         .IsUnique();
 
-                    b.ToTable("PaymentTransactions");
+                    b.ToTable("PaymentTransactions", (string)null);
                 });
 
             modelBuilder.Entity("domain.Room", b =>
@@ -350,7 +344,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
                 });
 
             modelBuilder.Entity("domain.Score", b =>
@@ -362,11 +356,11 @@ namespace entityframework.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("FeeDetailId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SubjectComponentID")
                         .HasColumnType("uniqueidentifier");
@@ -376,11 +370,11 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeeDetailId");
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("SubjectComponentID");
 
-                    b.ToTable("Scores");
+                    b.ToTable("Scores", (string)null);
                 });
 
             modelBuilder.Entity("domain.Semester", b =>
@@ -424,7 +418,7 @@ namespace entityframework.Migrations
                         .IsUnique()
                         .HasFilter("[PrevSemesterId] IS NOT NULL");
 
-                    b.ToTable("Semesters");
+                    b.ToTable("Semesters", (string)null);
                 });
 
             modelBuilder.Entity("domain.Slot", b =>
@@ -452,7 +446,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Slots");
+                    b.ToTable("Slots", (string)null);
                 });
 
             modelBuilder.Entity("domain.SlotTimeTableAtWeek", b =>
@@ -485,7 +479,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("WeekId");
 
-                    b.ToTable("SlotTimeTableAtWeeks");
+                    b.ToTable("SlotTimeTableAtWeeks", (string)null);
                 });
 
             modelBuilder.Entity("domain.StudentSemester", b =>
@@ -516,7 +510,7 @@ namespace entityframework.Migrations
                     b.HasIndex("SemesterId", "StudentId")
                         .IsUnique();
 
-                    b.ToTable("StudentSemesters");
+                    b.ToTable("StudentSemesters", (string)null);
                 });
 
             modelBuilder.Entity("domain.Subject", b =>
@@ -544,7 +538,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
                 });
 
             modelBuilder.Entity("domain.SubjectComponent", b =>
@@ -576,7 +570,7 @@ namespace entityframework.Migrations
 
                     b.HasIndex("SubjectID");
 
-                    b.ToTable("SubjectComponents");
+                    b.ToTable("SubjectComponents", (string)null);
                 });
 
             modelBuilder.Entity("domain.Timetable", b =>
@@ -597,7 +591,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Timetables");
+                    b.ToTable("Timetables", (string)null);
                 });
 
             modelBuilder.Entity("domain.Week", b =>
@@ -617,7 +611,7 @@ namespace entityframework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Weeks");
+                    b.ToTable("Weeks", (string)null);
                 });
 
             modelBuilder.Entity("domain.Student", b =>
@@ -668,19 +662,11 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Class", b =>
                 {
-                    b.HasOne("domain.Semester", "Semester")
-                        .WithMany("Classes")
-                        .HasForeignKey("SemesterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("domain.Teacher", "Teacher")
                         .WithMany("Classes")
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Semester");
 
                     b.Navigation("Teacher");
                 });
@@ -747,9 +733,9 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Score", b =>
                 {
-                    b.HasOne("domain.FeeDetail", "FeeDetail")
+                    b.HasOne("domain.Student", "Student")
                         .WithMany("Scores")
-                        .HasForeignKey("FeeDetailId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -759,7 +745,7 @@ namespace entityframework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FeeDetail");
+                    b.Navigation("Student");
 
                     b.Navigation("SubjectComponent");
                 });
@@ -849,8 +835,6 @@ namespace entityframework.Migrations
             modelBuilder.Entity("domain.FeeDetail", b =>
                 {
                     b.Navigation("Attendances");
-
-                    b.Navigation("Scores");
                 });
 
             modelBuilder.Entity("domain.Major", b =>
@@ -872,8 +856,6 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Semester", b =>
                 {
-                    b.Navigation("Classes");
-
                     b.Navigation("MajorSubjects");
 
                     b.Navigation("NextSemester");
@@ -922,6 +904,8 @@ namespace entityframework.Migrations
 
             modelBuilder.Entity("domain.Student", b =>
                 {
+                    b.Navigation("Scores");
+
                     b.Navigation("StudentSemesters");
                 });
 

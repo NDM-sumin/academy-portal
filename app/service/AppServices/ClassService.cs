@@ -13,6 +13,8 @@ using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Teacher;
 using service.contract.IAppServices;
 using System;
+using System.Collections.Immutable;
+using System.Xml.Linq;
 
 namespace service.AppServices
 {
@@ -22,13 +24,16 @@ namespace service.AppServices
         readonly IScoreRepository scoreRepository;
         readonly ISubjectRepository subjectRepository;
         readonly IAttedanceRepository attedanceRepository;
-
-        public ClassService(IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        readonly IStudentRepository studentRepository;
+        readonly IClassRepository classRepository;
+        public ClassService(IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
             this.feeDetailRepository = feeDetailRepository;
             this.scoreRepository = scoreRepository;
             this.subjectRepository = subjectRepository;
             this.attedanceRepository = attedanceRepository;
+            this.studentRepository = studentRepository;
+            this.classRepository = classRepository;
         }
         public async Task<List<StudentAttendance>> GetAttendancesByClass(Guid classId, DateTime dateTime)
         {
@@ -55,6 +60,38 @@ namespace service.AppServices
             return Mapper.Map<List<StudentAttendance>>(result);
         }
 
+        public async Task ClassForNewSemester()
+        {
+            var subjects = subjectRepository.GetAll().Result.Include(s => s.FeeDetails).ThenInclude(fd => fd.StudentSemester).ThenInclude(ss => ss.Semester).ToList();
+            var currentSemester = subjects.FirstOrDefault().FeeDetails.Where(fd => fd.StudentSemester.IsNow == true).Select(fd => fd.StudentSemester.Semester).FirstOrDefault();
+
+            foreach (var subject in subjects)
+            {
+                var fees = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
+                var index = 0;
+                while (fees.Any())
+                {
+                    Class newClass = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        StartDate = new DateTime(DateTime.Now.Year, currentSemester.StartMonth, currentSemester.StartDay),
+                        EndDate = new DateTime(DateTime.Now.Year, currentSemester.EndMonth, currentSemester.EndDay),
+                        ClassCode = $"{subject.SubjectCode}_{index}"
+                    };
+                    classRepository.Create(newClass);
+
+                    for (int i = 0; i < 30; i++)
+                    {
+                        FeeDetail feeDetail = fees[i];
+                        feeDetail.Class = newClass;
+                        feeDetail.ClassId = newClass.Id;
+                        feeDetailRepository.Update(feeDetail);
+                    }
+
+                    index++;
+                }
+            }
+        }
 
         public async Task<TeacherDTO> GetTeacher(Guid classId)
         {
@@ -63,7 +100,7 @@ namespace service.AppServices
 
         public async Task<List<ClassDTO>> GetClassesByTeacher(Guid teacherId)
         {
-            var result = base.Repository.GetAll().Result.Include(c => c.FeeDetails).ThenInclude(fd => fd.StudentSemester).Where(c => c.TeacherId == teacherId).ToList();
+            var result = base.Repository.GetAll().Result.Include(c => c.FeeDetails).ThenInclude(fd => fd.StudentSemester).Where(c => c.TeacherId == teacherId && c.StartDate <= DateTime.Now && c.EndDate >= DateTime.Now).ToList();
             return Mapper.Map<List<ClassDTO>>(result);
         }
 
@@ -143,6 +180,20 @@ namespace service.AppServices
                     scoreRepository.Update(score);
                 }
             }
+        }
+
+        public async Task<ClassInformation> GetClassInformation(Guid classId)
+        {
+            return classRepository.GetAll().Result.Include(c => c.Teacher)
+                .Include(c => c.FeeDetails).ThenInclude(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).ThenInclude(s => s.Major)
+                .Include(c => c.FeeDetails).ThenInclude(fd => fd.Subject).
+                Select(c => new ClassInformation()
+                {
+                    ClassCode = c.ClassCode,
+                    TeacherName = c.Teacher.FullName,
+                    SubjectName = c.FeeDetails.FirstOrDefault().Subject.SubjectName,
+                    Students = Mapper.Map<List<StudentDTO>>(c.FeeDetails.Select(fd => fd.StudentSemester.Student).ToList())
+                }).FirstOrDefault();
         }
     }
 }

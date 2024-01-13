@@ -30,6 +30,10 @@
   },
   {
     "code": 5006,
-    "message": "KVui lòng chọn môn học "
+    "message": "Vui lòng chọn môn học "
+  },
+  {
+    "code": 5008,
+    "message": "Vui lòng tạo một học kì"
   }
 ]

@@ -84,7 +84,8 @@ const Timetable = () => {
 							) {
 								const dayOfWeek = slotTimeTable.timetable.weekDay.toLowerCase();
 								slotData[dayOfWeek] = {
-									class: item.class.classCode,
+									classId: item.class.id,
+									className: item.class.classCode,
 									subjectName: item.subject.subjectName,
 									roomCode: item.room.roomCode,
 								};
@@ -178,9 +179,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -198,9 +201,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -218,9 +223,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -238,9 +245,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -258,9 +267,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -278,9 +289,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
@@ -298,9 +311,11 @@ const Timetable = () => {
 				if (text) {
 					return (
 						<div>
-							<a>{text.class}</a>
+							<a href={`/ClassDetail?classId=${text.classId}`}>
+								{text.className}
+							</a>
 							<br />
-							dạy môn {text.subjectName}
+							học {text.subjectName}
 							<br />
 							tại phòng {text.roomCode}
 						</div>
