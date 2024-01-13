@@ -53,7 +53,7 @@ namespace service.AppServices
             foreach (var item in classes)
             {
                 var fee = await feeDetailService.GetByClass(item.Id);
-
+                
                 var feeDetail = feeDetailRepository.GetAll().Result
                     .Include(fd => fd.Attendances)
                         .ThenInclude(a => a.SlotTimeTableAtWeek)

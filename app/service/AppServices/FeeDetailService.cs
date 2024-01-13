@@ -21,7 +21,7 @@ namespace service.AppServices
 
         public async Task<List<FeeDetailDTO>> GetByStudent(Guid studentId, Guid semesterId)
         {
-            var result = await base.Repository.Entities.Include(fd => fd.Subject).Include(fd => fd.Attendances)
+            var result = await base.Repository.Entities.Include(fd => fd.Subject).Include(fd => fd.Attendances).Include(fd => fd.Class)
                 .Where(fd => fd.StudentSemester.SemesterId == semesterId && fd.StudentSemester.StudentId == studentId).ToListAsync();
             return Mapper.Map<List<FeeDetailDTO>>(result);
 

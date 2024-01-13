@@ -2,6 +2,7 @@ import { ReloadOutlined } from "@ant-design/icons";
 import { Button, Divider, Space } from "antd";
 import ReloadButton from "./ReloadButton";
 import CreateButton from "./CreateButton";
+import ImportButton from "./ImportButton";
 
 const CRUDSearchBar = ({ additionButton }) => {
 	return (

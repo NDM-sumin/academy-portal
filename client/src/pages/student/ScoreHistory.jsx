@@ -66,7 +66,7 @@ const ScoreManagement = () => {
 			const studentScore = await studentApi.getScores(userId, currentSubject);
 			const scoreHistoryList = [];
 			let totalWeightedScore = 0;
-
+			console.log(studentScore);
 			studentScore.forEach((score, index) => {
 				const weightedScore = score.scores[0].value * (score.weight / 100);
 				totalWeightedScore += weightedScore;

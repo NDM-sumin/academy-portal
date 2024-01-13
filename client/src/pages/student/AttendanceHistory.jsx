@@ -51,6 +51,7 @@ const AttendanceHistory = () => {
 			var subjects = [];
 			const userId = await getUser();
 			subjects = await subjectApi.GetSubjects(currentSemester, userId);
+			console.log(subjects);
 			setSelectedSubject((await subjects)[0].id);
 			return { subjects: subjects, currentSubject: (await subjects)[0].id };
 		} catch (error) {

@@ -67,5 +67,19 @@ namespace api.Controllers
             await (appCRUDService as IClassService).SaveScores(result);
             return Ok();
         }
+
+        [HttpPost("ClassForNewSemester")]
+        public async Task<IActionResult> ClassForNewSemester()
+        {
+            await (appCRUDService as IClassService).ClassForNewSemester();
+            return Ok();
+        }
+
+        [HttpGet("GetClassInformation/{classId}")]
+        public async Task<ClassInformation> GetClassInformation(Guid classId)
+        {
+            return await (appCRUDService as IClassService).GetClassInformation(classId);
+        }
+
     }
 }

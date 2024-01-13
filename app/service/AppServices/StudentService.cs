@@ -65,9 +65,9 @@ namespace service.AppServices
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets[0];
-                for (int row = 2; row <= worksheet.Dimension.Rows; row++)
+                for (int row = 1; row <= worksheet.Dimension.Rows; row++)
                 {
-                    MajorDTO major = await _majorService.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString());
+                    MajorDTO major = _majorService.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString()).Result;
                     var student = new StudentDTO
                     {
                         Username = worksheet.Cells[row, 1].Value.ToString(),
@@ -76,8 +76,7 @@ namespace service.AppServices
                         Dob = DateTime.Parse(worksheet.Cells[row, 4].Value.ToString()),
                         Gender = Convert.ToBoolean(worksheet.Cells[row, 5].Value),
                         Phone = worksheet.Cells[row, 6].Value.ToString(),
-                        MajorId = major.Id,
-                        Major = major
+                        MajorId = major.Id
                     };
                     student.Id = Guid.NewGuid();
                     student.Password = Guid.NewGuid().ToString();
@@ -128,6 +127,7 @@ namespace service.AppServices
                 var room = await attendanceService.GetRoomByFee(item.Id);
                 StudentTimetableDto timeTable = new()
                 {
+                    Class = item.Class,
                     Subject = item.Subject,
                     StartDate = startOfTerm,
                     EndDate = endOfTerm,
@@ -155,5 +155,10 @@ namespace service.AppServices
             return Mapper.Map<List<SemesterDTO>>(data!);
         }
 
+        public async Task<List<FeeDetailDTO>> GetFeeHistory(Guid studentId, Guid semesterId)
+        {
+            var result = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester).Include(fd => fd.Subject).Where(fd => fd.StudentSemester.StudentId == studentId && fd.StudentSemester.SemesterId == semesterId).ToList();
+            return Mapper.Map<List<FeeDetailDTO>>(result);
+        }
     }
 }

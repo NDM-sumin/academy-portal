@@ -23,7 +23,7 @@ namespace service.AppServices
         public async Task<List<SubjectComponentDTO>> GetByStudentAndSubject(Guid studentId, Guid subjectId)
         {
 
-            var result = await base.Repository.Entities
+            var result = await base.Repository.Entities.Include(sc => sc.Scores)
                       .Where(sc => sc.SubjectID == subjectId
                       && sc.Scores.Any(s => s.StudentId == studentId)
                       ).ToListAsync();

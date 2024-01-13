@@ -10,8 +10,10 @@ namespace service.contract.IAppServices
 {
     public interface IClassService : IAppCRUDDefaultKeyService<ClassDTO, CreateClassDTO, UpdateClassDTO, Class>
     {
+        Task ClassForNewSemester();
         Task<List<StudentAttendance>> GetAttendancesByClass(Guid classId, DateTime dateTime);
         Task<List<ClassDTO>> GetClassesByTeacher(Guid teacherId);
+        Task<ClassInformation> GetClassInformation(Guid classId);
         Task<List<DateTime?>> GetDates(Guid classId);
         Task<List<StudentScoreDTO>> GetStudentsByClass(Guid classId);
         Task<List<SubjectComponentDTO>> GetSubjectComponentsByClass(Guid classId);

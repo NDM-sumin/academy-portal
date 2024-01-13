@@ -59,7 +59,7 @@ namespace api.Controllers
         public async Task<AttendanceHistory> GetAttendances(Guid studentId, Guid semesterId, Guid subjectId)
         {
 
-            var (fee,attendance) = await feeDetailService.GetByStudentAndSubject(studentId, semesterId, subjectId);
+            var (fee, attendance) = await feeDetailService.GetByStudentAndSubject(studentId, semesterId, subjectId);
             return new AttendanceHistory()
             {
                 Attendances = attendance,
@@ -82,31 +82,41 @@ namespace api.Controllers
             return Ok(new
             {
                 semesters = data.ToList(),
-                current = (await studentSemesterService.GetCurrentSemester(studentId)).Semester  
-            }) ;
+                current = (await studentSemesterService.GetCurrentSemester(studentId)).Semester
+            });
 
         }
-    [HttpPost("RegisterSubject")]
-    public async Task<IActionResult> RegisterSubject(List<CreateFeeDetailDTO> feeDetailDTOs){
-    
-    var userId = GetUserId();
-        var currentSemester = await studentSemesterService.GetCurrentSemester(userId);
-        foreach(CreateFeeDetailDTO feedetail in feeDetailDTOs){
-            feedetail.StudentSemesterId = currentSemester.Id;
-            feedetail.DueDate = DateTime.Now.AddDays(20);
-            feedetail.Amount =(float) (await subjectService.Get(feedetail.SubjectId)).Price;
-            await  feeDetailService.Create(feedetail);
+        [HttpPost("RegisterSubject")]
+        public async Task<IActionResult> RegisterSubject(List<CreateFeeDetailDTO> feeDetailDTOs)
+        {
+
+            var userId = GetUserId();
+            var currentSemester = await studentSemesterService.GetCurrentSemester(userId);
+            foreach (CreateFeeDetailDTO feedetail in feeDetailDTOs)
+            {
+                feedetail.StudentSemesterId = currentSemester.Id;
+                feedetail.DueDate = DateTime.Now.AddDays(20);
+                feedetail.Amount = (float)(await subjectService.Get(feedetail.SubjectId)).Price;
+                await feeDetailService.Create(feedetail);
+            }
+
+            return Ok(feeDetailDTOs);
+
         }
 
-        return Ok(feeDetailDTOs);
-
-    }
         [HttpPost("RegisterSubject/{studentId}/{subjectId}")]
         public async Task<IActionResult> RegisterSubject(Guid studentId, Guid subjectId)
         {
             await (appCRUDService as IStudentService).RegisterSubject(studentId, subjectId);
             return Ok();
         }
+
+        [HttpGet("GetFeeHistory/{studentId}/{semesterId}")]
+        public async Task<List<FeeDetailDTO>> GetFeeHistory(Guid studentId, Guid semesterId)
+        {
+           return await (appCRUDService as IStudentService).GetFeeHistory(studentId, semesterId);
+        }
+
 
     }
 }

@@ -69,6 +69,10 @@ const useClassApi = () => {
 		const scoreDatasJSON = JSON.stringify(scoreDatas);
 		return axios.post(`api/Class/SaveScores?scores=${scoreDatasJSON}`);
 	};
+
+	const GetClassInformation = (classId) => {
+		return axios.get(`api/Class/GetClassInformation/${classId}`);
+	};
 	return {
 		create,
 		update,
@@ -81,6 +85,7 @@ const useClassApi = () => {
 		GetDates,
 		SaveAttendance,
 		SaveScores,
+		GetClassInformation,
 	};
 };
 export default useClassApi;
