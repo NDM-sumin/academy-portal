@@ -32,6 +32,7 @@ namespace api.Extensions
                 .AddScoped<ISlotTimeTableAtWeekRepository, SlotTimeTableAtWeekRepository>()
                 .AddScoped<IAttedanceRepository, AttendanceRepository>()
                 .AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>()
+                .AddScoped<IWeekRepository, WeekRepository>()
 
 
                 ;

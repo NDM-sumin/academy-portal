@@ -14,6 +14,8 @@ using service.contract.DTOs.Teacher;
 using service.contract.IAppServices;
 using System;
 using System.Collections.Immutable;
+using System.Globalization;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace service.AppServices
@@ -26,7 +28,12 @@ namespace service.AppServices
         readonly IAttedanceRepository attedanceRepository;
         readonly IStudentRepository studentRepository;
         readonly IClassRepository classRepository;
-        public ClassService(IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        readonly IRoomRepository roomRepository;
+        readonly ISlotRepository slotRepository;
+        readonly ITimeTableRepository timeTableRepository;
+        readonly IWeekRepository weekRepository;
+        readonly ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository;
+        public ClassService(ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository, IWeekRepository weekRepository, ITimeTableRepository timeTableRepository, ISlotRepository slotRepository, IRoomRepository roomRepository, IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
             this.feeDetailRepository = feeDetailRepository;
             this.scoreRepository = scoreRepository;
@@ -34,6 +41,11 @@ namespace service.AppServices
             this.attedanceRepository = attedanceRepository;
             this.studentRepository = studentRepository;
             this.classRepository = classRepository;
+            this.roomRepository = roomRepository;
+            this.slotRepository = slotRepository;
+            this.timeTableRepository = timeTableRepository;
+            this.weekRepository = weekRepository;
+            this.slotTimeTableAtWeekRepository = slotTimeTableAtWeekRepository;
         }
         public async Task<List<StudentAttendance>> GetAttendancesByClass(Guid classId, DateTime dateTime)
         {
@@ -64,33 +76,103 @@ namespace service.AppServices
         {
             var subjects = subjectRepository.GetAll().Result.Include(s => s.FeeDetails).ThenInclude(fd => fd.StudentSemester).ThenInclude(ss => ss.Semester).ToList();
             var currentSemester = subjects.FirstOrDefault().FeeDetails.Where(fd => fd.StudentSemester.IsNow == true).Select(fd => fd.StudentSemester.Semester).FirstOrDefault();
+            var rooms = await roomRepository.GetAll().Result.Take(3).ToListAsync();
+            var startDate = new DateTime(DateTime.Now.Year, currentSemester.StartMonth, currentSemester.StartDay);
+            var endDate = new DateTime(DateTime.Now.Year, currentSemester.EndMonth, currentSemester.EndDay);
 
             foreach (var subject in subjects)
             {
                 var fees = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
+
                 var index = 0;
                 while (fees.Any())
                 {
                     Class newClass = new()
                     {
+                        StartDate = startDate,
+                        EndDate = endDate,
                         Id = Guid.NewGuid(),
-                        StartDate = new DateTime(DateTime.Now.Year, currentSemester.StartMonth, currentSemester.StartDay),
-                        EndDate = new DateTime(DateTime.Now.Year, currentSemester.EndMonth, currentSemester.EndDay),
                         ClassCode = $"{subject.SubjectCode}_{index}"
                     };
                     classRepository.Create(newClass);
 
-                    for (int i = 0; i < 30; i++)
+                    var allSlotTimeTables = await slotTimeTableAtWeekRepository.GetAll().Result.Include(staw => staw.Slot).Include(staw => staw.Timetable).Include(staw => staw.Week).ToListAsync();
+                    var assignedSlotTimeTables = await GetAssignedSlotTimeTablesForCurrentSemester(currentSemester);
+
+                    var unassignedSlotTimeTables = allSlotTimeTables
+             .Where(st => !assignedSlotTimeTables.Any(assigned => assigned.Id == st.Id))
+             .ToList();
+
+                    var selectedSlotTimeTables = new List<SlotTimeTableAtWeek>();
+
+                    foreach (var room in rooms)
                     {
-                        FeeDetail feeDetail = fees[i];
-                        feeDetail.Class = newClass;
-                        feeDetail.ClassId = newClass.Id;
-                        feeDetailRepository.Update(feeDetail);
+                        var selectedGroups = unassignedSlotTimeTables.GroupBy(st => new { st.SlotId, st.TimetableId }).Take(2);
+
+                        foreach (var group in selectedGroups)
+                        {
+                            foreach (var slotTimeTable in group)
+                            {
+                                selectedSlotTimeTables.Add(slotTimeTable);
+                                foreach (var feeDetail in fees.Take(30))
+                                {
+                                    feeDetail.Class = newClass;
+                                    feeDetail.ClassId = newClass.Id;
+
+                                    DateTime currentDate = startDate;
+
+                                    while (currentDate <= endDate)
+                                    {
+                                        if (slotTimeTable.Timetable.WeekDay.Contains(currentDate.DayOfWeek.ToString()))
+                                        {
+                                            if (GetWeekNumber(currentDate) == slotTimeTable.Week.WeekName)
+                                            {
+
+                                                Attendance attendance = new Attendance
+                                                {
+                                                    Room = room,
+                                                    SlotTimeTableAtWeek = slotTimeTable,
+                                                    FeeDetail = feeDetail,
+                                                    IsAttendance = true,
+                                                    Date = currentDate
+                                                };
+
+                                            }
+                                        }
+
+                                        currentDate = currentDate.AddDays(1);
+                                    }
+                                }
+                            }
+                        }
                     }
+
+                    unassignedSlotTimeTables.RemoveAll(st => selectedSlotTimeTables.Any(selected => selected.Id == st.Id));
 
                     index++;
                 }
+
             }
+
+        }
+
+        private async Task<List<SlotTimeTableAtWeek>> GetAssignedSlotTimeTablesForCurrentSemester(Semester semester)
+        {
+            var assignedSlotTimeTables = await attedanceRepository.GetAll().Result.Include(a => a.SlotTimeTableAtWeek).ThenInclude(staw => staw.Week)
+                .Include(a => a.SlotTimeTableAtWeek).ThenInclude(staw => staw.Slot).Include(a => a.SlotTimeTableAtWeek).ThenInclude(staw => staw.Week)
+                .Where(a => a.SlotTimeTableAtWeek.Attendances.Any(a => a.FeeDetail.StudentSemester.SemesterId == semester.Id))
+                .Select(a => a.SlotTimeTableAtWeek)
+                .Distinct()
+                .ToListAsync();
+
+            return assignedSlotTimeTables;
+        }
+
+        public static int GetWeekNumber(DateTime date)
+        {
+            CultureInfo ciCurr = CultureInfo.CurrentCulture;
+            int weekNum = ciCurr.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+            return weekNum;
         }
 
         public async Task<TeacherDTO> GetTeacher(Guid classId)
