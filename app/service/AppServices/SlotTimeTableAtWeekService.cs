@@ -18,7 +18,7 @@ namespace service.AppServices
         }
         public async Task<List<SlotTimeTableAtWeekDTO>> GetSlotTimeTableAtWeeks(SemesterDTO currentSemester, Guid feeDetailId)
         {
-            var year = currentSemester.CreatedAt.Year;
+            var year = DateTime.Now.Year;
             DateTime startOfTerm = new DateTime(year, currentSemester.StartMonth, currentSemester.StartDay);
             if (currentSemester.StartMonth > currentSemester.EndMonth) { year++; }
             DateTime endOfTerm = new DateTime(year, currentSemester.EndMonth, currentSemester.EndDay);

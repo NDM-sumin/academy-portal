@@ -21,7 +21,8 @@ namespace api.Controllers
         [HttpGet("GetTimeTable")]
         public async Task<List<TeacherTimetableDto>> GetTimeTable(Guid teacherId)
         {
-            return await (appCRUDService as ITeacherService).GetTimeTable(teacherId);
+            var result = await (appCRUDService as ITeacherService).GetTimeTable(teacherId);
+            return result;
         }
 
     }

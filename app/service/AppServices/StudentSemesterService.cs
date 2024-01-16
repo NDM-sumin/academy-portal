@@ -45,7 +45,7 @@ namespace service.AppServices
         public async Task<StudentSemesterDto> SetNextSemester(Guid studentId)
         {
             var currentSemester = await GetCurrentSemester(studentId);
-            this.Repository.DetachLocalAll();
+            //this.Repository.DetachLocalAll();
 
           
 
@@ -59,7 +59,7 @@ namespace service.AppServices
                 await this.Update(updating);
             }
           
-            UpdateStudentSemesterDto creating = new UpdateStudentSemesterDto()
+            UpdateStudentSemesterDto creating = new()
             {
                 StudentId = studentId,
                 IsNow = true,
@@ -74,7 +74,7 @@ namespace service.AppServices
         public async Task<List<StudentSemesterDto>> SetNextSemester()
         {
             this.Repository.Context.Database.SetCommandTimeout(1000);
-            List<StudentSemesterDto> studentSemesterDtos = new List<StudentSemesterDto>();
+            List<StudentSemesterDto> studentSemesterDtos = new();
             foreach (var student in this.Repository.Context.Students)
             {
                 try
