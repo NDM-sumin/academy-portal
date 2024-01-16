@@ -13,10 +13,14 @@ namespace service.AppServices
     public class FeeDetailService : AppCRUDDefaultKeyService<FeeDetailDTO, CreateFeeDetailDTO, CreateFeeDetailDTO, FeeDetail>, IFeeDetailService
     {
         readonly IAttedanceRepository attedanceRepository;
-        public FeeDetailService(IAttedanceRepository attedanceRepository, IFeeDetailRepository genericRepository,
+        readonly IStudentSemesterRepository studentSemesterRepository;
+        readonly ISubjectRepository subjectRepository;
+        public FeeDetailService(ISubjectRepository subjectRepository, IStudentSemesterRepository studentSemesterRepository, IAttedanceRepository attedanceRepository, IFeeDetailRepository genericRepository,
          IMapper mapper) : base(genericRepository, mapper)
         {
             this.attedanceRepository = attedanceRepository;
+            this.studentSemesterRepository = studentSemesterRepository;
+            this.subjectRepository = subjectRepository;
         }
 
         public async Task<List<FeeDetailDTO>> GetByStudent(Guid studentId, Guid semesterId)
@@ -47,6 +51,27 @@ namespace service.AppServices
         }
 
 
+        public async Task AddFee()
+        {
+            List<FeeDetail> result = new();
+            var studentSemesters = studentSemesterRepository.GetAll().Result.Where(ss => ss.IsNow == true);
+            var subject = subjectRepository.GetAll().Result.FirstOrDefault(s => s.Id.Equals(Guid.Parse("0DE01667-EDCD-4D7F-A1E2-2636BCA248E1")));
+            foreach (var item in studentSemesters)
+            {
+                FeeDetail feeDetail = new FeeDetail();
+                feeDetail.Id = Guid.NewGuid();
+                feeDetail.StudentSemesterId = item.Id;
+                feeDetail.StudentSemester = item;
+                feeDetail.DueDate = DateTime.Now;
+                feeDetail.PayDate = DateTime.Now;
+                feeDetail.Amount = 30000;
+                feeDetail.PaymentTransactionId = Guid.Parse("EA36BA11-F466-48F1-A5FF-180758012355");
+                feeDetail.SubjectId = Guid.Parse("0DE01667-EDCD-4D7F-A1E2-2636BCA248E1");
+                feeDetail.Subject = subject;
+                result.Add(feeDetail);
+            }
+            this.Repository.AddRange(result);
+        }
 
     }
 }

@@ -33,7 +33,8 @@ namespace service.AppServices
         readonly ITimeTableRepository timeTableRepository;
         readonly IWeekRepository weekRepository;
         readonly ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository;
-        public ClassService(ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository, IWeekRepository weekRepository, ITimeTableRepository timeTableRepository, ISlotRepository slotRepository, IRoomRepository roomRepository, IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        readonly ITeacherRepository teacherRepository;
+        public ClassService(ITeacherRepository teacherRepository,ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository, IWeekRepository weekRepository, ITimeTableRepository timeTableRepository, ISlotRepository slotRepository, IRoomRepository roomRepository, IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
             this.feeDetailRepository = feeDetailRepository;
             this.scoreRepository = scoreRepository;
@@ -46,6 +47,7 @@ namespace service.AppServices
             this.timeTableRepository = timeTableRepository;
             this.weekRepository = weekRepository;
             this.slotTimeTableAtWeekRepository = slotTimeTableAtWeekRepository;
+            this.teacherRepository = teacherRepository;
         }
         public async Task<List<StudentAttendance>> GetAttendancesByClass(Guid classId, DateTime dateTime)
         {
@@ -113,6 +115,9 @@ namespace service.AppServices
                         {
                             foreach (var slotTimeTable in group)
                             {
+                                var teacher = await GetAvailableTeacherForClass(newClass, slotTimeTable);
+                                newClass.Teacher = teacher;
+                                newClass.TeacherId = teacher.Id;
                                 selectedSlotTimeTables.Add(slotTimeTable);
                                 foreach (var feeDetail in fees.Take(30))
                                 {
@@ -133,15 +138,16 @@ namespace service.AppServices
                                                     Room = room,
                                                     SlotTimeTableAtWeek = slotTimeTable,
                                                     FeeDetail = feeDetail,
-                                                    IsAttendance = true,
+                                                    IsAttendance = null,
                                                     Date = currentDate
                                                 };
-
+                                                attedanceRepository.Create(attendance); 
                                             }
                                         }
 
                                         currentDate = currentDate.AddDays(1);
                                     }
+                                    fees.Remove(feeDetail);
                                 }
                             }
                         }
@@ -154,6 +160,26 @@ namespace service.AppServices
 
             }
 
+        }
+
+        public async Task<Teacher> GetAvailableTeacherForClass(Class newClass, SlotTimeTableAtWeek timetable)
+        {
+            var allTeachers = await teacherRepository.GetAll().Result.ToListAsync();
+
+            var availableTeachers = allTeachers
+    .Where(teacher =>
+        !teacher.Classes.Any(c => c.StartDate == newClass.StartDate && c.EndDate == newClass.EndDate &&
+            c.FeeDetails.Any(fd =>
+                fd.Attendances.Any(att =>
+                    att.SlotTimeTableAtWeek.TimetableId == timetable.TimetableId &&
+                    att.SlotTimeTableAtWeek.SlotId == timetable.SlotId)))
+    )
+    .ToList();
+
+            var random = new Random();
+            var selectedTeacher = availableTeachers.OrderBy(x => random.Next()).FirstOrDefault();
+
+            return selectedTeacher;
         }
 
         private async Task<List<SlotTimeTableAtWeek>> GetAssignedSlotTimeTablesForCurrentSemester(Semester semester)

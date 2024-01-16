@@ -117,6 +117,12 @@ namespace api.Controllers
            return await (appCRUDService as IStudentService).GetFeeHistory(studentId, semesterId);
         }
 
+        [HttpPost("AddFee")]
+        public async Task<IActionResult> AddFee()
+        {
+            await feeDetailService.AddFee();
+            return Ok();
+        }
 
     }
 }
