@@ -24,7 +24,7 @@ this.studentSemesterService = studentSemesterService;
 
         [HttpPost("SetNextSemester")]
         public async Task<IActionResult> SetNextSemester(){
-return Ok(await studentSemesterService.SetNextSemester());
+            return Ok(await studentSemesterService.SetNextSemester());
         }
 
     }
