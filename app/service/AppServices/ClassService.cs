@@ -34,7 +34,7 @@ namespace service.AppServices
         readonly IWeekRepository weekRepository;
         readonly ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository;
         readonly ITeacherRepository teacherRepository;
-        public ClassService(ITeacherRepository teacherRepository,ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository, IWeekRepository weekRepository, ITimeTableRepository timeTableRepository, ISlotRepository slotRepository, IRoomRepository roomRepository, IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        public ClassService(ITeacherRepository teacherRepository, ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository, IWeekRepository weekRepository, ITimeTableRepository timeTableRepository, ISlotRepository slotRepository, IRoomRepository roomRepository, IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
         {
             this.feeDetailRepository = feeDetailRepository;
             this.scoreRepository = scoreRepository;
@@ -96,7 +96,7 @@ namespace service.AppServices
                         Id = Guid.NewGuid(),
                         ClassCode = $"{subject.SubjectCode}_{index}"
                     };
-                    classRepository.Create(newClass);
+
 
                     var allSlotTimeTables = await slotTimeTableAtWeekRepository.GetAll().Result.Include(staw => staw.Slot).Include(staw => staw.Timetable).Include(staw => staw.Week).ToListAsync();
                     var assignedSlotTimeTables = await GetAssignedSlotTimeTablesForCurrentSemester(currentSemester);
@@ -106,29 +106,32 @@ namespace service.AppServices
              .ToList();
 
                     var selectedSlotTimeTables = new List<SlotTimeTableAtWeek>();
-
+                    var selectedFee = fees.Take(30);
                     foreach (var room in rooms)
                     {
                         var selectedGroups = unassignedSlotTimeTables.GroupBy(st => new { st.SlotId, st.TimetableId }).Take(2);
 
                         foreach (var group in selectedGroups)
                         {
-                            foreach (var slotTimeTable in group)
+
+
+                            foreach (var feeDetail in selectedFee)
                             {
-                                var teacher = await GetAvailableTeacherForClass(newClass, slotTimeTable);
-                                newClass.Teacher = teacher;
-                                newClass.TeacherId = teacher.Id;
-                                selectedSlotTimeTables.Add(slotTimeTable);
-                                foreach (var feeDetail in fees.Take(30))
+                               
+                                foreach (var slotTimeTable in group)
                                 {
-                                    feeDetail.Class = newClass;
-                                    feeDetail.ClassId = newClass.Id;
+                                    var teacher = await GetAvailableTeacherForClass(newClass, slotTimeTable);
+                                    newClass.Teacher = teacher;
+                                    newClass.TeacherId = teacher.Id;
+                                    classRepository.Create(newClass);
+                                    selectedSlotTimeTables.Add(slotTimeTable);
 
                                     DateTime currentDate = startDate;
 
                                     while (currentDate <= endDate)
                                     {
-                                        if (slotTimeTable.Timetable.WeekDay.Contains(currentDate.DayOfWeek.ToString()))
+                                        var a = currentDate.DayOfWeek.ToString().Substring(0, 3);
+                                        if (slotTimeTable.Timetable.WeekDay == currentDate.DayOfWeek.ToString().Substring(0, 3))
                                         {
                                             if (GetWeekNumber(currentDate) == slotTimeTable.Week.WeekName)
                                             {
@@ -141,16 +144,19 @@ namespace service.AppServices
                                                     IsAttendance = null,
                                                     Date = currentDate
                                                 };
-                                                attedanceRepository.Create(attendance); 
+                                                attedanceRepository.Create(attendance);
                                             }
                                         }
 
                                         currentDate = currentDate.AddDays(1);
                                     }
-                                    fees.Remove(feeDetail);
+                                    feeDetail.Class = newClass;
+                                    feeDetail.ClassId = newClass.Id;
                                 }
                             }
+
                         }
+                        fees.RemoveAll(st => selectedFee.Any(selected => selected.Id == st.Id));
                     }
 
                     unassignedSlotTimeTables.RemoveAll(st => selectedSlotTimeTables.Any(selected => selected.Id == st.Id));

@@ -15,10 +15,9 @@ import "./Timetable.css";
 import useStudentApi from "../../apis/student.api";
 import useAuthApi from "../../apis/auth.api";
 
-const Timetable = () => {
+const StudentTimetable = () => {
 	const studentApi = useStudentApi();
 	const authApi = useAuthApi();
-
 	const currentYear = new Date().getFullYear();
 	const [selectedYear, setSelectedYear] = useState(currentYear.toString());
 	const [selectedWeek, setSelectedWeek] = useState("");
@@ -61,12 +60,11 @@ const Timetable = () => {
 	const fetchData = async (currentWeek) => {
 		try {
 			const user = await authApi.getCurrentUser();
-
 			const [slots, timetableData] = await Promise.all([
 				studentApi.getSlots(),
 				studentApi.getTimeTable(user.id),
 			]);
-
+			console.log(timetableData);
 			const formattedData = slots.map((slot) => {
 				const slotData = {
 					SlotName: `Slot_${slot.slotName} (${slot.startTime} - ${slot.endTime})`,
@@ -95,10 +93,8 @@ const Timetable = () => {
 						});
 					}
 				});
-				console.log(slotData);
 				return slotData;
 			});
-			console.log(formattedData);
 			setTimetableData(formattedData);
 		} catch (error) {
 			console.error("Error fetching timetable data", error);
@@ -374,4 +370,4 @@ const Timetable = () => {
 	);
 };
 
-export default Timetable;
+export default StudentTimetable;

@@ -72,7 +72,9 @@ namespace service.AppServices
                          .Select(g => g.First().SlotTimeTableAtWeek))
                      .AsEnumerable()
                      .Select(Mapper.Map<SlotTimeTableAtWeekDTO>)
-                     .ToList();
+                     .ToList().GroupBy(sc => new { sc.TimetableId, sc.SlotId })
+                             .Select(group => group.First())
+                             .ToList();
 
 
                 var teacherTimetable = new TeacherTimetableDto

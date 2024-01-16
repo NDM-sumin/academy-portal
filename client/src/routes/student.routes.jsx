@@ -1,5 +1,5 @@
 import RegisterSubject from "../pages/student/RegisterSubject/index";
-import TimeTable from "../pages/student/Timetable";
+import StudentTimeTable from "../pages/student/StudentTimetable";
 import Attendance from "../pages/student/AttendanceHistory";
 import ScoreHistory from "../pages/student/ScoreHistory";
 import FeeHistory from "../pages/student/FeeHistory";
@@ -20,9 +20,9 @@ export const STUDENT_ROUTES = [
 			},
 			{
 				inMenu: true,
-				path: "timetable",
+				path: "studentTimetable",
 				title: "Lịch học",
-				element: <TimeTable />,
+				element: <StudentTimeTable />,
 			},
 			{
 				inMenu: true,
