@@ -117,7 +117,7 @@ namespace service.AppServices
             var currentSemester = (await studentSemesterService.GetCurrentSemester(studentId)).Semester;
             var fees = await feeDetailService.GetByStudent(studentId, currentSemester.Id);
 
-            var year = currentSemester.CreatedAt.Year;
+            var year = DateTime.Now.Year;
             DateTime startOfTerm = new DateTime(year, currentSemester.StartMonth, currentSemester.StartDay);
             if (currentSemester.StartMonth > currentSemester.EndMonth) { year++; }
             DateTime endOfTerm = new DateTime(year, currentSemester.EndMonth, currentSemester.EndDay);
@@ -134,7 +134,11 @@ namespace service.AppServices
                     Room = room
                 };
                 List<SlotTimeTableAtWeekDTO> list = await slotTimeTableAtWeekService.GetSlotTimeTableAtWeeks(currentSemester, item.Id);
-                timeTable.AtWeek.AddRange(list);
+                var unique = list
+                             .GroupBy(sc => new { sc.TimetableId, sc.SlotId })
+                             .Select(group => group.First())
+                             .ToList();
+                timeTable.AtWeek.AddRange(unique);
                 result.Add(timeTable);
             }
             return result;
