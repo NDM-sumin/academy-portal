@@ -12,6 +12,6 @@ namespace service.contract.DTOs.Timetable
         public RoomDTO? Room { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<SlotTimeTableAtWeekDTO> AtWeek { get; set; } = new List<SlotTimeTableAtWeekDTO>();
+        public List<AtWeekDto> AtWeek { get; set; } = new List<AtWeekDto>();
     }
 }

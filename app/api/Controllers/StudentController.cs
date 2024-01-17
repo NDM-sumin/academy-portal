@@ -1,6 +1,9 @@
-﻿using api.Controllers.Base;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using api.Controllers.Base;
 using domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Update;
 using service.AppServices;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
@@ -50,10 +53,11 @@ namespace api.Controllers
 
 
         [HttpGet("GetTimeTable")]
-        public async Task<List<StudentTimetableDto>> GetTimeTable(Guid studentId)
+        public async Task<IActionResult> GetTimeTable(Guid studentId)
         {
             var result = await (appCRUDService as IStudentService).GetTimeTable(studentId);
-            return result;
+            // var resultString = JsonSerializer.Serialize(result, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles});
+            return Ok(result);
         }
 
         [HttpGet("GetAttendances/{studentId}/{semesterId}/{subjectId}")]

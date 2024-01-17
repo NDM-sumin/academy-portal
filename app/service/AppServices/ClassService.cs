@@ -84,19 +84,22 @@ namespace service.AppServices
 
             foreach (var subject in subjects)
             {
-                var fees = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
-                foreach(var fee in fees)
+                var fees = feeDetailRepository.GetAll().Result.Include(fd => fd.Attendances).Include(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
+                foreach (var fee in fees)
                 {
-                    foreach(var sc in subject.SubjectComponents)
+                    foreach (var sc in subject.SubjectComponents)
                     {
                         Score score = new()
                         {
                             Id = Guid.NewGuid(),
+                            SubjectComponentID = sc.Id,
                             SubjectComponent = sc,
+                            StudentId = fee.StudentSemester.Student.Id,
                             Student = fee.StudentSemester.Student,
                             Value = null,
                         };
-                        scoreRepository.Create(score);
+                        await scoreRepository.Create(score);
+                        await scoreRepository.SaveChange();
                     }
                 }
                 var index = 0;
@@ -109,8 +112,8 @@ namespace service.AppServices
                         Id = Guid.NewGuid(),
                         ClassCode = $"{subject.SubjectCode}_{index}"
                     };
-                    classRepository.Create(newClass);
-
+                    await classRepository.Create(newClass);
+                    await this.classRepository.SaveChange();
                     index++;
 
                     var allSlotTimeTables = await slotTimeTableAtWeekRepository.GetAll().Result.Include(staw => staw.Slot).Include(staw => staw.Timetable).Include(staw => staw.Week).ToListAsync();
@@ -124,11 +127,11 @@ namespace service.AppServices
                     var selectedFee = fees.Take(30);
 
                     var selectedGroups = unassignedSlotTimeTables.GroupBy(st => new { st.SlotId, st.TimetableId }).Take(2);
-
                     foreach (var feeDetail in selectedFee)
                     {
                         foreach (var group in selectedGroups)
                         {
+
                             foreach (var slotTimeTable in group)
                             {
                                 selectedSlotTimeTables.Add(slotTimeTable);
@@ -150,7 +153,8 @@ namespace service.AppServices
                                                 IsAttendance = null,
                                                 Date = currentDate
                                             };
-                                            attedanceRepository.Create(attendance);
+                                            await attedanceRepository.Create(attendance);
+                                            await attedanceRepository.SaveChange();
                                         }
                                     }
 
@@ -159,27 +163,27 @@ namespace service.AppServices
                                 feeDetail.Class = newClass;
                                 feeDetail.ClassId = newClass.Id;
                             }
+
                         }
                     }
-
                     var selectedRoom = rooms.FirstOrDefault(room => !room.RoomAttendances.Any(ra => ra.FeeDetail.SubjectId == subject.Id &&
                     selectedSlotTimeTables.Any(stt => ra.SlotTimeTableAtWeek.SlotId == stt.SlotId && ra.SlotTimeTableAtWeek.TimetableId == stt.TimetableId)));
 
                     foreach (var feeDetail in selectedFee)
                     {
-                        foreach(var attendance in feeDetail.Attendances)
+                        foreach (var attendance in feeDetail.Attendances)
                         {
                             attendance.Room = selectedRoom;
-                            await attedanceRepository.Update(attendance);
+                            await attedanceRepository.Update(attendance); 
+                            await attedanceRepository.SaveChange();
                         }
                     }
 
-                    var teacher = await GetAvailableTeacherForClass(newClass, selectedSlotTimeTables,subject.Id);
+                    var teacher = await GetAvailableTeacherForClass(newClass, selectedSlotTimeTables, subject.Id);
                     newClass.Teacher = teacher;
                     newClass.TeacherId = teacher.Id;
                     await classRepository.Update(newClass);
                     fees.RemoveAll(st => selectedFee.Any(selected => selected.Id == st.Id));
-
 
                     unassignedSlotTimeTables.RemoveAll(st => selectedSlotTimeTables.Any(selected => selected.Id == st.Id));
 
