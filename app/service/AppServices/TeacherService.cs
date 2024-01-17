@@ -14,6 +14,7 @@ using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Teacher;
 using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
+using System.Xml;
 
 namespace service.AppServices
 {
@@ -81,7 +82,6 @@ namespace service.AppServices
                 {
                     StartDate = item.StartDate,
                     EndDate = item.EndDate,
-                    AtWeek = Mapper.Map<List<SlotTimeTableAtWeekDTO>>(timetables),
                     Class = item,
                     Subject = fee.Subject,
                     Room = Mapper.Map<RoomDTO>(feeDetail
@@ -90,7 +90,7 @@ namespace service.AppServices
                     .Select(g => g.FirstOrDefault().Room))
                 .FirstOrDefault())
                 };
-
+                teacherTimetable.AtWeek.AddRange(Mapper.Map<List<SlotTimeTableAtWeekDTO>, List<AtWeekDto>>(timetables));
                 result.Add(teacherTimetable);
             }
 

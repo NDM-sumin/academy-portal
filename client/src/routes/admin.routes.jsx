@@ -5,7 +5,7 @@ import Teacher from "../pages/admin/Teacher";
 import Student from "../pages/admin/Student";
 import LayoutPage from "../pages/index";
 import Semester from "../pages/admin/Semester";
-import Class from "../pages/admin/Class";
+import Class from "../pages/admin/Class/Class";
 
 export const ADMIN_ROUTES = [
 	{
@@ -29,7 +29,7 @@ export const ADMIN_ROUTES = [
 				inMenu: true,
 				path: "room",
 				title: "Quản lý phòng",
-				element: <Room />
+				element: <Room />,
 			},
 			{
 				inMenu: true,
