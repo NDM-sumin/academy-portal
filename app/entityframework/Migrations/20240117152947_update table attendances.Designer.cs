@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using entityframework;
 
@@ -11,9 +12,10 @@ using entityframework;
 namespace entityframework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240117152947_update table attendances")]
+    partial class updatetableattendances
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,6 +89,9 @@ namespace entityframework.Migrations
                     b.Property<Guid>("SlotTimeTableAtWeekId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("FeeDetailId")
                         .HasColumnType("uniqueidentifier");
 
@@ -108,10 +113,7 @@ namespace entityframework.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("RoomId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SlotTimeTableAtWeekId", "FeeDetailId");
+                    b.HasKey("SlotTimeTableAtWeekId", "RoomId", "FeeDetailId");
 
                     b.HasIndex("FeeDetailId");
 
@@ -643,7 +645,9 @@ namespace entityframework.Migrations
 
                     b.HasOne("domain.Room", "Room")
                         .WithMany("RoomAttendances")
-                        .HasForeignKey("RoomId");
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("domain.SlotTimeTableAtWeek", "SlotTimeTableAtWeek")
                         .WithMany("Attendances")
