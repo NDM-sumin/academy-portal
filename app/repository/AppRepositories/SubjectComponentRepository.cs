@@ -11,5 +11,29 @@ namespace repository.AppRepositories
         public SubjectComponentRepository(AppDbContext context) : base(context)
         {
         }
+
+        public async Task CreateDefaultSubjectComponent(Guid subjectId)
+        {
+            List<SubjectComponent> subjectComponents = new List<SubjectComponent>(){
+                new SubjectComponent() {
+                    SubjectID = subjectId,
+                    Name = "Kiểm tra 1",
+                    Weight = 0.15,
+
+                },
+                new SubjectComponent() {
+                    SubjectID = subjectId,
+                    Name = "Kiểm tra 2",
+                    Weight = 0.15,
+                },
+                 new SubjectComponent() {
+                    SubjectID = subjectId,
+                    Name = "Thi cuối kì",
+                    Weight = 0.7,
+
+                }
+            };
+            await this.AddRange(subjectComponents);
+        }
     }
 }
