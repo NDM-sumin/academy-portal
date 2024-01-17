@@ -43,7 +43,7 @@ namespace entityframework
             modelBuilder.Entity<Account>().HasIndex(ra => ra.Username).IsUnique();
             modelBuilder.Entity<Account>().HasIndex(ra => ra.Email).IsUnique();
 
-            modelBuilder.Entity<Attendance>().HasKey(ra => new { ra.SlotTimeTableAtWeekId, ra.RoomId, ra.FeeDetailId });
+            modelBuilder.Entity<Attendance>().HasKey(ra => new { ra.SlotTimeTableAtWeekId, ra.FeeDetailId });
             modelBuilder.Entity<MajorSubject>().HasIndex(ra => new { ra.MajorId, ra.SubjectId, ra.SemesterId }).IsUnique();
             modelBuilder.Entity<StudentSemester>().HasIndex(ra => new { ra.SemesterId, ra.StudentId }).IsUnique();
             modelBuilder.Entity<FeeDetail>().HasIndex(ra => new { ra.SubjectId, ra.StudentSemesterId, ra.ClassId }).IsUnique();

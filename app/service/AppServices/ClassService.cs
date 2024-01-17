@@ -76,16 +76,29 @@ namespace service.AppServices
 
         public async Task ClassForNewSemester()
         {
-            var subjects = subjectRepository.GetAll().Result.Include(s => s.FeeDetails).ThenInclude(fd => fd.StudentSemester).ThenInclude(ss => ss.Semester).ToList();
+            var subjects = subjectRepository.GetAll().Result.Include(s => s.SubjectComponents).Include(s => s.FeeDetails).ThenInclude(fd => fd.StudentSemester).ThenInclude(ss => ss.Semester).ToList();
             var currentSemester = subjects.FirstOrDefault().FeeDetails.Where(fd => fd.StudentSemester.IsNow == true).Select(fd => fd.StudentSemester.Semester).FirstOrDefault();
-            var rooms = await roomRepository.GetAll().Result.Take(3).ToListAsync();
+            var rooms = await roomRepository.GetAll().Result.ToListAsync();
             var startDate = new DateTime(DateTime.Now.Year, currentSemester.StartMonth, currentSemester.StartDay);
             var endDate = new DateTime(DateTime.Now.Year, currentSemester.EndMonth, currentSemester.EndDay);
 
             foreach (var subject in subjects)
             {
                 var fees = feeDetailRepository.GetAll().Result.Include(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
-
+                foreach(var fee in fees)
+                {
+                    foreach(var sc in subject.SubjectComponents)
+                    {
+                        Score score = new()
+                        {
+                            Id = Guid.NewGuid(),
+                            SubjectComponent = sc,
+                            Student = fee.StudentSemester.Student,
+                            Value = null,
+                        };
+                        scoreRepository.Create(score);
+                    }
+                }
                 var index = 0;
                 while (fees.Any())
                 {
@@ -96,7 +109,9 @@ namespace service.AppServices
                         Id = Guid.NewGuid(),
                         ClassCode = $"{subject.SubjectCode}_{index}"
                     };
+                    classRepository.Create(newClass);
 
+                    index++;
 
                     var allSlotTimeTables = await slotTimeTableAtWeekRepository.GetAll().Result.Include(staw => staw.Slot).Include(staw => staw.Timetable).Include(staw => staw.Week).ToListAsync();
                     var assignedSlotTimeTables = await GetAssignedSlotTimeTablesForCurrentSemester(currentSemester);
@@ -107,86 +122,91 @@ namespace service.AppServices
 
                     var selectedSlotTimeTables = new List<SlotTimeTableAtWeek>();
                     var selectedFee = fees.Take(30);
-                    foreach (var room in rooms)
-                    {
-                        var selectedGroups = unassignedSlotTimeTables.GroupBy(st => new { st.SlotId, st.TimetableId }).Take(2);
 
+                    var selectedGroups = unassignedSlotTimeTables.GroupBy(st => new { st.SlotId, st.TimetableId }).Take(2);
+
+                    foreach (var feeDetail in selectedFee)
+                    {
                         foreach (var group in selectedGroups)
                         {
-
-
-                            foreach (var feeDetail in selectedFee)
+                            foreach (var slotTimeTable in group)
                             {
-                               
-                                foreach (var slotTimeTable in group)
+                                selectedSlotTimeTables.Add(slotTimeTable);
+
+                                DateTime currentDate = startDate;
+
+                                while (currentDate <= endDate)
                                 {
-                                    var teacher = await GetAvailableTeacherForClass(newClass, slotTimeTable);
-                                    newClass.Teacher = teacher;
-                                    newClass.TeacherId = teacher.Id;
-                                    classRepository.Create(newClass);
-                                    selectedSlotTimeTables.Add(slotTimeTable);
-
-                                    DateTime currentDate = startDate;
-
-                                    while (currentDate <= endDate)
+                                    var a = currentDate.DayOfWeek.ToString().Substring(0, 3);
+                                    if (slotTimeTable.Timetable.WeekDay == currentDate.DayOfWeek.ToString().Substring(0, 3))
                                     {
-                                        var a = currentDate.DayOfWeek.ToString().Substring(0, 3);
-                                        if (slotTimeTable.Timetable.WeekDay == currentDate.DayOfWeek.ToString().Substring(0, 3))
+                                        if (GetWeekNumber(currentDate) == slotTimeTable.Week.WeekName)
                                         {
-                                            if (GetWeekNumber(currentDate) == slotTimeTable.Week.WeekName)
+
+                                            Attendance attendance = new Attendance
                                             {
-
-                                                Attendance attendance = new Attendance
-                                                {
-                                                    Room = room,
-                                                    SlotTimeTableAtWeek = slotTimeTable,
-                                                    FeeDetail = feeDetail,
-                                                    IsAttendance = null,
-                                                    Date = currentDate
-                                                };
-                                                attedanceRepository.Create(attendance);
-                                            }
+                                                SlotTimeTableAtWeek = slotTimeTable,
+                                                FeeDetail = feeDetail,
+                                                IsAttendance = null,
+                                                Date = currentDate
+                                            };
+                                            attedanceRepository.Create(attendance);
                                         }
-
-                                        currentDate = currentDate.AddDays(1);
                                     }
-                                    feeDetail.Class = newClass;
-                                    feeDetail.ClassId = newClass.Id;
-                                }
-                            }
 
+                                    currentDate = currentDate.AddDays(1);
+                                }
+                                feeDetail.Class = newClass;
+                                feeDetail.ClassId = newClass.Id;
+                            }
                         }
-                        fees.RemoveAll(st => selectedFee.Any(selected => selected.Id == st.Id));
                     }
+
+                    var selectedRoom = rooms.FirstOrDefault(room => !room.RoomAttendances.Any(ra => ra.FeeDetail.SubjectId == subject.Id &&
+                    selectedSlotTimeTables.Any(stt => ra.SlotTimeTableAtWeek.SlotId == stt.SlotId && ra.SlotTimeTableAtWeek.TimetableId == stt.TimetableId)));
+
+                    foreach (var feeDetail in selectedFee)
+                    {
+                        foreach(var attendance in feeDetail.Attendances)
+                        {
+                            attendance.Room = selectedRoom;
+                            await attedanceRepository.Update(attendance);
+                        }
+                    }
+
+                    var teacher = await GetAvailableTeacherForClass(newClass, selectedSlotTimeTables,subject.Id);
+                    newClass.Teacher = teacher;
+                    newClass.TeacherId = teacher.Id;
+                    await classRepository.Update(newClass);
+                    fees.RemoveAll(st => selectedFee.Any(selected => selected.Id == st.Id));
+
 
                     unassignedSlotTimeTables.RemoveAll(st => selectedSlotTimeTables.Any(selected => selected.Id == st.Id));
 
-                    index++;
                 }
 
             }
 
         }
 
-        public async Task<Teacher> GetAvailableTeacherForClass(Class newClass, SlotTimeTableAtWeek timetable)
+        public async Task<Teacher> GetAvailableTeacherForClass(Class newClass, List<SlotTimeTableAtWeek> timetable, Guid subjectId)
         {
             var allTeachers = await teacherRepository.GetAll().Result.ToListAsync();
 
-            var availableTeachers = allTeachers
-    .Where(teacher =>
+
+            var availableTeachers = allTeachers.Where(teacher =>
         !teacher.Classes.Any(c => c.StartDate == newClass.StartDate && c.EndDate == newClass.EndDate &&
-            c.FeeDetails.Any(fd =>
-                fd.Attendances.Any(att =>
-                    att.SlotTimeTableAtWeek.TimetableId == timetable.TimetableId &&
-                    att.SlotTimeTableAtWeek.SlotId == timetable.SlotId)))
-    )
-    .ToList();
+            c.FeeDetails.Any(fd => fd.SubjectId == subjectId && fd.Attendances.Any(att =>
+                  timetable.Any(slt => att.SlotTimeTableAtWeek.TimetableId == slt.TimetableId &&
+                    att.SlotTimeTableAtWeek.SlotId == slt.SlotId))))).ToList();
 
             var random = new Random();
             var selectedTeacher = availableTeachers.OrderBy(x => random.Next()).FirstOrDefault();
 
             return selectedTeacher;
         }
+
+
 
         private async Task<List<SlotTimeTableAtWeek>> GetAssignedSlotTimeTablesForCurrentSemester(Semester semester)
         {
