@@ -6,9 +6,7 @@ namespace service.contract.DTOs.Timetable
     {
         public TimeTableDTO()
         {
-            SlotTimeTableAtWeeks = new HashSet<SlotTimeTableAtWeekDTO>();
         }
         public string WeekDay { get; set; } = null!;
-        public virtual ICollection<SlotTimeTableAtWeekDTO> SlotTimeTableAtWeeks { get; set; }
     }
 }

@@ -74,7 +74,9 @@ namespace service
 
             this.CreateMap<Slot, SlotDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<Attendance, AttendanceDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
-            this.CreateMap<SlotTimeTableAtWeek, SlotTimeTableAtWeekDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
+            this.CreateMap<SlotTimeTableAtWeek, SlotTimeTableAtWeekDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion());
+            this.CreateMap<SlotTimeTableAtWeekDTO, AtWeekDto>().ReverseMap();
+
             this.CreateMap<Timetable, TimeTableDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<Week, WeekDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 
             this.CreateMap<Room, RoomDTO>().ReverseMap().ForAllMembers(o => o.ExplicitExpansion()); 

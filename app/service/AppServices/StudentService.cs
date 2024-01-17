@@ -138,7 +138,7 @@ namespace service.AppServices
                              .GroupBy(sc => new { sc.TimetableId, sc.SlotId })
                              .Select(group => group.First())
                              .ToList();
-                timeTable.AtWeek.AddRange(unique);
+                timeTable.AtWeek.AddRange(Mapper.Map<List<SlotTimeTableAtWeekDTO>, List<AtWeekDto>>(unique));
                 result.Add(timeTable);
             }
             return result;
