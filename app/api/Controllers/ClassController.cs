@@ -9,6 +9,7 @@ using service.contract.DTOs.Score;
 using service.contract.DTOs.Student;
 using service.contract.DTOs.SubjectComponent;
 using service.contract.IAppServices;
+using System.Globalization;
 using System.Net;
 
 namespace api.Controllers
@@ -43,7 +44,8 @@ namespace api.Controllers
         [HttpGet("GetAttendances/{classId}")]
         public async Task<List<StudentAttendance>> GetAttendances(Guid classId, string dateTime)
         {
-            return await (appCRUDService as IClassService).GetAttendancesByClass(classId, DateTime.Parse(dateTime));
+            var date = DateTime.ParseExact(dateTime, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            return await (appCRUDService as IClassService).GetAttendancesByClass(classId, date);
         }
 
         [HttpGet("GetDates/{classId}")]
