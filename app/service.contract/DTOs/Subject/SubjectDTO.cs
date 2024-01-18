@@ -9,9 +9,6 @@ namespace service.contract.DTOs.Subject
         public string SubjectCode { get; set; } = null!;
         public string SubjectName { get; set; } = null!;
         public decimal Price { get; set; }
-        public ICollection<FeeDetailDTO> FeeDetails { get; set; }
-
-        public ICollection<MajorSubjectDto> MajorSubjects { get; set; }
 
     }
 }

@@ -14,6 +14,8 @@ using service.contract.DTOs.SubjectComponent;
 using service.contract.DTOs.Teacher;
 using service.contract.DTOs.Timetable;
 using service.contract.IAppServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml;
 
 namespace service.AppServices
@@ -50,50 +52,33 @@ namespace service.AppServices
         public async Task<List<TeacherTimetableDto>> GetTimeTable(Guid teacherId)
         {
             List<TeacherTimetableDto> result = new();
-            var classes = (await classService.GetClassesByTeacher(teacherId));
-            foreach (var item in classes)
+            var fees = (await feeDetailService.GetByTeacher(teacherId));
+            foreach (var item in fees)
             {
-                var fee = await feeDetailService.GetByClass(item.Id);
-                
-                var feeDetail = feeDetailRepository.GetAll().Result
-                    .Include(fd => fd.Attendances)
-                        .ThenInclude(a => a.SlotTimeTableAtWeek)
-                        .ThenInclude(staw => staw.Slot)
-                        .ThenInclude(staw => staw.SlotTimeTableAtWeeks)
-                        .ThenInclude(staw => staw.Week)
-                        .ThenInclude(staw => staw.SlotTimeTableAtWeeks)
-                        .ThenInclude(staw => staw.Timetable)
-                    .Include(fd => fd.Attendances)
-                        .ThenInclude(a => a.Room)
-                    .Where(fd => fd.Id == fee.Id).ToList();
 
-                var timetables = feeDetail
-                     .SelectMany(fd => fd.Attendances
+
+
+                var timetables = item.Attendances
                          .GroupBy(a => a.SlotTimeTableAtWeekId)
-                         .Select(g => g.First().SlotTimeTableAtWeek))
-                     .AsEnumerable()
+                         .Select(g => g.First().SlotTimeTableAtWeek)
                      .Select(Mapper.Map<SlotTimeTableAtWeekDTO>)
-                     .ToList().GroupBy(sc => new { sc.TimetableId, sc.SlotId })
+                     .GroupBy(sc => new { sc.TimetableId, sc.SlotId })
                              .Select(group => group.First())
                              .ToList();
 
 
                 var teacherTimetable = new TeacherTimetableDto
                 {
-                    StartDate = item.StartDate,
-                    EndDate = item.EndDate,
-                    Class = item,
-                    Subject = fee.Subject,
-                    Room = Mapper.Map<RoomDTO>(feeDetail
-                .SelectMany(fd => fd.Attendances
-                    .GroupBy(a => a.Room)
-                    .Select(g => g.FirstOrDefault().Room))
-                .FirstOrDefault())
+                    StartDate = item.Class.StartDate,
+                    EndDate = item.Class.EndDate,
+                    Class = item.Class,
+                    Subject = item.Subject,
+                    Room = item.Attendances.FirstOrDefault()?.Room
                 };
                 teacherTimetable.AtWeek.AddRange(Mapper.Map<List<SlotTimeTableAtWeekDTO>, List<AtWeekDto>>(timetables));
                 result.Add(teacherTimetable);
             }
-
+            string a = JsonSerializer.Serialize(result, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles });
             return result;
         }
 

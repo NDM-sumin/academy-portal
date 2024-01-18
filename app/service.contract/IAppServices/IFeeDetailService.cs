@@ -11,6 +11,7 @@ namespace service.contract.IAppServices
         Task<List<FeeDetailDTO>> GetByStudent(Guid studentId, Guid semesterId);
         Task<(FeeDetailDTO, List<AttendanceDTO>)> GetByStudentAndSubject(Guid studentId, Guid semesterId, Guid subjectId);
         Task<FeeDetailDTO> GetByClass(Guid classId);
+        Task<List<FeeDetailDTO>> GetByTeacher(Guid teacherId);
         Task AddFee();
     }
 }

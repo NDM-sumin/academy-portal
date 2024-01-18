@@ -73,5 +73,27 @@ namespace service.AppServices
             this.Repository.AddRange(result);
         }
 
+        public async Task<List<FeeDetailDTO>> GetByTeacher(Guid teacherId)
+        {
+            var result = await base.Repository.Entities
+            .Include(fd => fd.Subject)
+            .Include(fd => fd.Class)
+            .Include( fd => fd.Attendances)
+            .ThenInclude(a => a.Room)
+            .Include(fd => fd.Attendances)
+            .ThenInclude(a => a.SlotTimeTableAtWeek)
+            .ThenInclude(a => a.Slot)
+
+            .Include(fd => fd.Attendances)
+            .ThenInclude(a => a.SlotTimeTableAtWeek)
+            .ThenInclude(navigationPropertyPath: a => a.Week)
+
+            .Include(fd => fd.Attendances)
+            .ThenInclude(a => a.SlotTimeTableAtWeek)
+            .ThenInclude(a => a.Timetable)
+               .Where(fd => fd.Class != null && fd.Class.TeacherId == teacherId
+                && fd.Class.StartDate <= DateTime.Now && fd.Class.EndDate >= DateTime.Now).ToListAsync();
+            return Mapper.Map<List<FeeDetailDTO>>(result);
+        }
     }
 }
