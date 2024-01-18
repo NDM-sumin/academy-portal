@@ -73,6 +73,10 @@ const useClassApi = () => {
 	const GetClassInformation = (classId) => {
 		return axios.get(`api/Class/GetClassInformation/${classId}`);
 	};
+
+	const ClassForNewSemester = () => {
+		return axios.post(`api/Class/ClassForNewSemester`);
+	};
 	return {
 		create,
 		update,
@@ -86,6 +90,7 @@ const useClassApi = () => {
 		SaveAttendance,
 		SaveScores,
 		GetClassInformation,
+		ClassForNewSemester,
 	};
 };
 export default useClassApi;

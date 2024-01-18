@@ -14,7 +14,7 @@ const Class = () => {
 		open: false,
 	});
 	const [reload, setReload] = useState(true);
-	const additionButtons = [<StartNewSemesterButton key={"dfsdfsdfs"} />];
+	const additionButtons = [<ArrangeClassScheduleButton key={"dfsdfsdfs"} />];
 	const columns = [
 		{
 			title: "Mã phòng",
