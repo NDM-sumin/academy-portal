@@ -63,10 +63,9 @@ namespace api.Controllers
         }
 
         [HttpPost("SaveScores")]
-        public async Task<IActionResult> SaveScores(string scores)
+        public async Task<IActionResult> SaveScores([FromBody] List<TakeScore> scores)
         {
-            var result = JsonConvert.DeserializeObject<List<TakeScore>>(scores);
-            await (appCRUDService as IClassService).SaveScores(result);
+            await (appCRUDService as IClassService).SaveScores(scores);
             return Ok();
         }
 

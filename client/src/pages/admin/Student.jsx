@@ -13,7 +13,7 @@ const Student = () => {
 
 	const [query, setQuery] = useState({
 		skip: 0,
-		top: 50,
+		top: 10,
 	});
 	const [modalProps, setModalProps] = useState({
 		open: false,

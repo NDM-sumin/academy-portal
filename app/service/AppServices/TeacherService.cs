@@ -84,7 +84,11 @@ namespace service.AppServices
 
         public async Task<List<ClassDTO>> GetClassByTeacher(Guid teacherId)
         {
-            var result = base.Repository.GetAll().Result.Include(t => t.Classes).Where(t => t.Id == teacherId).SelectMany(t => t.Classes).AsEnumerable().ToList();
+            var result = (await base.Repository.GetAll())
+            .Include(t => t.Classes)
+            .FirstOrDefault(t => t.Id == teacherId)?
+            .Classes
+            .AsEnumerable().ToList();
             return Mapper.Map<List<ClassDTO>>(result);
         }
 

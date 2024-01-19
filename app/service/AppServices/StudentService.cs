@@ -79,7 +79,7 @@ namespace service.AppServices
                         MajorId = major.Id
                     };
                     student.Id = Guid.NewGuid();
-                    student.Password = Guid.NewGuid().ToString();
+                    student.Password = "123456";
                     HashService hashService = new(student.Password, _jwtConfiguration.HashSalt);
                     student.Password = hashService.EncryptedPassword;
                     studentDtos.Add(student);
@@ -92,7 +92,7 @@ namespace service.AppServices
         public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
         {
             entityDto.Id = Guid.NewGuid();
-            entityDto.Password = Guid.NewGuid().ToString();
+            entityDto.Password ="123456";
             HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
             entityDto.Password = hashService.EncryptedPassword;
             return base.Create(entityDto);

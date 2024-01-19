@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using domain;
+using entityframework.Extensions;
+using Microsoft.EntityFrameworkCore;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
 using service.contract.DTOs.Subject;
@@ -11,7 +13,7 @@ namespace service.AppServices
     {
         readonly IStudentService studentService;
         readonly IStudentSemesterService studentSemesterService;
-readonly IFeeDetailService feeDetailService;
+        readonly IFeeDetailService feeDetailService;
         readonly IMajorSubjectService majorSubjectService;
         public SubjectService(ISubjectRepository genericRepository,
             IMapper mapper,
@@ -24,8 +26,6 @@ readonly IFeeDetailService feeDetailService;
             this.studentSemesterService = studentSemesterService;
             this.feeDetailService = feeDetailService;
         }
-
-
 
         public async Task<List<SubjectDTO>> GetRegisterableSubjects(Guid studentId)
         {
@@ -42,10 +42,10 @@ readonly IFeeDetailService feeDetailService;
             {
                 var majorSubjects = majorSubjectService.GetSubjectsOfMajorInSemester(student.Major.Id, studentSemester.Semester.Id);
                 var subjects = majorSubjects.Select(ms => ms.Subject);
-                var feeDetailRegistered= await feeDetailService.GetByStudent(studentId, studentSemester.SemesterId);
+                var feeDetailRegistered = await feeDetailService.GetByStudent(studentId, studentSemester.SemesterId);
 
 
-                listSubject.AddRange(subjects.Where(s =>!feeDetailRegistered.Select(f => f.SubjectId).Contains(s.Id)));
+                listSubject.AddRange(subjects.Where(s => !feeDetailRegistered.Select(f => f.SubjectId).Contains(s.Id)));
             }
 
             return listSubject;

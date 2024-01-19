@@ -1,8 +1,12 @@
 ﻿using api.Controllers.Base;
+using AutoMapper;
 using domain;
 using domain.shared.Exceptions;
+using entityframework.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using repository.contract.IAppRepositories;
+using service.contract.DTOs;
 using service.contract.DTOs.MajorSubject;
 using service.contract.DTOs.Subject;
 using service.contract.DTOs.VNPay;
@@ -18,13 +22,15 @@ namespace api.Controllers
         readonly IVnPayService vnPayService;
         readonly IAccountService accountService;
         readonly IPaymentTransactionService paymentTransactionService;
+        readonly IMapper mapper;
         public SubjectController(ISubjectService appCRUDService,
         IStudentSemesterService studentSemesterService,
         IVnPayService vnPayService,
         IMajorSubjectService majorSubjectService,
         IAccountService accountService,
         IPaymentTransactionService paymentTransactionService,
-        ISubjectComponentRepository subjectComponentRepository) : base(appCRUDService)
+        ISubjectComponentRepository subjectComponentRepository,
+        IMapper mapper) : base(appCRUDService)
         {
             this.studentSemesterService = studentSemesterService;
             this.majorSubjectService = majorSubjectService;
@@ -32,6 +38,20 @@ namespace api.Controllers
             this.accountService = accountService;
             this.paymentTransactionService = paymentTransactionService;
             this.subjectComponentRepository = subjectComponentRepository;
+            this.mapper = mapper;
+        }
+
+        public override async Task<IActionResult> Get(int skip, int? top)
+        {
+            var service = (await this.appCRUDService.GetQueryable())
+            .Include(a => a.MajorSubjects);
+            IQueryable<Subject>? skippedData = service.Skip(skip).Take(top ?? 50);
+            PageResponse<SubjectDTO> response = new PageResponse<SubjectDTO>()
+            {
+                TotalItems = service.Count(),
+                Items = mapper.Map<IEnumerable<SubjectDTO>>(skippedData.AsEnumerable())
+            };
+            return Ok(response);
         }
         [HttpPost("GetPayUrl")]
         public async Task<PaymentTransactionDto> GetPayUrl([FromBody] List<Guid> subjectIds)

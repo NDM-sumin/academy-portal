@@ -20,6 +20,7 @@ const item = [
 
 
     return <Descriptions 
+    
     title="Tổng cộng"
     items={item}
     bordered={true}

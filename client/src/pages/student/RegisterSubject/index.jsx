@@ -84,7 +84,6 @@ const RegisterSubject = () => {
       ),
     };
   };
-
   return (
     <Row style={{ width: "100%" }} justify={"center"}>
       <Col span={6} />
