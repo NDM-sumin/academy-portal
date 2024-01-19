@@ -95,6 +95,21 @@ namespace service.AppServices
             entityDto.Password = hashService.EncryptedPassword;
             return base.Create(entityDto);
         }
+        public override async Task<StudentDTO> Update(UpdateStudentDTO updateTeacherDTO)
+        {
+            var teacher = await (Repository as IStudentRepository).Find(updateTeacherDTO.Id);
+            teacher.Username = updateTeacherDTO.Username;
+            teacher.Phone = updateTeacherDTO.Phone;
+            teacher.FullName = updateTeacherDTO.FullName;
+            teacher.Gender = updateTeacherDTO.Gender;
+            teacher.Dob = updateTeacherDTO.Dob;
+            teacher.Email = updateTeacherDTO.Email;
+            teacher.MajorId = updateTeacherDTO.MajorId;
+            await Repository.Update(teacher);
+
+            return Mapper.Map<Student, StudentDTO>(teacher);
+
+        }
 
         public async Task RegisterSubject(Guid studentId, Guid subjectId)
         {

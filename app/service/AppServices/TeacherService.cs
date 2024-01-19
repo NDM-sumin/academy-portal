@@ -40,15 +40,29 @@ namespace service.AppServices
             this.scoreRepository = scoreRepository;
         }
 
-        public override Task<TeacherDTO> Create(CreateTeacherDTO entityDto)
+        public override async Task<TeacherDTO> Create(CreateTeacherDTO entityDto)
         {
             entityDto.Id = Guid.NewGuid();
-            entityDto.Password = Guid.NewGuid().ToString();
-            HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
-            entityDto.Password = hashService.EncryptedPassword;
-            return base.Create(entityDto);
+            HashService hashService = new HashService("123456", _jwtConfiguration.HashSalt);
+            var teacher = Mapper.Map<Teacher>(entityDto);
+            teacher.Password = hashService.EncryptedPassword;
+            await Repository.Create(teacher);
+            return Mapper.Map<TeacherDTO>(teacher);
         }
+        public override async Task<TeacherDTO> Update(UpdateTeacherDTO updateTeacherDTO)
+        {
+            var teacher = await (Repository as ITeacherRepository).Find(updateTeacherDTO.Id);
+            teacher.Username = updateTeacherDTO.Username;
+            teacher.Phone = updateTeacherDTO.Phone;
+            teacher.FullName = updateTeacherDTO.FullName;
+            teacher.Gender = updateTeacherDTO.Gender;
+            teacher.Dob = updateTeacherDTO.Dob;
+            teacher.Email = updateTeacherDTO.Email;
+            await Repository.Update(teacher);
 
+            return Mapper.Map<Teacher, TeacherDTO>(teacher);
+
+        }
         public async Task<List<TeacherTimetableDto>> GetTimeTable(Guid teacherId)
         {
             List<TeacherTimetableDto> result = new();

@@ -11,6 +11,5 @@ namespace service.contract.DTOs.Student
         public bool Gender { get; set; }
         public string? Phone { get; set; }
         public Guid MajorId { get; set; }
-        public MajorDTO Major { get; set; }
     }
 }
