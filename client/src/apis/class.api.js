@@ -40,10 +40,10 @@ const useClassApi = () => {
 			attendanceId: item.key,
 			isAttendance: item.attendance === "present" ? true : false,
 		}));
-		const attendanceDatasJSON = JSON.stringify(attendanceDatas);
 
 		return axios.post(
-			`api/Class/SaveAttendance?attendances=${attendanceDatasJSON}`
+			`api/Class/SaveAttendance`,
+			attendanceDatas
 		);
 	};
 	const SaveScores = (scoreData) => {

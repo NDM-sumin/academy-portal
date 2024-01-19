@@ -57,10 +57,9 @@ namespace api.Controllers
         }
 
         [HttpPost("SaveAttendance")]
-        public async Task<IActionResult> SaveAttendance(string attendances)
+        public async Task<IActionResult> SaveAttendance([FromBody] List<TakeAttendance> attendances)
         {
-            var result = JsonConvert.DeserializeObject<List<TakeAttendance>>(attendances);
-            await (appCRUDService as IClassService).SaveAttendance(result);
+            await (appCRUDService as IClassService).SaveAttendance(attendances);
             return Ok();
         }
 
