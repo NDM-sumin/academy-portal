@@ -37,7 +37,22 @@ namespace service.AppServices
         readonly IWeekRepository weekRepository;
         readonly ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository;
         readonly ITeacherRepository teacherRepository;
-        public ClassService(ITeacherRepository teacherRepository, ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository, IWeekRepository weekRepository, ITimeTableRepository timeTableRepository, ISlotRepository slotRepository, IRoomRepository roomRepository, IClassRepository classRepository, IStudentRepository studentRepository, IScoreRepository scoreRepository, IAttedanceRepository attedanceRepository, ISubjectRepository subjectRepository, IFeeDetailRepository feeDetailRepository, IClassRepository genericRepository, IMapper mapper) : base(genericRepository, mapper)
+        readonly IStudentSemesterRepository studentSemesterRepository;
+        public ClassService(ITeacherRepository teacherRepository,
+         ISlotTimeTableAtWeekRepository slotTimeTableAtWeekRepository,
+          IWeekRepository weekRepository,
+          ITimeTableRepository timeTableRepository,
+          ISlotRepository slotRepository,
+           IRoomRepository roomRepository,
+           IClassRepository classRepository,
+            IStudentRepository studentRepository,
+            IScoreRepository scoreRepository,
+             IAttedanceRepository attedanceRepository,
+              ISubjectRepository subjectRepository,
+              IFeeDetailRepository feeDetailRepository,
+              IClassRepository genericRepository,
+              IStudentSemesterRepository studentSemesterRepository,
+               IMapper mapper) : base(genericRepository, mapper)
         {
             this.feeDetailRepository = feeDetailRepository;
             this.scoreRepository = scoreRepository;
@@ -51,6 +66,7 @@ namespace service.AppServices
             this.weekRepository = weekRepository;
             this.slotTimeTableAtWeekRepository = slotTimeTableAtWeekRepository;
             this.teacherRepository = teacherRepository;
+            this.studentSemesterRepository = studentSemesterRepository;
         }
         public async Task<List<StudentAttendance>> GetAttendancesByClass(Guid classId, DateTime dateTime)
         {
@@ -80,31 +96,22 @@ namespace service.AppServices
         public async Task ClassForNewSemester()
         {
             var subjects = subjectRepository.GetAll().Result.Include(s => s.SubjectComponents).Include(s => s.FeeDetails).ThenInclude(fd => fd.StudentSemester).ThenInclude(ss => ss.Semester).ToList();
-            var currentSemester = subjects.FirstOrDefault().FeeDetails.Where(fd => fd.StudentSemester.IsNow == true).Select(fd => fd.StudentSemester.Semester).FirstOrDefault();
+            var currentSemester = studentSemesterRepository.Entities.FirstOrDefault(s => s.IsNow).Semester;
             var rooms = await roomRepository.GetAll().Result.ToListAsync();
             var startDate = new DateTime(DateTime.Now.Year, currentSemester.StartMonth, currentSemester.StartDay);
             var endDate = new DateTime(DateTime.Now.Year, currentSemester.EndMonth, currentSemester.EndDay);
 
             foreach (var subject in subjects)
             {
-                var fees = feeDetailRepository.GetAll().Result.Include(fd => fd.Attendances).Include(fd => fd.StudentSemester).ThenInclude(ss => ss.Student).Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
-                foreach (var fee in fees)
-                {
-                    foreach (var sc in subject.SubjectComponents)
-                    {
-                        Score score = new()
-                        {
-                            Id = Guid.NewGuid(),
-                            SubjectComponentID = sc.Id,
-                            SubjectComponent = sc,
-                            StudentId = fee.StudentSemester.Student.Id,
-                            Student = fee.StudentSemester.Student,
-                            Value = null,
-                        };
-                        await scoreRepository.Create(score);
-                        await scoreRepository.SaveChange();
-                    }
-                }
+                var fees = feeDetailRepository
+                    .GetAll()
+                    .Result
+                    .Include(f => f.Class)
+                    .Include(fd => fd.Attendances)
+                    .Include(fd => fd.StudentSemester)
+                    .ThenInclude(ss => ss.Student)
+                    .Where(fd => fd.StudentSemester.IsNow == true && fd.SubjectId == subject.Id && fd.ClassId == null).ToList();
+
                 var index = 0;
                 while (fees.Any())
                 {
@@ -152,7 +159,7 @@ namespace service.AppServices
                                             Attendance attendance = new Attendance
                                             {
                                                 SlotTimeTableAtWeek = slotTimeTable,
-                                                FeeDetail = feeDetail,
+                                                FeeDetailId = feeDetail.Id,
                                                 IsAttendance = null,
                                                 Date = currentDate
                                             };
@@ -163,7 +170,7 @@ namespace service.AppServices
 
                                     currentDate = currentDate.AddDays(1);
                                 }
-                                feeDetail.Class = newClass;
+                                
                                 feeDetail.ClassId = newClass.Id;
                             }
 
@@ -176,14 +183,13 @@ namespace service.AppServices
                     {
                         foreach (var attendance in feeDetail.Attendances)
                         {
-                            attendance.Room = selectedRoom;
+                            attendance.RoomId = selectedRoom.Id;
                             await attedanceRepository.Update(attendance);
                             await attedanceRepository.SaveChange();
                         }
                     }
 
                     var teacher = await GetAvailableTeacherForClass(newClass, selectedSlotTimeTables, subject.Id);
-                    newClass.Teacher = teacher;
                     newClass.TeacherId = teacher.Id;
                     await classRepository.Update(newClass);
                     fees.RemoveAll(st => selectedFee.Any(selected => selected.Id == st.Id));

@@ -1,10 +1,15 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using api.Controllers.Base;
+using AutoMapper;
 using domain;
+using entityframework.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
+using repository.contract.IAppRepositories;
 using service.AppServices;
+using service.contract.DTOs;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.FeeDetail;
 using service.contract.DTOs.Score;
@@ -26,13 +31,15 @@ namespace api.Controllers
         readonly IStudentSemesterService studentSemesterService;
         readonly IAccountService accountService;
         readonly ISubjectService subjectService;
+        readonly IScoreRepository scoreRepository;
         public StudentController(IStudentService appCRUDService,
         IAttendanceService attendanceService,
         IStudentSemesterService studentSemesterService,
         ISubjectComponentService subjectComponentService,
         IFeeDetailService feeDetailService,
         ISubjectService subjectService,
-        IAccountService accountService) : base(appCRUDService)
+        IAccountService accountService,
+        IScoreRepository scoreRepository) : base(appCRUDService)
         {
             this.attendanceService = attendanceService;
             this.feeDetailService = feeDetailService;
@@ -40,9 +47,25 @@ namespace api.Controllers
             this.studentSemesterService = studentSemesterService;
             this.subjectService = subjectService;
             this.accountService = accountService;
+            this.scoreRepository = scoreRepository;
 
         }
-
+        public override async Task<IActionResult> Get(int skip, int? top)
+        {
+            IMapper mapper = this.Request.HttpContext.RequestServices.GetService<IMapper>()!;
+            var queryable = await appCRUDService.GetQueryable();
+            var data = queryable.Include(s => s.Major).Skip(skip);
+            if (top.HasValue)
+            {
+                data = data.Take(top.Value);
+            }
+            PageResponse<StudentDTO> response = new PageResponse<StudentDTO>()
+            {
+                TotalItems = queryable.Count(),
+                Items = mapper.Map<IEnumerable<StudentDTO>>(data.AsEnumerable())
+            };
+            return Ok(response);
+        }
         [HttpPost("Import")]
         public async Task<IActionResult> Import(IFormFile? formFile)
         {
@@ -102,6 +125,19 @@ namespace api.Controllers
                 feedetail.StudentSemesterId = currentSemester.Id;
                 feedetail.DueDate = DateTime.Now.AddDays(20);
                 feedetail.Amount = (float)(await subjectService.Get(feedetail.SubjectId)).Price;
+                List<SubjectComponent> subjectComponents =
+                (await subjectComponentService.GetQueryable()).Where(sc => sc.SubjectID == feedetail.SubjectId).ToList();
+                foreach (var subjectComponent in subjectComponents)
+                {
+                    Score score = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        SubjectComponentID = subjectComponent.Id,
+                        StudentId = userId,
+                        Value = null,
+                    };
+                    await scoreRepository.Create(score);
+                }
                 await feeDetailService.Create(feedetail);
             }
 
@@ -119,7 +155,7 @@ namespace api.Controllers
         [HttpGet("GetFeeHistory/{studentId}/{semesterId}")]
         public async Task<List<FeeDetailDTO>> GetFeeHistory(Guid studentId, Guid semesterId)
         {
-           return await (appCRUDService as IStudentService).GetFeeHistory(studentId, semesterId);
+            return await (appCRUDService as IStudentService).GetFeeHistory(studentId, semesterId);
         }
 
         [HttpPost("AddFee")]

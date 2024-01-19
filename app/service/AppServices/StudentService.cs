@@ -59,7 +59,7 @@ namespace service.AppServices
 
         public async Task ImportStudentsFromExcel(IFormFile file)
         {
-            var studentDtos = new List<StudentDTO>();
+            List<Student> students = new List<Student>();
 
             using (var stream = file.OpenReadStream())
             using (var package = new ExcelPackage(stream))
@@ -68,7 +68,7 @@ namespace service.AppServices
                 for (int row = 1; row <= worksheet.Dimension.Rows; row++)
                 {
                     MajorDTO major = _majorService.GetMajorByCode(worksheet.Cells[row, 7].Value.ToString()).Result;
-                    var student = new StudentDTO
+                    Student student = new Student
                     {
                         Username = worksheet.Cells[row, 1].Value.ToString(),
                         FullName = worksheet.Cells[row, 2].Value.ToString(),
@@ -76,23 +76,21 @@ namespace service.AppServices
                         Dob = DateTime.Parse(worksheet.Cells[row, 4].Value.ToString()),
                         Gender = Convert.ToBoolean(worksheet.Cells[row, 5].Value),
                         Phone = worksheet.Cells[row, 6].Value.ToString(),
-                        MajorId = major.Id
+                        MajorId = major.Id,
+                        Password = new HashService("123456", _jwtConfiguration.HashSalt).EncryptedPassword
                     };
-                    student.Id = Guid.NewGuid();
-                    student.Password = "123456";
-                    HashService hashService = new(student.Password, _jwtConfiguration.HashSalt);
-                    student.Password = hashService.EncryptedPassword;
-                    studentDtos.Add(student);
+
+                    students.Add(student);
+
                 }
             }
-            var students = Mapper.Map<List<Student>>(studentDtos);
             await base.Repository.AddRange(students);
         }
 
         public override Task<StudentDTO> Create(CreateStudentDTO entityDto)
         {
             entityDto.Id = Guid.NewGuid();
-            entityDto.Password ="123456";
+            entityDto.Password = "123456";
             HashService hashService = new HashService(entityDto.Password, _jwtConfiguration.HashSalt);
             entityDto.Password = hashService.EncryptedPassword;
             return base.Create(entityDto);
