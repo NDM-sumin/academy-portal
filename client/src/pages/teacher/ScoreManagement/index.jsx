@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Select,
-  Input,
-  Button,
-  Space,
-  notification,
-  Form,
-  InputNumber,
-} from "antd";
-import useStudentApi from "../../../apis/student.api";
+import { useState, useEffect } from "react";
+import { Table, Select, Button, notification, Form, InputNumber } from "antd";
 import useClassApi from "../../../apis/class.api";
 import useAuthApi from "../../../apis/auth.api";
 import { useAppContext } from "../../../hooks/context/app-bounding-context";
@@ -17,17 +7,15 @@ import GetExcelTemplateButton from "./GetExcelTemplateButton";
 import UploadExcelScore from "./UploadExcelScore";
 
 const ScoreHistory = () => {
-  const studentApi = useStudentApi();
   const ClassApi = useClassApi();
   const authApi = useAuthApi();
 
-  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedClass, setSelectedClass] = useState(null);
   const [classData, setClassData] = useState([]);
   const [scoreData, setScoreData] = useState([]);
   const [userId, setUserId] = useState(null);
   const [subjectComponentsData, setSubjectComponentsData] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [editedData, setEditedData] = useState({});
 
   const getUser = async () => {
     try {
@@ -48,7 +36,7 @@ const ScoreHistory = () => {
       if (classes.length == 0) {
         return;
       }
-      setSelectedClass((await classes)[0].id);
+      setSelectedClass((await classes)[0]);
       return { classes: classes, currentClass: (await classes)[0].id };
     } catch (error) {
       console.error("Error fetching ", error);
@@ -72,23 +60,23 @@ const ScoreHistory = () => {
     },
     ...subjectComponentsData.map((item) => ({
       title: `${item.name}`,
-      dataIndex: `${item.name}`,
-      key: `${item.name}`,
+      dataIndex: `${item.code}`,
+      key: `${item.code}`,
       align: "center",
       editable: editing,
       render: (text, record) => {
-        const renderInput = () => (
+        return editing ? (
           <InputNumber
             min={0}
             max={10}
             value={text}
             onChange={(value) =>
-              handleInputChange(record.key, item.name, value)
+              handleInputChange(record.key, item.code, value)
             }
           />
+        ) : (
+          <span>{text}</span>
         );
-
-        return editing ? renderInput() : <span>{text}</span>;
       },
     })),
   ];
@@ -96,36 +84,18 @@ const ScoreHistory = () => {
   const fetchData = async (currentClass) => {
     try {
       const studentScore = await ClassApi.GetStudents(currentClass);
-      const components = await ClassApi.GetSubjectComponents(currentClass);
-      console.log(studentScore);
-      const scoreHistoryList = [];
-      studentScore.forEach((student, index) => {
+      const scoreHistoryList = studentScore.map((student, index) => {
         const scoreHistory = {
           index: index + 1,
           key: student.studentId,
           id: currentClass,
           studentName: student.studentName,
         };
-        student.subjectComponents.forEach((subjectComponent) => {
-          const score =
-            subjectComponent.scores.length !== 0
-              ? subjectComponent.scores[0].value !== null
-                ? subjectComponent.scores[0].value
-                : ""
-              : "";
-
-          const studentScore = subjectComponent.scores.find(
-            (s) => s.studentId === student.id
-          );
-
-          if (studentScore) {
-            score.value = studentScore.value;
-          }
-
-          scoreHistory[subjectComponent.name] = score;
+        student.subjectComponents.map((subjectComponent) => {
+          const score = subjectComponent.scores[0].value ?? "";
+          scoreHistory[subjectComponent.code] = score;
         });
-
-        scoreHistoryList.push(scoreHistory);
+        return scoreHistory;
       });
       setScoreData(scoreHistoryList);
     } catch (error) {
@@ -134,39 +104,35 @@ const ScoreHistory = () => {
   };
   const fetchAndSetClasses = async () => {
     const classList = await generateClassList();
-    const classes = classList.classes;
-    const currentClass = classList.currentClass;
-    await generateSubjectComponent(currentClass);
-    const components = await ClassApi.GetSubjectComponents(currentClass);
+    await generateSubjectComponent(classList.currentClass);
+    const components = await ClassApi.GetSubjectComponents(
+      classList.currentClass
+    );
     setSubjectComponentsData(components);
-    setClassData(classes);
-
-    fetchData(currentClass);
+    setClassData(classList.classes);
+    fetchData(classList.currentClass);
   };
   useEffect(() => {
     fetchAndSetClasses();
   }, [userId, editing]);
 
-  const handleClassChange = async (value) => {
-    setSelectedClass(value);
-    const components = await ClassApi.GetSubjectComponents(value);
+  const handleClassChange = async (selectedClassId) => {
+    setSelectedClass(classData.find((item) => item.id == selectedClassId));
+    const components = await ClassApi.GetSubjectComponents(selectedClassId);
     setSubjectComponentsData(components);
-
-    fetchData(value);
+    fetchData(selectedClassId);
   };
-  const handleInputChange = (studentId, columnname, value) => {
-    console.log(value);
+  const handleInputChange = (studentId, scoreComponentCode, scoreValue) => {
     const changeData = scoreData.map((item) => {
-      if (item.key === studentId) {
-        Object.keys(item).map((propName) => {
-          if (propName === columnname) {
-            item[propName] = value;
-          }
-        });
+      if (
+        item.key === studentId &&
+        Object.keys(item).includes(scoreComponentCode)
+      ) {
+        item[scoreComponentCode] = scoreValue;
       }
+
       return item;
     });
-    console.log(changeData);
     setScoreData(changeData);
   };
 
@@ -185,7 +151,6 @@ const ScoreHistory = () => {
 
   const handleCancel = () => {
     setEditing(false);
-    setEditedData({});
   };
   const context = useAppContext();
   return (
@@ -194,7 +159,7 @@ const ScoreHistory = () => {
       <Form layout="inline">
         <Form.Item label="Lớp học">
           <Select
-            value={selectedClass}
+            value={selectedClass?.id}
             style={{ marginLeft: 8, marginBottom: 10 }}
             onChange={handleClassChange}
             loading={context.loading}
@@ -207,10 +172,13 @@ const ScoreHistory = () => {
           </Select>
         </Form.Item>
         <Form.Item>
-          <GetExcelTemplateButton />
+          <GetExcelTemplateButton selectedClass={selectedClass} />
         </Form.Item>
         <Form.Item>
-          <UploadExcelScore />
+          <UploadExcelScore
+            selectedClass={selectedClass}
+            onSuccess={fetchAndSetClasses}
+          />
         </Form.Item>
 
         {!editing && (

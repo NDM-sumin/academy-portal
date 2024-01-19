@@ -18,13 +18,11 @@ const useAxios = (setLoading) => {
         if(error.code == "ERR_NETWORK"){
             description = "Lỗi kết nối"
         }
-        console.log(description);
         notification.error({
             message: 'Có lỗi xảy ra',
             description: description,
             placement: 'topRight',
         });
-        console.log(error);
         if (error.request?.status === 401) {
             localStorage.removeItem(USER_TOKEN_KEY);
             navigate('/auth/login');

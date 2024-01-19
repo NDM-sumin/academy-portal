@@ -15,6 +15,7 @@ namespace service.contract.DTOs.SubjectComponent
         {
             Scores = new HashSet<ScoreDTO>();
         }
+        public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
         public double Weight { get; set; }
         public string? Comment { get; set; }

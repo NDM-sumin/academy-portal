@@ -269,6 +269,7 @@ namespace service.AppServices
                             .Select(sc => new SubjectComponentDTO
                             {
                                 Id = sc.Id,
+                                Code = sc.Code,
                                 Name = sc.Name,
                                 Weight = sc.Weight,
                                 Comment = sc.Comment,
@@ -312,13 +313,15 @@ namespace service.AppServices
         {
             foreach (var item in result)
             {
-                foreach (var subjectComponent in item.Scores)
+                foreach (var scoreDto in item.Scores)
                 {
                     var score = scoreRepository.GetAll().Result.Include(s => s.SubjectComponent).
-                        Where(s => s.SubjectComponent.Name.Equals(subjectComponent.Name) && s.StudentId == item.StudentId)
+                        Where(s => s.SubjectComponent.Code.Equals(scoreDto.Name) && s.StudentId == item.StudentId)
                         .OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-                    score.Value = string.IsNullOrEmpty(subjectComponent.Value) ? (double?)null : double.Parse(subjectComponent.Value);
-                    scoreRepository.Update(score);
+                    score.Value = string.IsNullOrEmpty(scoreDto.Value)
+                            || !double.TryParse(scoreDto.Value, out double scoreValue)
+                            || scoreValue > 10 || scoreValue < 0 ? null : scoreValue;
+                    await scoreRepository.Update(score);
                 }
             }
         }
@@ -401,13 +404,13 @@ namespace service.AppServices
                     StudentId = (student.FirstOrDefault(s => s.Username == classScore.Cells[i, 1].Value.ToString())
                        ?? throw new ClientException($"Không tìm thấy thông tin sinh viên tại dòng {i} trong hệ thống")).Id,
                 };
-                for (int j = 3; j <= subjectComponent.Count; j++)
+                for (int j = 3; j <= classScore.Columns.Count(); j++)
                 {
-                    var name = subjectComponent.ElementAt(j - 3).Name;
+                    var componentCode = subjectComponent.ElementAt(j - 3).Code;
                     var value = classScore.Cells[i, j].Value?.ToString();
                     ScoreValue score = new ScoreValue()
                     {
-                        Name = name,
+                        Name = componentCode,
                         Value = value
                     };
                     takeScore.Scores.Add(score);

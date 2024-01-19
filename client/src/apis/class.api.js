@@ -77,6 +77,18 @@ const useClassApi = () => {
 	const ClassForNewSemester = () => {
 		return axios.post(`api/Class/ClassForNewSemester`);
 	};
+	const GetExcelScoreTemplate = (classId) => {
+		return axios.get(`api/Class/${classId}/ScoreExcelTemplate`, { responseType: 'blob' })
+	}
+	const UploadScoreExcel = (classId, file) => {
+		let c = new FormData();
+		c.append('excelScore', file)
+		return axios.post(`api/Class/${classId}/UploadScoreExcel`, c, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		})
+	}
 	return {
 		create,
 		update,
@@ -91,6 +103,8 @@ const useClassApi = () => {
 		SaveScores,
 		GetClassInformation,
 		ClassForNewSemester,
+		GetExcelScoreTemplate,
+		UploadScoreExcel
 	};
 };
 export default useClassApi;

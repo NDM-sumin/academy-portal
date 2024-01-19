@@ -92,7 +92,7 @@ namespace api.Controllers
             return File(fileByte, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
         [AllowAnonymous]
-        [HttpGet("{classId}/UploadScoreExcel")]
+        [HttpPost("{classId}/UploadScoreExcel")]
         public async Task<IActionResult> UploadScoreExcel(Guid classId,[FromForm] IFormFile excelScore)
         {
             using ExcelPackage? excelPackage = new ExcelPackage(excelScore.OpenReadStream());

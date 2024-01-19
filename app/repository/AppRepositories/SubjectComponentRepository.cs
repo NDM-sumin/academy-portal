@@ -16,6 +16,7 @@ namespace repository.AppRepositories
         {
             List<SubjectComponent> subjectComponents = new List<SubjectComponent>(){
                 new SubjectComponent() {
+                    Code = "KT1",
                     SubjectID = subjectId,
                     Name = "Kiểm tra 1",
                     Weight = 0.15,
@@ -23,12 +24,14 @@ namespace repository.AppRepositories
 
                 },
                 new SubjectComponent() {
+                    Code= "KT2",
                     SubjectID = subjectId,
                     Name = "Kiểm tra 2",
                     Weight = 0.15,
                     CreatedAt = DateTime.Now.AddMinutes(15)
                 },
                  new SubjectComponent() {
+                    Code = "FE",
                     SubjectID = subjectId,
                     Name = "Thi cuối kì",
                     Weight = 0.7,
