@@ -15,6 +15,10 @@ const useAxios = (setLoading) => {
         if (error.request?.responseType === 'arraybuffer') {
             description = JSON.parse(new TextDecoder().decode(error?.response?.data));
         }
+        if(error.code == "ERR_NETWORK"){
+            description = "Lỗi kết nối"
+        }
+        console.log(description);
         notification.error({
             message: 'Có lỗi xảy ra',
             description: description,

@@ -1,4 +1,6 @@
 ﻿using domain;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.Class;
 using service.contract.DTOs.Score;
@@ -15,10 +17,12 @@ namespace service.contract.IAppServices
         Task<List<ClassDTO>> GetClassesByTeacher(Guid teacherId);
         Task<ClassInformation> GetClassInformation(Guid classId);
         Task<List<DateTime?>> GetDates(Guid classId);
+        Task<byte[]> GetScoreExcelTemplate(Guid classId);
         Task<List<StudentScoreDTO>> GetStudentsByClass(Guid classId);
         Task<List<SubjectComponentDTO>> GetSubjectComponentsByClass(Guid classId);
         Task<TeacherDTO> GetTeacher(Guid classId);
         Task SaveAttendance(List<TakeAttendance> result);
         Task SaveScores(List<TakeScore> result);
+        Task UploadScoreExcel(Guid classId, ExcelPackage excelScore);
     }
 }

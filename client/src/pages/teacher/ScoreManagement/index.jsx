@@ -9,10 +9,12 @@ import {
   Form,
   InputNumber,
 } from "antd";
-import useStudentApi from "../../apis/student.api";
-import useClassApi from "../../apis/class.api";
-import useAuthApi from "../../apis/auth.api";
-import { useAppContext } from "../../hooks/context/app-bounding-context";
+import useStudentApi from "../../../apis/student.api";
+import useClassApi from "../../../apis/class.api";
+import useAuthApi from "../../../apis/auth.api";
+import { useAppContext } from "../../../hooks/context/app-bounding-context";
+import GetExcelTemplateButton from "./GetExcelTemplateButton";
+import UploadExcelScore from "./UploadExcelScore";
 
 const ScoreHistory = () => {
   const studentApi = useStudentApi();
@@ -178,7 +180,7 @@ const ScoreHistory = () => {
     notification.success({
       message: "Lưu điểm thành công",
     });
-    fetchAndSetClasses()
+    fetchAndSetClasses();
   };
 
   const handleCancel = () => {
@@ -204,12 +206,17 @@ const ScoreHistory = () => {
             ))}
           </Select>
         </Form.Item>
+        <Form.Item>
+          <GetExcelTemplateButton />
+        </Form.Item>
+        <Form.Item>
+          <UploadExcelScore />
+        </Form.Item>
 
         {!editing && (
           <Button
             type="primary"
             onClick={handleEditClick}
-            style={{ marginLeft: 8, marginBottom: 10 }}
             loading={context.loading}
           >
             Chỉnh sửa điểm

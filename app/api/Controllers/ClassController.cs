@@ -1,8 +1,10 @@
 ﻿using api.Controllers.Base;
 using domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using service.contract.DTOs.Attendance;
 using service.contract.DTOs.Class;
 using service.contract.DTOs.Score;
@@ -80,6 +82,23 @@ namespace api.Controllers
         public async Task<ClassInformation> GetClassInformation(Guid classId)
         {
             return await (appCRUDService as IClassService).GetClassInformation(classId);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{classId}/ScoreExcelTemplate")]
+        public async Task<IActionResult> GetScoreExcelTemplate(Guid classId)
+        {
+            byte[] fileByte = await (appCRUDService as IClassService).GetScoreExcelTemplate(classId);
+            return File(fileByte, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+        [AllowAnonymous]
+        [HttpGet("{classId}/UploadScoreExcel")]
+        public async Task<IActionResult> UploadScoreExcel(Guid classId,[FromForm] IFormFile excelScore)
+        {
+            using ExcelPackage? excelPackage = new ExcelPackage(excelScore.OpenReadStream());
+            await (appCRUDService as IClassService).UploadScoreExcel(classId, excelPackage);
+            return NoContent();
+
         }
 
     }

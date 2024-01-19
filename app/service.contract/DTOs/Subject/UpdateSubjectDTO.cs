@@ -8,7 +8,7 @@
         }
         public string SubjectCode { get; set; } = null!;
         public string SubjectName { get; set; } = null!;
-
+        public decimal Price { get; set; }
         public List<Guid> MajorIds { get; set; }
         public Guid SemesterId { get; set; }
     }

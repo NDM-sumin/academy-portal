@@ -1,5 +1,5 @@
 import TimeTable from "../pages/teacher/Timetable";
-import ScoreManagement from "../pages/teacher/ScoreManagement";
+import ScoreManagement from "../pages/teacher/ScoreManagement/index";
 import Attendance from "../pages/teacher/Attendance";
 import LayoutPage from "../pages/index";
 import ClassDetail from "../pages/teacher/ClassDetail";

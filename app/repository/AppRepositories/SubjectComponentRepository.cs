@@ -19,17 +19,20 @@ namespace repository.AppRepositories
                     SubjectID = subjectId,
                     Name = "Kiểm tra 1",
                     Weight = 0.15,
+                    CreatedAt = DateTime.Now
 
                 },
                 new SubjectComponent() {
                     SubjectID = subjectId,
                     Name = "Kiểm tra 2",
                     Weight = 0.15,
+                    CreatedAt = DateTime.Now.AddMinutes(15)
                 },
                  new SubjectComponent() {
                     SubjectID = subjectId,
                     Name = "Thi cuối kì",
                     Weight = 0.7,
+                    CreatedAt = DateTime.Now.AddMinutes(30)
 
                 }
             };

@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using domain;
+using domain.shared.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
+using OfficeOpenXml;
 using repository.AppRepositories;
 using repository.contract.IAppRepositories;
 using service.AppServices.Base;
@@ -174,7 +177,7 @@ namespace service.AppServices
                         foreach (var attendance in feeDetail.Attendances)
                         {
                             attendance.Room = selectedRoom;
-                            await attedanceRepository.Update(attendance); 
+                            await attedanceRepository.Update(attendance);
                             await attedanceRepository.SaveChange();
                         }
                     }
@@ -332,6 +335,87 @@ namespace service.AppServices
                     SubjectName = c.FeeDetails.FirstOrDefault().Subject.SubjectName,
                     Students = Mapper.Map<List<StudentDTO>>(c.FeeDetails.Select(fd => fd.StudentSemester.Student).ToList())
                 }).FirstOrDefault();
+        }
+
+        public async Task<byte[]> GetScoreExcelTemplate(Guid classId)
+        {
+            var querable = await this.Repository.GetAll();
+            var classInfo = querable
+            .Include(c => c.FeeDetails)
+            .ThenInclude(c => c.StudentSemester)
+            .ThenInclude(c => c.Student)
+            .Include(c => c.FeeDetails)
+            .ThenInclude(f => f.Subject)
+            .ThenInclude(f => f.SubjectComponents)
+            .FirstOrDefault(c => c.Id == classId)
+            ?? throw new ClientException("Không tìm thấy thông tin lớp");
+
+            var student = classInfo.FeeDetails.Select(f => f.StudentSemester.Student).ToList();
+            var subjectComponent = classInfo.FeeDetails.First().Subject.SubjectComponents.OrderBy(s => s.CreatedAt).ToList();
+            using var excelPackage = new ExcelPackage();
+            var workSheet = excelPackage.Workbook.Worksheets.Add(classInfo.ClassCode);
+            workSheet.Cells[1, 1].Value = "Mã sinh viên";
+            workSheet.Cells[1, 2].Value = "Tên sinh viên";
+
+
+            for (int i = 0; i < subjectComponent.Count; i++)
+            {
+                workSheet.Cells[1, i + 3].Value = subjectComponent.ElementAt(i).Name;
+            }
+            for (int i = 0; i < student.Count(); i++)
+            {
+                workSheet.Cells[i + 2, 1].Value = student.ElementAt(i).Username;
+                workSheet.Cells[i + 2, 2].Value = student.ElementAt(i).FullName;
+            }
+            for (int i = 1; i <= workSheet.Columns.Count(); i++)
+            {
+                workSheet.Column(i).AutoFit();
+            }
+            return excelPackage.GetAsByteArray();
+
+        }
+
+        public async Task UploadScoreExcel(Guid classId, ExcelPackage excelScore)
+        {
+            var querable = await this.Repository.GetAll();
+            var classInfo = querable
+            .Include(c => c.FeeDetails)
+            .ThenInclude(c => c.StudentSemester)
+            .ThenInclude(c => c.Student)
+            .Include(c => c.FeeDetails)
+            .ThenInclude(f => f.Subject)
+            .ThenInclude(f => f.SubjectComponents)
+            .FirstOrDefault(c => c.Id == classId)
+            ?? throw new ClientException("Không tìm thấy thông tin lớp");
+            var student = classInfo.FeeDetails.Select(f => f.StudentSemester.Student).ToList();
+            var subjectComponent = classInfo.FeeDetails.First().Subject.SubjectComponents.OrderBy(s => s.CreatedAt).ToList();
+
+            var classScore = excelScore.Workbook.Worksheets.FirstOrDefault(w => w.Name == classInfo.ClassCode)
+            ?? throw new ClientException("File excel không tồn tại sheet có tên của lớp đang chọn");
+            List<TakeScore> scores = new List<TakeScore>();
+            for (int i = 2; i <= classScore.Rows.Count(); i++)
+            {
+                TakeScore takeScore = new TakeScore()
+                {
+                    ClassId = classId,
+                    StudentId = (student.FirstOrDefault(s => s.Username == classScore.Cells[i, 1].Value.ToString())
+                       ?? throw new ClientException($"Không tìm thấy thông tin sinh viên tại dòng {i} trong hệ thống")).Id,
+                };
+                for (int j = 3; j <= subjectComponent.Count; j++)
+                {
+                    var name = subjectComponent.ElementAt(j - 3).Name;
+                    var value = classScore.Cells[i, j].Value?.ToString();
+                    ScoreValue score = new ScoreValue()
+                    {
+                        Name = name,
+                        Value = value
+                    };
+                    takeScore.Scores.Add(score);
+                }
+                scores.Add(takeScore);
+            }
+            await this.SaveScores(scores);
+
         }
     }
 }
