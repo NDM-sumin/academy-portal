@@ -70,7 +70,7 @@ const ScoreManagement = () => {
       let totalWeightedScore = 0;
       console.log(studentScore);
       studentScore.forEach((score, index) => {
-        const weightedScore = score.scores[0].value * (score.weight / 100);
+        const weightedScore = score.scores[0].value * (score.weight);
         totalWeightedScore += weightedScore;
         const scoreHistory = {
           id: index + 1,

@@ -170,7 +170,7 @@ namespace service.AppServices
 
                                     currentDate = currentDate.AddDays(1);
                                 }
-                                
+
                                 feeDetail.ClassId = newClass.Id;
                             }
 
@@ -266,7 +266,7 @@ namespace service.AppServices
                      .Include(fd => fd.Subject)
                          .ThenInclude(s => s.SubjectComponents)
                                      .Where(fd => fd.ClassId == classId)
-                .GroupBy(fd => new { fd.StudentSemester.StudentId, fd.SubjectId })
+                    .GroupBy(fd => new { fd.StudentSemester.StudentId, fd.SubjectId })
                      .Select(group => new StudentScoreDTO
                      {
                          StudentId = group.First().StudentSemester.Student.Id,
@@ -322,7 +322,9 @@ namespace service.AppServices
                 foreach (var scoreDto in item.Scores)
                 {
                     var score = scoreRepository.GetAll().Result.Include(s => s.SubjectComponent).
-                        Where(s => s.SubjectComponent.Code.Equals(scoreDto.Name) && s.StudentId == item.StudentId)
+                        Where(s => s.SubjectComponent.Code.Equals(scoreDto.Name) && s.StudentId == item.StudentId
+                        && s.SubjectComponent.Subject.FeeDetails.Any(f => f.ClassId == item.ClassId)
+                        )
                         .OrderByDescending(x => x.CreatedAt).FirstOrDefault();
                     score.Value = string.IsNullOrEmpty(scoreDto.Value)
                             || !double.TryParse(scoreDto.Value, out double scoreValue)
